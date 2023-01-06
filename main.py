@@ -1,5 +1,6 @@
 
-import json, os, re, sys
+from bs4 import BeautifulSoup
+import requests
 
 # readout metadata file and store it as dictionary
 def parseMetadata(filename:str) -> dict:
@@ -37,9 +38,31 @@ def parseMetadata(filename:str) -> dict:
 
 
 # get movie poster as url
-def getMoviePoster(moviename:str) -> bool:
-    return False
+def getMoviePoster(moviename:str, source:str="amazon") -> str:
+    if source == "amazon":
+        header = {"user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36" ,"referer":"https://www.google.com/"}
+        request = requests.get(f"https://www.amazon.de/s?k={moviename}", headers=header)
+
+        if request.status_code != 200:
+            raise Exception(f"HTTP response code: {request.status_code}")
+        
+        html = BeautifulSoup(request.content, features="html.parser")
+        img = html.body.find(attr={"alt": moviename})
+
+        if img is None:
+            raise Exception("Related image not found")
+
+        return img.get("data-src")
+    
+    elif source == "bing":
+        pass
+    
+    raise ValueError(f"unknow source: {source}")
 
 
 metadata = parseMetadata(r"C:\Users\fabia\OneDrive\Dokumente\GitHub\video-library\Videos\23 - Nichts ist so wie es scheint.txt")
 print(metadata)
+
+moviePoster = getMoviePoster("23 - Nichts ist so wie es scheint")
+print(moviePoster)
+
