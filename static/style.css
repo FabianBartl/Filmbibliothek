@@ -1,0 +1,45 @@
+
+@import url("theme.css");
+@import url("fonts.css");
+
+/* variables */
+html {
+	--text-font: "Calibri Light", "Calibri", sans-serif;
+}
+
+/* general */
+* {
+	scroll-behavior: smooth;
+	scrollbar-gutter: stable;
+	box-sizing: border-box;
+	-webkit-font-smoothing: antialiased;
+}
+
+/* font style */
+body {
+	font-family: var(--text-font);
+	font-size: 12pt;
+	hyphens: auto;
+}
+
+/*  */
+main {
+    display: inline-block;
+}
+
+/* debug */
+* {
+	background: #000 !important;
+	color: #0f0 !important;
+	outline: 1px #f00 solid !important;
+	background-color: rgba(255, 0, 0, 0.2) !important;
+}
+
+* *               { background-color: rgba(  0, 255,   0, 0.2) !important; }
+* * *             { background-color: rgba(  0,   0, 255, 0.2) !important; }
+* * * *           { background-color: rgba(255,   0, 255, 0.2) !important; }
+* * * * *         { background-color: rgba(  0, 255, 255, 0.2) !important; }
+* * * * * *       { background-color: rgba(255, 255,   0, 0.2) !important; }
+* * * * * * *     { background-color: rgba(255,   0,   0, 0.2) !important; }
+* * * * * * * *   { background-color: rgba(  0, 255,   0, 0.2) !important; }
+* * * * * * * * * { background-color: rgba(  0,   0, 255, 0.2) !important; }

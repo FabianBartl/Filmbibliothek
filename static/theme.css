@@ -1,0 +1,11 @@
+
+html,
+html[theme="light"] {
+	--background: #eee;
+	--foreground: #111;
+}
+
+html[theme="dark"] {
+	--background: #111;
+	--foreground: #eee;
+}
