@@ -9,10 +9,14 @@
 	</head>
 	<body>
 		<header>
+			<h1>
+				Movie Library
+			</h1>
 			<div>
 				<input id="search-input" type="text" placeholder="Filme durchsuchen ...">
 			</div>
 		</header>
+
 		<main>
 			{% for movieID, data in movies.items() %}
 				<div id="movieID_{{ movieID }}" class="movie" data-path="{{ data.get('path') }}">
@@ -42,5 +46,9 @@
 				</div>
 			{% endfor %}
 		</main>
+
+		<footer>
+			designed &amp; programmed by Fabian Bartl
+		</footer>
 	</body>
 </html>

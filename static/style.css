@@ -10,7 +10,7 @@ html {
 /* general */
 * {
 	scroll-behavior: smooth;
-	scrollbar-gutter: stable;
+	/* scrollbar-gutter: stable; */
 	box-sizing: border-box;
 	-webkit-font-smoothing: antialiased;
 }
@@ -20,11 +20,17 @@ body {
 	font-family: var(--text-font);
 	font-size: 12pt;
 	hyphens: auto;
+    overflow-x: hidden;
 }
 
 /* movie */
+main {
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+}
 .movie {
-    width: 45vw;
+    width: 50vw;
 }
 /* movie title */
 .movie .title {
@@ -43,7 +49,7 @@ body {
 }
 .movie .summary .poster img {
     width: 10em;
-    border-radius: 20px;
+    border-radius: 10px;
 }
 /* movie details */
 .movie .details {}
@@ -52,10 +58,12 @@ body {
 }
 .movie .details .badges {}
 .movie .details .badges ul li {
-    border: 1px solid var(--foreground);
+    border: 1.5px solid var(--foreground);
     border-radius: 5px;
-    margin-right: 0.6rem;
-    padding: 1px 8px;
+    margin-right: 0.4rem;
+    padding: 3px 4px;
+    line-height: 100%;
+    font-size: 70%;
 }
 .movie .details .metadata {}
 .movie .details .badges ul,
@@ -64,10 +72,13 @@ body {
     padding-left: 0;
     display: flex;
 }
+.movie .details .metadata ul li {
+    font-size: 80%;
+}
 .movie .details .metadata ul li:not(:last-child)::after {
     content: "●";
-    margin-right: 0.6rem;
-    margin-left: 0.6rem;
+    margin-right: 0.4rem;
+    margin-left: 0.4rem;
 }
 .movie .details .description {
     line-height: 1.2rem;
@@ -76,30 +87,29 @@ body {
 /* search */
 #search-input:focus,
 #search-input {
-	margin-left: 0.5em;
 	padding: 0.5em;
 	color: var(--foreground);
-	font-family: (--text-font);
-	font-size: 110%;
-	background: var(--background-accent);
-	border-radius: 3px;
+	border-radius: 5px;
 	text-overflow: ellipsis;
+    font-size: 1.1rem;
 }
-#search-input:focus { width: calc(100% - 1em); }
+#search-input:focus {
+    width: 100%;
+}
 #search-input {
 	width: 15em;
 	transition: width 0.2s ease-in-out;
 }
 
 /* debug */
-/*
 * {
-	background: #000 !important;
-	color: #0f0 !important;
-	outline: 1px #f00 solid !important;
-	background-color: rgba(255, 0, 0, 0.2) !important;
+	/* color: #0f0 !important; */
+	/* outline: 1px #f00 solid !important; */
+	/* background: #000 !important;
+	background-color: rgba(255, 0, 0, 0.2) !important; */
 }
 
+/* 
 * *               { background-color: rgba(  0, 255,   0, 0.2) !important; }
 * * *             { background-color: rgba(  0,   0, 255, 0.2) !important; }
 * * * *           { background-color: rgba(255,   0, 255, 0.2) !important; }
