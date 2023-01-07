@@ -1,6 +1,7 @@
 
 from bs4 import BeautifulSoup
-import requests
+import urllib.parse
+import requests, json, re, os, sys
 
 # readout metadata file and store it as dictionary
 def parseMetadata(filename:str) -> dict:
@@ -41,7 +42,7 @@ def parseMetadata(filename:str) -> dict:
 def getMoviePoster(moviename:str, source:str="amazon") -> str:
     header = {"user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36" ,"referer":"https://www.google.com/"}
     
-    movienameURL = moviename.replace(" ", "+")
+    movienameURL = urllib.parse.quote_plus(f"filmplakat \"{moviename}\"")
     if source == "amazon":
         requestURL = "https://www.amazon.de/s?k=" + movienameURL
     elif source == "bing":
@@ -53,22 +54,31 @@ def getMoviePoster(moviename:str, source:str="amazon") -> str:
     else:
         raise ValueError(f"unknow source: {source}")
 
+    input(requestURL)
+
     request = requests.get(requestURL, headers=header)
     if request.status_code != 200:
         raise Exception(f"HTTP response code: {request.status_code}")
     html = BeautifulSoup(request.content, features="html.parser")
     
+    with open("request.html", "wb") as file:
+        file.write(request.content)
+
     if source == "amazon":
-        img = html.body.find("img", attrs={"alt": moviename})
+        img = html.body.find(attrs={"alt": moviename})
         if img is None:
             raise Exception("Related image not found")
         return img.get("data-src")
     
     elif source == "bing":
-        img = [ tag for tag in html.body.findAll("img", attrs={"class": "mimg"}) if tag.get("class") == ["mimg"] ]
-        if img == []:
+        imgs = [ tag for tag in html.body.findAll(attrs={"class": "iusc"}) if tag.get("class") == ["iusc"] ]
+        if imgs == []:
             raise Exception("Related image not found")
-        return img[0].get("src")
+
+        imgURL = [ param.replace("mediaurl=", "") for param in imgs[0].get("href").split("&") if param.startswith("mediaurl=") ]
+        if imgURL == []:
+            raise Exception("Related image not found")
+        return urllib.parse.unquote(imgURL[0])
 
     elif source == "google":
         pass
