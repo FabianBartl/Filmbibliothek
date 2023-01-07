@@ -40,6 +40,7 @@ def parseMetadata(filename:str) -> dict:
 
 # get movie poster as url
 def getMoviePoster(moviename:str, source:str="amazon") -> str:
+    relImgNotFound = Exception("Related image not found")
     header = {"user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36" ,"referer":"https://www.google.com/"}
     
     movienameURL = urllib.parse.quote_plus(f"filmplakat \"{moviename}\"")
@@ -51,11 +52,11 @@ def getMoviePoster(moviename:str, source:str="amazon") -> str:
         pass
     elif source == "ebay":
         pass
+    elif source == "imdb":
+        requestURL = "https://www.imdb.com/find/?q=" + movienameURL
     else:
         raise ValueError(f"unknow source: {source}")
-
-    input(requestURL)
-
+    
     request = requests.get(requestURL, headers=header)
     if request.status_code != 200:
         raise Exception(f"HTTP response code: {request.status_code}")
@@ -65,19 +66,19 @@ def getMoviePoster(moviename:str, source:str="amazon") -> str:
         file.write(request.content)
 
     if source == "amazon":
-        img = html.body.find(attrs={"alt": moviename})
+        img = html.body.find("img", attrs={"alt": moviename})
         if img is None:
-            raise Exception("Related image not found")
+            raise relImgNotFound
         return img.get("data-src")
     
     elif source == "bing":
         imgs = [ tag for tag in html.body.findAll(attrs={"class": "iusc"}) if tag.get("class") == ["iusc"] ]
         if imgs == []:
-            raise Exception("Related image not found")
+            raise relImgNotFound
 
         imgURL = [ param.replace("mediaurl=", "") for param in imgs[0].get("href").split("&") if param.startswith("mediaurl=") ]
         if imgURL == []:
-            raise Exception("Related image not found")
+            raise relImgNotFound
         return urllib.parse.unquote(imgURL[0])
 
     elif source == "google":
@@ -86,10 +87,29 @@ def getMoviePoster(moviename:str, source:str="amazon") -> str:
     elif source == "ebay":
         pass
 
+    elif source == "imdb":
+        page = html.body.find("a", attrs={"class": "ipc-metadata-list-summary-item__t"})
+        if page is None:
+            raise relImgNotFound
+        pageURL = "https://www.imdb.com" + page.get("href")
+
+        request = requests.get(pageURL, headers=header)
+        if request.status_code != 200:
+            raise Exception(f"HTTP response code: {request.status_code}")
+        html = BeautifulSoup(request.content, features="html.parser")
+
+        with open("request_page.html", "wb") as file:
+            file.write(request.content)
+        
+        imgs = [ tag for tag in html.body.findAll("img", attrs={"class": "ipc-image"}) if tag.get("class") == ["ipc-image"] ]
+        if imgURL == []:
+            raise relImgNotFound
+        return imgs[0].get("srcset").split(", ")[-1].split(" ")[0]
+
 
 metadata = parseMetadata(r"C:\Users\fabia\OneDrive\Dokumente\GitHub\video-library\Videos\23 - Nichts ist so wie es scheint.txt")
 print(metadata)
 
-moviePoster = getMoviePoster("23 - Nichts ist so wie es scheint", "bing")
+moviePoster = getMoviePoster("23 - Nichts ist so wie es scheint", "imdb")
 print(moviePoster)
 
