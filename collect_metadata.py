@@ -38,7 +38,6 @@ def parseMetadataFromFile(filename:str) -> dict:
 
     return metadata
 
-
 # get movie poster as url
 def getMoviePoster(moviename:str, source:str="imdb") -> str:
     relImgNotFound = Exception("Related image not found")
@@ -101,7 +100,6 @@ def getMoviePoster(moviename:str, source:str="imdb") -> str:
             raise relImgNotFound
         return imgs[0].get("srcset").split(", ")[-1].split(" ")[0]
 
-
 # get metadata from imdb
 def getMetadataFromIMDB(moviename:str) -> dict:
     header = {"user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36" ,"referer":"https://www.google.com/"}
@@ -130,15 +128,15 @@ def getMetadataFromIMDB(moviename:str) -> dict:
     metadata["credits_html"] = html.find(id="fullcredits_content").text
     return metadata
 
-
 # save collected metadata as json format
 def saveMetadata(filename:str, metadata:dict) -> None:
     with open(filename, "w", encoding="utf-8") as file:
         json.dump(metadata, file, indent=2)
 
-
+# cli
 if __name__ == "__main__":
     movie_directory = os.path.abspath( sys.argv[1] if len(sys.argv) >= 2 else "Videos" )
+    movies_json = os.path.abspath( sys.argv[2] if len(sys.argv) >= 3 else "movies.json" )
     movie_filetypes = r"\.(mp4|mkv|mov)"
     
     metadata = {}
@@ -154,7 +152,8 @@ if __name__ == "__main__":
         if os.path.isfile(metadata_file):
             movie_metadata = parseMetadataFromFile(metadata_file)
         movie_metadata |= getMetadataFromIMDB(moviename)
-
+        movie_metadata["filepath"] = filename
+        
         metadata[moviename] = movie_metadata
     
-    saveMetadata("movies.json", metadata)
+    saveMetadata(movies_json, metadata)
