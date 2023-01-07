@@ -9,15 +9,15 @@ def parseMetadata(filename:str) -> dict:
     metadata = {}
 
     with open(filename, "r", encoding="utf-8") as file:
-        metadata["sender"] = file.readline()
-        metadata["thema"] = file.readline()
+        metadata["channel"] = file.readline()
+        metadata["topc"] = file.readline()
         file.readline()
-        metadata["titel"] = file.readline()
+        metadata["title"] = file.readline()
         file.readline()
-        metadata["datum"] = file.readline()
-        metadata["zeit"] = file.readline()
-        metadata["dauer"] = file.readline()
-        metadata["größe"] = file.readline()
+        metadata["date"] = file.readline()
+        metadata["time"] = file.readline()
+        metadata["duration"] = file.readline()
+        metadata["filesize"] = file.readline()
         file.readline()
         file.readline()
 
@@ -34,7 +34,7 @@ def parseMetadata(filename:str) -> dict:
         while line := file.readline():
             if line.strip() == "": continue
             beschreibung.append(line.strip())
-        metadata["beschreibung"] = " ".join(beschreibung)
+        metadata["description"] = " ".join(beschreibung)
 
     return metadata
 
@@ -111,7 +111,7 @@ def getMoviePoster(moviename:str, source:str="imdb") -> str:
 # save collected metadata as json format
 def saveMetadata(filename:str, metadata:dict) -> None:
     with open(filename, "w", encoding="utf-8") as file:
-        json.dump(metadata, file)
+        json.dump(metadata, file, indent=2)
 
 moviename = "23 - Nichts ist so wie es scheint"
 
