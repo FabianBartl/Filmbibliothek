@@ -39,7 +39,7 @@ def parseMetadata(filename:str) -> dict:
 
 
 # get movie poster as url
-def getMoviePoster(moviename:str, source:str="amazon") -> str:
+def getMoviePoster(moviename:str, source:str="imdb") -> str:
     relImgNotFound = Exception("Related image not found")
     header = {"user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36" ,"referer":"https://www.google.com/"}
     
@@ -102,9 +102,15 @@ def getMoviePoster(moviename:str, source:str="amazon") -> str:
             file.write(request.content)
         
         imgs = [ tag for tag in html.body.findAll("img", attrs={"class": "ipc-image"}) if tag.get("class") == ["ipc-image"] ]
-        if imgURL == []:
+        if imgs == []:
             raise relImgNotFound
         return imgs[0].get("srcset").split(", ")[-1].split(" ")[0]
+
+
+# save collected metadata as json format
+def saveMetadata(filename:str, metadata:dict) -> None:
+    with open(filename, "w", encoding="utf-8") as file:
+        json.dump(metadata, file)
 
 
 metadata = parseMetadata(r"C:\Users\fabia\OneDrive\Dokumente\GitHub\video-library\Videos\23 - Nichts ist so wie es scheint.txt")
