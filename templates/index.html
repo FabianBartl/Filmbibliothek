@@ -4,28 +4,40 @@
 		<title>Movie Library</title>
 		<meta charset="utf-8">
 		<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
-		<script src="{{ url_for('static', filename='script.js') }}" defer></script>
-		<script src="{{ url_for('static', filename='jquery-3.6.3.min.js') }}" defer></script>
+		<!-- <script src="{{ url_for('static', filename='jquery-3.6.3.min.js') }}"></script> -->
+		<!-- <script src="{{ url_for('static', filename='script.js') }}" defer></script> -->
 	</head>
 	<body>
+		<header>
+			<div>
+				<input id="search-input" type="text" placeholder="Filme durchsuchen ...">
+			</div>
+		</header>
 		<main>
-			{% for name, data in movies.items() %}
-				<div class="movie">
-					<div>
+			{% for movieID, data in movies.items() %}
+				<div id="movieID_{{ movieID }}" class="movie" data-path="{{ data.get('path') }}">
+					<div class="title">{{ data.title }}</div>
+					<div class="summary">
 						<div class="poster"><img src="{{ data.get('poster') }}"></div>
-						<div class="watch"><a href="{{ data.get('path') }}" target="_blank"><i class="fa fa-watch"></i></a></div>
-					</div>
-					<div>
-						<div class="title">{{ name }}</div>
-						<div class="badges {{ data.get('badges') }}"></div>
-						<div class="metadata">
-							<ul>
-								<li>{{ data.get('date', '2023').split('.')[-1] }}</li>
-								<li>{{ data.get('channel') }}</li>
-								<li>{{ data.get('duration') }}</li>
-							</ul>
+						<div class="details">
+							<div class="badges">
+								{% if data.get('badges') %}
+								<ul>
+									{% for badge in data.get('badges', []) %}
+									<li>{{ badge }}</li>
+									{% endfor %}
+								</ul>
+								{% endif %}
+							</div>
+							<div class="metadata">
+								<ul>
+									<li>{{ data.get('date', '2023').split('.')[-1] }}</li>
+									<li>{{ data.get('channel') }}</li>
+									<li>{{ data.get('duration') }}</li>
+								</ul>
+							</div>
+							<div class="description">{{ data.get('description') }}</div>
 						</div>
-						<div class="description">{{ data.get('description') }}</div>
 					</div>
 				</div>
 			{% endfor %}
