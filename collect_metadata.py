@@ -1,11 +1,10 @@
 
-import requests, json
+import requests, json, re
 import urllib.parse
 from bs4 import BeautifulSoup
-from tqdm import tqdm
 
 # readout metadata file and store it as dictionary
-def parseMetadata(filename:str) -> dict:
+def parseMetadataFromFile(filename:str) -> dict:
     metadata = {}
 
     with open(filename, "r", encoding="utf-8") as file:
@@ -62,18 +61,15 @@ def getMoviePoster(moviename:str, source:str="imdb") -> str:
     if request.status_code != 200:
         raise Exception(f"HTTP response code: {request.status_code}")
     html = BeautifulSoup(request.content, features="html.parser")
-    
-    with open("request.html", "wb") as file:
-        file.write(request.content)
 
     if source == "amazon":
-        img = html.body.find("img", attrs={"alt": moviename})
+        img = html.find("img", attrs={"alt": moviename})
         if img is None:
             raise relImgNotFound
         return img.get("data-src")
     
     elif source == "bing":
-        imgs = [ tag for tag in html.body.findAll(attrs={"class": "iusc"}) if tag.get("class") == ["iusc"] ]
+        imgs = [ tag for tag in html.findAll(attrs={"class": "iusc"}) if tag.get("class") == ["iusc"] ]
         if imgs == []:
             raise relImgNotFound
 
@@ -89,7 +85,7 @@ def getMoviePoster(moviename:str, source:str="imdb") -> str:
         pass
 
     elif source == "imdb":
-        page = html.body.find("a", attrs={"class": "ipc-metadata-list-summary-item__t"})
+        page = html.find("a", attrs={"class": "ipc-metadata-list-summary-item__t"})
         if page is None:
             raise relImgNotFound
         pageURL = "https://www.imdb.com" + page.get("href")
@@ -98,14 +94,38 @@ def getMoviePoster(moviename:str, source:str="imdb") -> str:
         if request.status_code != 200:
             raise Exception(f"HTTP response code: {request.status_code}")
         html = BeautifulSoup(request.content, features="html.parser")
-
-        with open("request_page.html", "wb") as file:
-            file.write(request.content)
         
-        imgs = [ tag for tag in html.body.findAll("img", attrs={"class": "ipc-image"}) if tag.get("class") == ["ipc-image"] ]
+        imgs = [ tag for tag in html.findAll("img", attrs={"class": "ipc-image"}) if tag.get("class") == ["ipc-image"] ]
         if imgs == []:
             raise relImgNotFound
         return imgs[0].get("srcset").split(", ")[-1].split(" ")[0]
+
+
+# get metadata from imdb
+def getMetadataFromIMDB(moviename:str) -> dict:
+    header = {"user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36" ,"referer":"https://www.google.com/"}
+
+    request = requests.get("https://www.imdb.com/find/?q="+urllib.parse.quote_plus(moviename), headers=header)
+    if request.status_code != 200:
+        raise Exception(f"HTTP response code: {request.status_code}")
+    html = BeautifulSoup(request.content, features="html.parser")
+    
+    page = html.find("a", attrs={"class": "ipc-metadata-list-summary-item__t"})
+    if page is None:
+        raise Exception("Movie not found")
+    
+    metadata = {}
+    metadata["imdb_id"] = page.get("href").split("/")[2]
+    metadata["imdb_url"] = f"https://www.imdb.com/title/" + metadata["imdb_id"]
+    metadata["poster"] = getMoviePoster(moviename, "imdb")
+
+    request = requests.get(metadata["imdb_url"]+"fullcredits/", headers=header)
+    if request.status_code != 200:
+        raise Exception(f"HTTP response code: {request.status_code}")
+    html = BeautifulSoup(request.content, features="html.parser")
+
+    metadata["credits_html"] = html.find(id="fullcredits_content").text
+    return metadata
 
 
 # save collected metadata as json format
@@ -115,11 +135,6 @@ def saveMetadata(filename:str, metadata:dict) -> None:
 
 moviename = "23 - Nichts ist so wie es scheint"
 
-metadata = parseMetadata(f"Videos\\{moviename}.txt")
-print(metadata)
-
-moviePoster = getMoviePoster(moviename, "imdb")
-print(moviePoster)
-
-metadata["poster"] = moviePoster
+metadata = parseMetadataFromFile(f"Videos\\{moviename}.txt")
+metadata |= getMetadataFromIMDB(moviename)
 saveMetadata(f"{moviename}.json", metadata)
