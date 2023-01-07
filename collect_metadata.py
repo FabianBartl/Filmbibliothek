@@ -1,5 +1,5 @@
 
-import requests, json, re
+import requests, json, sys, os
 import urllib.parse
 from bs4 import BeautifulSoup
 
@@ -105,7 +105,8 @@ def getMoviePoster(moviename:str, source:str="imdb") -> str:
 def getMetadataFromIMDB(moviename:str) -> dict:
     header = {"user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36" ,"referer":"https://www.google.com/"}
 
-    request = requests.get("https://www.imdb.com/find/?q="+urllib.parse.quote_plus(moviename), headers=header)
+    requestURL = "https://www.imdb.com/find/?q="+urllib.parse.quote_plus(moviename)
+    request = requests.get(requestURL, headers=header)
     if request.status_code != 200:
         raise Exception(f"HTTP response code: {request.status_code}")
     html = BeautifulSoup(request.content, features="html.parser")
@@ -119,7 +120,8 @@ def getMetadataFromIMDB(moviename:str) -> dict:
     metadata["imdb_url"] = f"https://www.imdb.com/title/" + metadata["imdb_id"]
     metadata["poster"] = getMoviePoster(moviename, "imdb")
 
-    request = requests.get(metadata["imdb_url"]+"fullcredits/", headers=header)
+    requestURL = metadata["imdb_url"] + "/fullcredits/"
+    request = requests.get(requestURL, headers=header)
     if request.status_code != 200:
         raise Exception(f"HTTP response code: {request.status_code}")
     html = BeautifulSoup(request.content, features="html.parser")
@@ -133,8 +135,29 @@ def saveMetadata(filename:str, metadata:dict) -> None:
     with open(filename, "w", encoding="utf-8") as file:
         json.dump(metadata, file, indent=2)
 
-moviename = "23 - Nichts ist so wie es scheint"
+if __name__ == "__main__" and len(sys.argv) <= 1:
+    moviename = "23 - Nichts ist so wie es scheint"
+    metadata = parseMetadataFromFile(f"Videos\\{moviename}.txt")
+    metadata |= getMetadataFromIMDB(moviename)
+    saveMetadata(f"{moviename}.json", metadata)
 
-metadata = parseMetadataFromFile(f"Videos\\{moviename}.txt")
-metadata |= getMetadataFromIMDB(moviename)
-saveMetadata(f"{moviename}.json", metadata)
+elif __name__ == "__main__" and len(sys.argv) <= 2:
+    movie_directory = os.path.abspath(sys.argv[1])
+
+    metadata = {}
+    for filename in os.listdir(movie_directory):
+        if not filename.endswith(".mp4"):
+            continue
+
+        moviename = filename.replace(".mp4", "")
+        filename = os.path.join(movie_directory, filename)
+
+        movie_metadata = {}
+        metadata_file = os.path.join(movie_directory, moviename+".txt")
+        if os.path.isfile(metadata_file):
+            movie_metadata = parseMetadataFromFile(metadata_file)
+        movie_metadata |= getMetadataFromIMDB(moviename)
+
+        metadata[moviename] = movie_metadata
+    
+    saveMetadata("movies.json", metadata)
