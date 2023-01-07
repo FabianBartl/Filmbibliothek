@@ -1,0 +1,33 @@
+<!doctype html>
+<html>
+	<head>
+		<title>Movie Library</title>
+		<meta charset="utf-8">
+		<link ref="stylesheet" type="text/css" src="{{ url_for('static', filename='style.css') }}">
+		<script src="{{ url_for('static', filename='script.js') }}" defer></script>
+	</head>
+	<body>
+		<main>
+			{% for movie in movies %}				
+				<div class="movie">
+					<div>
+						<div class="poster"><img src="{{ movie.get('poster') }}"></div>
+						<div class="watch"><a href="{{ movie.get('path') }}" target="_blank"><i class="fa fa-watch"></i></a></div>
+					</div>
+					<div>
+						<div class="title">{{ movie.get('title') }}</div>
+						<div class="badges {{ movie.get('badges') }}"></div>
+						<div class="metadata">
+							<ul>
+								<li>{{ movie.get('year') }}</li>
+								<li>{{ movie.get('duration') }}</li>
+								<li>{{ movie.get('fsk') }}</li>
+							</ul>
+						</div>
+						<div class="description">{{ movie.get('description') }}</div>
+					</div>
+				</div>
+			{% endfor %}
+		</main>
+	</body>
+</html>
