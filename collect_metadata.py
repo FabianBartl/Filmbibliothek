@@ -10,7 +10,7 @@ def parseMetadataFromFile(filename:str) -> dict:
 
     with open(filename, "r", encoding="utf-8") as file:
         metadata["channel"] = file.readline()
-        metadata["topc"] = file.readline()
+        metadata["topic"] = file.readline()
         file.readline()
         metadata["title"] = file.readline()
         file.readline()
@@ -125,7 +125,7 @@ def getMetadataFromIMDB(moviename:str) -> dict:
         raise Exception(f"HTTP response code: {request.status_code}")
     html = BeautifulSoup(request.content, features="html.parser")
 
-    metadata["credits_html"] = html.find(id="fullcredits_content").text
+    metadata["credits_html"] = html.find(id="fullcredits_content").__repr__()
     return metadata
 
 # save collected metadata as json format
