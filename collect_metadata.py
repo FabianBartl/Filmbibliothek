@@ -135,14 +135,9 @@ def saveMetadata(filename:str, metadata:dict) -> None:
     with open(filename, "w", encoding="utf-8") as file:
         json.dump(metadata, file, indent=2)
 
-if __name__ == "__main__" and len(sys.argv) <= 1:
-    moviename = "23 - Nichts ist so wie es scheint"
-    metadata = parseMetadataFromFile(f"Videos\\{moviename}.txt")
-    metadata |= getMetadataFromIMDB(moviename)
-    saveMetadata(f"{moviename}.json", metadata)
 
-elif __name__ == "__main__" and len(sys.argv) <= 2:
-    movie_directory = os.path.abspath(sys.argv[1])
+if __name__ == "__main__":
+    movie_directory = os.path.abspath( sys.argv[1] if len(sys.argv) >= 2 else "Videos" )
 
     metadata = {}
     for filename in os.listdir(movie_directory):
