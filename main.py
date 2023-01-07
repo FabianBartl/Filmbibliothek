@@ -1,7 +1,8 @@
 
-from bs4 import BeautifulSoup
+import requests, json
 import urllib.parse
-import requests, json, re, os, sys
+from bs4 import BeautifulSoup
+from tqdm import tqdm
 
 # readout metadata file and store it as dictionary
 def parseMetadata(filename:str) -> dict:
@@ -43,7 +44,7 @@ def getMoviePoster(moviename:str, source:str="imdb") -> str:
     relImgNotFound = Exception("Related image not found")
     header = {"user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36" ,"referer":"https://www.google.com/"}
     
-    movienameURL = urllib.parse.quote_plus(f"filmplakat \"{moviename}\"")
+    movienameURL = urllib.parse.quote_plus(moviename)
     if source == "amazon":
         requestURL = "https://www.amazon.de/s?k=" + movienameURL
     elif source == "bing":
@@ -56,7 +57,7 @@ def getMoviePoster(moviename:str, source:str="imdb") -> str:
         requestURL = "https://www.imdb.com/find/?q=" + movienameURL
     else:
         raise ValueError(f"unknow source: {source}")
-    
+
     request = requests.get(requestURL, headers=header)
     if request.status_code != 200:
         raise Exception(f"HTTP response code: {request.status_code}")
@@ -112,10 +113,13 @@ def saveMetadata(filename:str, metadata:dict) -> None:
     with open(filename, "w", encoding="utf-8") as file:
         json.dump(metadata, file)
 
+moviename = "23 - Nichts ist so wie es scheint"
 
-metadata = parseMetadata(r"C:\Users\fabia\OneDrive\Dokumente\GitHub\video-library\Videos\23 - Nichts ist so wie es scheint.txt")
+metadata = parseMetadata(f"Videos\\{moviename}.txt")
 print(metadata)
 
-moviePoster = getMoviePoster("23 - Nichts ist so wie es scheint", "imdb")
+moviePoster = getMoviePoster(moviename, "imdb")
 print(moviePoster)
 
+metadata["poster"] = moviePoster
+saveMetadata(f"{moviename}.json", metadata)
