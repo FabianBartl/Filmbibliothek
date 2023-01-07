@@ -1,8 +1,6 @@
 
-import requests, json, sys, os, re
+import json, requests, sys, os, re
 import urllib.parse
-from bs4 import BeautifulSoup
-from tqdm import tqdm
 
 from flask import Flask, redirect, url_for, render_template
 app = Flask(__name__)
