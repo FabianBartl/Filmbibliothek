@@ -8,23 +8,23 @@
 	</head>
 	<body>
 		<main>
-			{% for movie in movies %}				
+			{% for name, data in movies.items() %}
 				<div class="movie">
 					<div>
-						<div class="poster"><img src="{{ movie.get('poster') }}"></div>
-						<div class="watch"><a href="{{ movie.get('path') }}" target="_blank"><i class="fa fa-watch"></i></a></div>
+						<div class="poster"><img src="{{ data.get('poster') }}"></div>
+						<div class="watch"><a href="{{ data.get('path') }}" target="_blank"><i class="fa fa-watch"></i></a></div>
 					</div>
 					<div>
-						<div class="title">{{ movie.get('title') }}</div>
-						<div class="badges {{ movie.get('badges') }}"></div>
+						<div class="title">{{ name }}</div>
+						<div class="badges {{ data.get('badges') }}"></div>
 						<div class="metadata">
 							<ul>
-								<li>{{ movie.get('year') }}</li>
-								<li>{{ movie.get('duration') }}</li>
-								<li>{{ movie.get('fsk') }}</li>
+								<li>{{ data.get('date', '2023').split('.')[-1] }}</li>
+								<li>{{ data.get('channel') }}</li>
+								<li>{{ data.get('duration') }}</li>
 							</ul>
 						</div>
-						<div class="description">{{ movie.get('description') }}</div>
+						<div class="description">{{ data.get('description') }}</div>
 					</div>
 				</div>
 			{% endfor %}
