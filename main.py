@@ -52,8 +52,6 @@ def getMoviePoster(moviename:str, source:str="amazon") -> str:
         pass
     else:
         raise ValueError(f"unknow source: {source}")
-    
-    print(requestURL)
 
     request = requests.get(requestURL, headers=header)
     if request.status_code != 200:
@@ -67,8 +65,7 @@ def getMoviePoster(moviename:str, source:str="amazon") -> str:
         return img.get("data-src")
     
     elif source == "bing":
-        img = [ tag for tag in html.body.findAll("img", attrs={"class": "mimg"}) ]
-        print(img)
+        img = [ tag for tag in html.body.findAll("img", attrs={"class": "mimg"}) if tag.get("class") == ["mimg"] ]
         if img == []:
             raise Exception("Related image not found")
         return img[0].get("src")
