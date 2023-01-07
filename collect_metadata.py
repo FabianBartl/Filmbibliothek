@@ -140,6 +140,7 @@ if __name__ == "__main__":
     movie_filetypes = r"\.(mp4|mkv|mov)"
     
     metadata = {}
+    movieID = 0
     for filename in tqdm(os.listdir(movie_directory), unit="File", desc="Progress"):
         if not re.search(rf".+{movie_filetypes}", filename):
             continue
@@ -147,13 +148,14 @@ if __name__ == "__main__":
         moviename = re.sub(movie_filetypes, "", filename)
         filename = os.path.join(movie_directory, filename)
 
-        movie_metadata = {}
+        movie_metadata = {"title": moviename}
         metadata_file = os.path.join(movie_directory, moviename+".txt")
         if os.path.isfile(metadata_file):
             movie_metadata = parseMetadataFromFile(metadata_file)
         movie_metadata |= getMetadataFromIMDB(moviename)
         movie_metadata["filepath"] = filename
         
-        metadata[moviename] = movie_metadata
+        metadata[movieID] = movie_metadata
+        movieID += 1
     
     saveMetadata(movies_json, metadata)
