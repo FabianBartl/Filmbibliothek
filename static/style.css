@@ -19,8 +19,10 @@ html {
 body {
 	font-family: var(--text-font);
 	font-size: 12pt;
+    color: var(--color-text);
 	hyphens: auto;
     overflow-x: hidden;
+    background-color: var(--color-background);
 }
 
 /* inline lists */
@@ -40,9 +42,11 @@ a,
 a:active,
 a:focus {
     text-decoration: none;
+    color: var(--color-link);
 }
 a:hover {
-	text-decoration: underline;
+    text-decoration: none;
+    color: var(--color-highlight);
 }
 
 /* movie */
@@ -83,7 +87,8 @@ main.overview {
 }
 .details .badges {}
 .details .badges ul li {
-    border: 1.5px solid var(--foreground);
+    border: 1.5px solid var(--color-accent);
+    color: var(--color-accent);
     border-radius: 5px;
     padding: 3px 4px;
     margin-right: 0.4rem;
@@ -106,7 +111,7 @@ main.overview {
 #search-input:focus,
 #search-input {
 	padding: 0.5em;
-	color: var(--foreground);
+	color: var(--color-text);
 	border-radius: 5px;
 	text-overflow: ellipsis;
     font-size: 1.1rem;
