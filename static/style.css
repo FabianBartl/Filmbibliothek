@@ -41,6 +41,16 @@ main {
     font-family: "Dubai Medium";
     font-size: 2rem;
 }
+.movie .title a,
+.movie .title a:active,
+.movie .title a:focus {
+    color: var(--foreground);
+    text-decoration: none;
+}
+.movie .title a:hover {
+	color: var(--foreground);
+	text-decoration: underline;
+}
 /* movie summary (poster) */
 .movie .summary {
     display: flex;

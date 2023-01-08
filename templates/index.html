@@ -19,15 +19,17 @@
 
 		<main>
 			{% for movieID, data in movies.items() %}
-				<div id="movieID_{{ movieID }}" class="movie" data-path="{{ data.get('filepath') }}">
+				<div id="movieID_{{ movieID }}" class="movie" data-path="movie/{{ data.get('title') }}/stream/">
 					<div class="title">
-						<a href="{{ data.get('filename') }}" target="_blank">
+						<a href="movie/{{ data.get('title') }}/stream/" target="_blank">
 							{{ data.title }}
 						</a>
 					</div>
 					<div class="summary">
 						<div class="poster">
-							<img src="{{ data.get('poster') }}">
+							<a href="movie/{{ data.get('filename') }}" target="_blank">
+								<img src="{{ data.get('poster') }}">
+							</a>
 						</div>
 						<div class="details">
 							<div class="badges">

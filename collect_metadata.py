@@ -1,5 +1,5 @@
 
-import requests, json, sys, os, re
+import requests, json, sys, os
 import urllib.parse
 from bs4 import BeautifulSoup
 from tqdm import tqdm
@@ -137,15 +137,14 @@ def saveMetadata(filename:str, metadata:dict) -> None:
 if __name__ == "__main__":
     movie_directory = os.path.abspath( sys.argv[1] if len(sys.argv) >= 2 else "Videos" )
     movies_json = os.path.abspath( sys.argv[2] if len(sys.argv) >= 3 else "movies.json" )
-    movie_filetypes = r"\.(mp4|mkv|mov)"
     
     metadata = {}
     movieID = 0
     for filename in tqdm(os.listdir(movie_directory), unit="File", desc="Progress"):
-        if not re.search(rf".+{movie_filetypes}", filename):
+        if not filename.endswith(".mp4"):
             continue
 
-        moviename = re.sub(movie_filetypes, "", filename)
+        moviename = filename.replace(".mp4", "")
         movie_metadata = {"title": moviename}
         
         movie_metadata["filename"] = filename
