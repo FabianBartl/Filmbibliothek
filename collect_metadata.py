@@ -153,11 +153,8 @@ def saveMetadata(filename:str, metadata:dict) -> None:
 	with open(filename, "w", encoding="utf-8") as file:
 		json.dump(metadata, file, indent=2)
 
-# cli
-if __name__ == "__main__":
-	movie_directory = os.path.abspath( sys.argv[1] if len(sys.argv) >= 2 else "movies" )
-	movies_json = os.path.abspath( sys.argv[2] if len(sys.argv) >= 3 else os.path.join("static", "movies.json") )
-	
+# run cli
+def run(movie_directory):
 	metadata = {}
 	movieID = 0
 	for filename in tqdm(os.listdir(movie_directory), unit="File", desc="Progress"):
@@ -180,4 +177,11 @@ if __name__ == "__main__":
 		metadata[movieID] = movie_metadata
 		movieID += 1
 	
-	saveMetadata(movies_json, metadata)
+	saveMetadata(os.path.join("static", "movies.json"), metadata)
+
+# cli
+if __name__ == "__main__":
+	if len(sys.argv) >= 2:
+		run(os.path.abspath(sys.argv[1]))
+	else:
+		print("Movie directory not given")

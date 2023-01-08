@@ -3,3 +3,6 @@ tqdm
 requests
 jinja2
 flask
+winshell
+pywin32
+colorama
