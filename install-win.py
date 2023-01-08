@@ -1,8 +1,12 @@
 
-import os
+import os, sys, subprocess
 
 # install python packages
-os.system("pip install -r requirements.txt")
+with open("requirements.txt", "r", encoding="utf-8") as file:
+	requirements = [ line.strip() for line in file.readlines() ]
+for package in requirements:
+	if not package in sys.modules:
+		subprocess.check_call([sys.executable, "-m", "pip", "install", package])
 
 # these packages are first available after the requirements.txt installation
 import winshell, collect_metadata
