@@ -35,7 +35,7 @@
 									<li>{{ data.get('duration') }}</li>
 								</ul>
 							</div>
-							<div class="description">{{ data.get('description', '')[:100] }}...</div>
+							<div class="description">{{ data.get('description', '') | truncate(100) }}</div>
 							<div class="links">
 								<ul>
 									<li class="more-information">
