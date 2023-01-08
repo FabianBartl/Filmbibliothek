@@ -19,7 +19,7 @@
 
 		<main>
 			{% for movieID, data in movies.items() %}
-				<div id="movieID_{{ movieID }}" class="movie" data-path="{{ data.get('path') }}">
+				<div id="movieID_{{ movieID }}" class="movie" data-path="{{ data.get('filepath') }}">
 					<div class="title">{{ data.title }}</div>
 					<div class="summary">
 						<div class="poster"><img src="{{ data.get('poster') }}"></div>
