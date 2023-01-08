@@ -1,7 +1,7 @@
 
 # Filmbibliothek
 
-## Release: v0.1.0
+## Release: v0.1.1
 
 ![](screenshot_movie-overview.png)
 
