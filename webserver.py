@@ -9,9 +9,16 @@ from flask import redirect, url_for, render_template, send_from_directory
 app = Flask(__name__)
 app.jinja_env.filters["urlEncode"] = lambda value: quote_plus(value)
 
-# load movies data file into global var
+# load movies data file into global variable
 with open(os.path.join("static", "movies.json"), "r", encoding="utf-8") as file:
     movies_json = json.load(file)
+
+# set environment variables for useage in templates
+@app.context_processor
+def utility_processor():
+    return {
+        "palette": "2-2"
+    }
 
 # ---------- url routes ----------
 
