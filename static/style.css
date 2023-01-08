@@ -10,7 +10,7 @@ html {
 /* general */
 * {
 	scroll-behavior: smooth;
-	/* scrollbar-gutter: stable; */
+	scrollbar-gutter: stable;
 	box-sizing: border-box;
 	-webkit-font-smoothing: antialiased;
 }
