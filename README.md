@@ -6,7 +6,7 @@
 ![](screenshot_movie-overview.png)
 
 - Basic concept is working
-- Own modern designed webpage
+- Own modern designed local webpage
 - Provides an installation script for Windows
 - Operates with *Flask* backend and can be accessed in the browser at http://filmbibliothek/
 
