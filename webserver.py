@@ -38,24 +38,24 @@ def utility_processor():
 def index():
 	return render_template("index.html", movies=movies_json)
 
-# see detailed movie data
-@app.route('/movie-<movieID>/<moviename>/')
-def movie(movieID, moviename):
+# detailed movie data
+@app.route('/movie/<movieID>/')
+def movie(movieID):
 	return render_template("movie.html", movie=movies_json[movieID])
 
-# watch movie
-@app.route('/movie-<movieID>/<moviename>/stream/')
-def movie_stream(movieID, moviename):
-	return movie_stream_filetype(movieID, moviename, "mp4")
+# stream movie
+@app.route('/movie/<movieID>/stream/')
+def movie_stream(movieID):
+	return movie_stream_filetype(movieID, "mp4")
 
-@app.route('/movie-<movieID>/<moviename>/stream/<filetype>/')
-def movie_stream_filetype(movieID, moviename, filetype):
+@app.route('/movie/<movieID>/stream/<filetype>/')
+def movie_stream_filetype(movieID, filetype):
 	movie_data = movies_json[movieID]
 	return send_from_directory(movie_data["directory"], f'{movie_data["filename"]}.{filetype}', as_attachment=False)
 
 # get subtitles
-@app.route('/movie-<movieID>/<moviename>/subtitles/<language>/')
-def movie_subtitles_language(movieID, moviename, language):
+@app.route('/movie/<movieID>/subtitles/<language>/')
+def movie_subtitles_language(movieID, language):
 	movie_data = movies_json[movieID]
 	return send_from_directory(movie_data["directory"], f'{movie_data["filename"]}.{language}.vtt', as_attachment=False)
 
