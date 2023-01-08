@@ -1,5 +1,5 @@
 
-import json, re, os
+import json, os
 from urllib.parse import unquote_plus, quote_plus
 
 from flask import Flask

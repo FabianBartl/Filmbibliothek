@@ -30,7 +30,7 @@ collect_metadata.run(os.path.abspath(movie_directory))
 
 print(Fore.GREEN + "Movie data collected and stored\n")
 
-# add webserver to startup
+# add webserver shortcut to startup
 shell = Dispatch("WScript.shell")
 shortcut = shell.CreateShortCut(os.path.join(winshell.startup(), f"webserver_{host}.lnk"))
 shortcut.Targetpath = os.path.abspath(os.path.join(os.path.curdir, "webserver.py"))
@@ -38,3 +38,9 @@ shortcut.WorkingDirectory = os.path.abspath(os.path.curdir)
 shortcut.save()
 
 print(Fore.GREEN + "Webserver added to windows startup directory\n")
+
+# start webserver via system restart
+print(Fore.YELLOW + "Please restart your system\n")
+
+# TODO: add client shortcut to desktop
+print(Fore.YELLOW + f"After restarting, the webpage will be available at: http://{host}/\n")
