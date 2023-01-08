@@ -8,7 +8,7 @@
 		{% include 'header.html' %}
 
 		<main class="detailed">
-			<div class="movie">
+			<div>
 				<div class="title">
 					{{ movie.title }}
 				</div>
@@ -37,13 +37,21 @@
 						<div class="links">
 							<ul>
 								<li class="watch-now" target="_blank">
-									<a href="movie/{{ movie.get('title') | urlEncode }}/stream/">
+									<a href="stream/">
 										Jetzt anschauen
 									</a>
 								</li>
 							</ul>
 						</div>
 					</div>
+				</div>
+				<div class="stream">
+					<vidoe controls>
+						<source src="stream/" type="video/mp4">
+						<source src="stream/ogg/" type="video/mp4">
+						<track src="subtitles/de/" kind="subtitles" srclang="de" label="Deutsch">
+						<track src="subtitles/en/" kind="subtitles" srclang="en" label="Englisch">
+					</vidoe>
 				</div>
 			</div>
 		</main>
