@@ -44,7 +44,7 @@ def movie_stream_filetype(movieID, moviename, filetype):
 
 # get subtitles
 @app.route('/movie-<movieID>/<moviename>/subtitles/<language>/')
-def movie_stream_filetype(movieID, moviename, language):
+def movie_subtitles_language(movieID, moviename, language):
 	movie_data = movies_json[movieID]
 	return send_from_directory(movie_data["directory"], f'{movie_data["filename"]}.{language}.vtt', as_attachment=False)
 
