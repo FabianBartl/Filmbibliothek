@@ -59,8 +59,8 @@ main.overview {
     flex-basis: 50vw;
 }
 .movie {
-    min-width: 25vw;
-    max-width: 50vw;
+    min-width: 32vw;
+    max-width: 33vw;
 }
 /* movie title */
 .title {

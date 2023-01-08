@@ -172,10 +172,10 @@ if __name__ == "__main__":
 		movie_metadata["title"] = movie_metadata["filename"]
 		movie_metadata["movieID"] = str(movieID)
 
-		metadata_file = os.path.join(movie_directory, filename+".txt")
+		metadata_file = os.path.join(movie_directory, movie_metadata["title"]+".txt")
 		if os.path.isfile(metadata_file):
 			movie_metadata |= parseMetadataFromFile(metadata_file)
-		movie_metadata |= getMetadataFromIMDB(filename, ignoreError=True)
+		movie_metadata |= getMetadataFromIMDB(movie_metadata["title"], ignoreError=True)
 		
 		metadata[movieID] = movie_metadata
 		movieID += 1
