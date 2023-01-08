@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
 	<head>
-		<title>Movie Library</title>
+		<title>Filmbibliothek</title>
 		<meta charset="utf-8">
 		<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
 		<script src="{{ url_for('static', filename='jquery-3.6.3.min.js') }}"></script>
@@ -10,26 +10,22 @@
 	<body>
 		<header>
 			<h1>
-				Movie Library
+				Filmbibliothek
 			</h1>
 			<div>
 				<input id="search-input" type="text" placeholder="Filme durchsuchen ...">
 			</div>
 		</header>
 
-		<main>
+		<main class="overview">
 			{% for movieID, data in movies.items() %}
-				<div id="movieID_{{ movieID }}" class="movie" data-path="movie/{{ data.get('title') | urlEncode }}/stream/">
+				<div id="movie-{{ movieID }}" class="movie">
 					<div class="title">
-						<a href="movie/{{ data.get('title') | urlEncode }}/stream/" target="_blank">
-							{{ data.title }}
-						</a>
+						{{ data.title }}
 					</div>
 					<div class="summary">
 						<div class="poster">
-							<a href="movie/{{ data.get('title') | urlEncode }}/stream/" target="_blank">
-								<img src="{{ data.get('poster') }}">
-							</a>
+							<img src="{{ data.get('poster') }}">
 						</div>
 						<div class="details">
 							<div class="badges">
@@ -48,7 +44,21 @@
 									<li>{{ data.get('duration') }}</li>
 								</ul>
 							</div>
-							<div class="description">{{ data.get('description') }}</div>
+							<div class="description">{{ data.get('description', '')[:100] }}...</div>
+							<div class="links">
+								<ul>
+									<li class="more-information">
+										<a href="movie-{{ movieID }}/{{ data.get('title') | urlEncode }}/">
+											Mehr Informationen
+										</a>
+									</li>
+									<li class="watch-now">
+										<a href="movie-{{ movieID }}/{{ data.get('title') | urlEncode }}/stream/" target="_blank">
+											Jetzt anschauen
+										</a>
+									</li>
+								</ul>
+							</div>
 						</div>
 					</div>
 				</div>

@@ -135,8 +135,8 @@ def saveMetadata(filename:str, metadata:dict) -> None:
 
 # cli
 if __name__ == "__main__":
-    movie_directory = os.path.abspath( sys.argv[1] if len(sys.argv) >= 2 else "Videos" )
-    movies_json = os.path.abspath( sys.argv[2] if len(sys.argv) >= 3 else "movies.json" )
+    movie_directory = os.path.abspath( sys.argv[1] if len(sys.argv) >= 2 else "movies" )
+    movies_json = os.path.abspath( sys.argv[2] if len(sys.argv) >= 3 else os.path.join("static", "movies.json") )
     
     metadata = {}
     movieID = 0
@@ -147,15 +147,17 @@ if __name__ == "__main__":
         moviename = filename.replace(".mp4", "")
         movie_metadata = {"title": moviename}
         
+        filepath = os.path.join(movie_directory, filename)
         movie_metadata["filename"] = filename
-        filename = os.path.join(movie_directory, filename)
-        movie_metadata["filepath"] = filename
+        movie_metadata["filepath"] = filepath
+        movie_metadata["directory"] = movie_directory
 
         metadata_file = os.path.join(movie_directory, moviename+".txt")
         if os.path.isfile(metadata_file):
             movie_metadata |= parseMetadataFromFile(metadata_file)
         movie_metadata |= getMetadataFromIMDB(moviename)
         
+        movie_metadata["movieID"] = str(movieID)
         metadata[movieID] = movie_metadata
         movieID += 1
     

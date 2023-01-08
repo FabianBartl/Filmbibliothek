@@ -23,8 +23,30 @@ body {
     overflow-x: hidden;
 }
 
+/* inline lists */
+ul {
+    list-style: none;
+    padding-left: 0;
+    display: flex;
+}
+ul li:not(:last-child)::after {
+    content: "●";
+    margin-right: 0.4rem;
+    margin-left: 0.4rem;
+}
+
+/* links */
+a,
+a:active,
+a:focus {
+    text-decoration: none;
+}
+a:hover {
+	text-decoration: underline;
+}
+
 /* movie */
-main {
+main.overview {
     width: 100%;
     display: flex;
     justify-content: space-between;
@@ -37,64 +59,46 @@ main {
     max-width: 50vw;
 }
 /* movie title */
-.movie .title {
+.title {
     font-family: "Dubai Medium";
     font-size: 2rem;
 }
-.movie .title a,
-.movie .title a:active,
-.movie .title a:focus {
-    color: var(--foreground);
-    text-decoration: none;
-}
-.movie .title a:hover {
-	color: var(--foreground);
-	text-decoration: underline;
-}
 /* movie summary (poster) */
-.movie .summary {
+.summary {
     display: flex;
     justify-content: flex-start;
 }
-.movie .summary > div {
+.summary > div {
     margin: 0.5em;
 }
-.movie .summary .poster {
-}
-.movie .summary .poster img {
+.summary .poster {}
+.summary .poster img {
     width: 10em;
     border-radius: 10px;
 }
 /* movie details */
-.movie .details {}
-.movie .details .title {
+.details {}
+.details .title {
     font-size: 3rem;
 }
-.movie .details .badges {}
-.movie .details .badges ul li {
+.details .badges {}
+.details .badges ul li {
     border: 1.5px solid var(--foreground);
     border-radius: 5px;
-    margin-right: 0.4rem;
     padding: 3px 4px;
+    margin-right: 0.4rem;
     line-height: 100%;
     font-size: 70%;
 }
-.movie .details .metadata {}
-.movie .details .badges ul,
-.movie .details .metadata ul {
-    list-style: none;
-    padding-left: 0;
-    display: flex;
+.details .badges ul li:not(:last-child)::after {
+    content: "";
+    margin: 0;
 }
-.movie .details .metadata ul li {
+.details .metadata {}
+.details .metadata ul li {
     font-size: 80%;
 }
-.movie .details .metadata ul li:not(:last-child)::after {
-    content: "●";
-    margin-right: 0.4rem;
-    margin-left: 0.4rem;
-}
-.movie .details .description {
+.details .description {
     line-height: 1.2rem;
 }
 

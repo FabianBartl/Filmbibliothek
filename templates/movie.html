@@ -1,0 +1,64 @@
+<!doctype html>
+<html>
+	<head>
+		<title>{{ movie.title }}</title>
+		<meta charset="utf-8">
+		<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+		<script src="{{ url_for('static', filename='jquery-3.6.3.min.js') }}"></script>
+		<script src="{{ url_for('static', filename='script.js') }}" defer></script>
+	</head>
+	<body>
+		<header>
+			<h1>
+				<a href="/">
+					Filmbibliothek
+				</a>
+			</h1>
+		</header>
+
+		<main class="detailed">
+			<div class="movie">
+				<div class="title">
+					{{ movie.title }}
+				</div>
+				<div class="summary">
+					<div class="poster">
+						<img src="{{ movie.get('poster') }}">
+					</div>
+					<div class="details">
+						<div class="badges">
+							{% if movie.get('badges') %}
+								<ul>
+									{% for badge in movie.get('badges', []) %}
+										<li>{{ badge }}</li>
+									{% endfor %}
+								</ul>
+							{% endif %}
+						</div>
+						<div class="metadata">
+							<ul>
+								<li>{{ movie.get('date', '2023').split('.')[-1] }}</li>
+								<li>{{ movie.get('channel') }}</li>
+								<li>{{ movie.get('duration') }}</li>
+							</ul>
+						</div>
+						<div class="description">{{ movie.get('description') }}</div>
+						<div class="links">
+							<ul>
+								<li class="watch-now" target="_blank">
+									<a href="movie/{{ movie.get('title') | urlEncode }}/stream/">
+										Jetzt anschauen
+									</a>
+								</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</main>
+
+		<footer>
+			designed &amp; programmed by Fabian Bartl
+		</footer>
+	</body>
+</html>
