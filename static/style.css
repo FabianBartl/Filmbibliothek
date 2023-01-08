@@ -27,10 +27,14 @@ body {
 main {
     width: 100%;
     display: flex;
-    justify-content: space-around;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    flex-direction: row;
+    flex-basis: 50vw;
 }
 .movie {
-    width: 50vw;
+    min-width: 25vw;
+    max-width: 50vw;
 }
 /* movie title */
 .movie .title {
@@ -40,7 +44,7 @@ main {
 /* movie summary (poster) */
 .movie .summary {
     display: flex;
-    justify-content: space-evenly;
+    justify-content: flex-start;
 }
 .movie .summary > div {
     margin: 0.5em;
