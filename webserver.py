@@ -13,13 +13,6 @@ app.jinja_env.filters["urlEncode"] = lambda value: quote_plus(value)
 with open(os.path.join("static", "movies.json"), "r", encoding="utf-8") as file:
     movies_json = json.load(file)
 
-# returns movie data from movies json 
-def getMovieData(moviename:str) -> dict:
-    for _, data in movies_json.items():
-        if re.sub(r"[^\W]*", "", data["title"]).lower() == re.sub(r"[^\W]*", "", moviename).lower():
-            return data
-    return {}
-
 # ---------- url routes ----------
 
 # movie overview
