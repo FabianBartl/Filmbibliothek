@@ -3,6 +3,8 @@
 
 ## Release: v0.1.0
 
+![](screenshot_movie-overview.png)
+
 - Basic concept is working
 - Own modern designed webpage
 - Provides an installation script for Windows
