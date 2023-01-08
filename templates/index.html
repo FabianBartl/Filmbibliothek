@@ -4,8 +4,8 @@
 		<title>Movie Library</title>
 		<meta charset="utf-8">
 		<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
-		<!-- <script src="{{ url_for('static', filename='jquery-3.6.3.min.js') }}"></script> -->
-		<!-- <script src="{{ url_for('static', filename='script.js') }}" defer></script> -->
+		<script src="{{ url_for('static', filename='jquery-3.6.3.min.js') }}"></script>
+		<script src="{{ url_for('static', filename='script.js') }}" defer></script>
 	</head>
 	<body>
 		<header>
@@ -20,17 +20,23 @@
 		<main>
 			{% for movieID, data in movies.items() %}
 				<div id="movieID_{{ movieID }}" class="movie" data-path="{{ data.get('filepath') }}">
-					<div class="title">{{ data.title }}</div>
+					<div class="title">
+						<a href="{{ data.get('filename') }}" target="_blank">
+							{{ data.title }}
+						</a>
+					</div>
 					<div class="summary">
-						<div class="poster"><img src="{{ data.get('poster') }}"></div>
+						<div class="poster">
+							<img src="{{ data.get('poster') }}">
+						</div>
 						<div class="details">
 							<div class="badges">
 								{% if data.get('badges') %}
-								<ul>
-									{% for badge in data.get('badges', []) %}
-									<li>{{ badge }}</li>
-									{% endfor %}
-								</ul>
+									<ul>
+										{% for badge in data.get('badges', []) %}
+											<li>{{ badge }}</li>
+										{% endfor %}
+									</ul>
 								{% endif %}
 							</div>
 							<div class="metadata">

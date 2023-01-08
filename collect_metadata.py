@@ -146,14 +146,16 @@ if __name__ == "__main__":
             continue
 
         moviename = re.sub(movie_filetypes, "", filename)
-        filename = os.path.join(movie_directory, filename)
-
         movie_metadata = {"title": moviename}
+        
+        movie_metadata["filename"] = filename
+        filename = os.path.join(movie_directory, filename)
+        movie_metadata["filepath"] = filename
+
         metadata_file = os.path.join(movie_directory, moviename+".txt")
         if os.path.isfile(metadata_file):
             movie_metadata = parseMetadataFromFile(metadata_file)
         movie_metadata |= getMetadataFromIMDB(moviename)
-        movie_metadata["filepath"] = filename
         
         metadata[movieID] = movie_metadata
         movieID += 1
