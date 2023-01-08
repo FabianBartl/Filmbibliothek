@@ -1,20 +1,11 @@
 <!doctype html>
 <html palette="{{ palette }}">
 	<head>
-		<title>{{ movie.title }}</title>
-		<meta charset="utf-8">
-		<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
-		<script src="{{ url_for('static', filename='jquery-3.6.3.min.js') }}"></script>
-		<script src="{{ url_for('static', filename='script.js') }}" defer></script>
+		{% set title = 'Film: "' + movie.title + '"' %}
+		{% include 'head.html' %}
 	</head>
 	<body>
-		<header>
-			<h1>
-				<a href="/">
-					Filmbibliothek
-				</a>
-			</h1>
-		</header>
+		{% include 'header.html' %}
 
 		<main class="detailed">
 			<div class="movie">
@@ -57,8 +48,6 @@
 			</div>
 		</main>
 
-		<footer>
-			designed &amp; programmed by Fabian Bartl
-		</footer>
+		{% include 'footer.html' %}
 	</body>
 </html>
