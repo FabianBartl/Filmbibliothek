@@ -28,7 +28,7 @@
 						</div>
 						<div class="metadata">
 							<ul>
-								<li>{{ movie.get('date', '2023').split('.')[-1] }}</li>
+								<li>{{ movie.get('date', 'YYYY').split('.')[-1] }}</li>
 								<li>{{ movie.get('channel') }}</li>
 								<li>{{ movie.get('duration') }}</li>
 							</ul>
