@@ -39,7 +39,7 @@ def parseMetadataFromFile(filename:str) -> dict:
     return metadata
 
 # get movie poster as url
-def getMoviePoster(moviename:str, source:str="imdb") -> str:
+def getMoviePoster(moviename:str, source:str="imdb", ignoreError=False) -> str:
     relImgNotFound = Exception("Related image not found")
     header = {"user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36" ,"referer":"https://www.google.com/"}
     
@@ -59,22 +59,30 @@ def getMoviePoster(moviename:str, source:str="imdb") -> str:
 
     request = requests.get(requestURL, headers=header)
     if request.status_code != 200:
+        if ignoreError:
+            return ""
         raise Exception(f"HTTP response code: {request.status_code}")
     html = BeautifulSoup(request.content, features="html.parser")
 
     if source == "amazon":
         img = html.find("img", attrs={"alt": moviename})
         if img is None:
+            if ignoreError:
+                return ""
             raise relImgNotFound
         return img.get("data-src")
     
     elif source == "bing":
         imgs = [ tag for tag in html.findAll(attrs={"class": "iusc"}) if tag.get("class") == ["iusc"] ]
         if imgs == []:
+            if ignoreError:
+                return ""
             raise relImgNotFound
 
         imgURL = [ param.replace("mediaurl=", "") for param in imgs[0].get("href").split("&") if param.startswith("mediaurl=") ]
         if imgURL == []:
+            if ignoreError:
+                return ""
             raise relImgNotFound
         return urllib.parse.unquote(imgURL[0])
 
@@ -87,31 +95,41 @@ def getMoviePoster(moviename:str, source:str="imdb") -> str:
     elif source == "imdb":
         page = html.find("a", attrs={"class": "ipc-metadata-list-summary-item__t"})
         if page is None:
+            if ignoreError:
+                return ""
             raise relImgNotFound
         pageURL = "https://www.imdb.com" + page.get("href")
 
         request = requests.get(pageURL, headers=header)
         if request.status_code != 200:
+            if ignoreError:
+                return ""
             raise Exception(f"HTTP response code: {request.status_code}")
         html = BeautifulSoup(request.content, features="html.parser")
         
         imgs = [ tag for tag in html.findAll("img", attrs={"class": "ipc-image"}) if tag.get("class") == ["ipc-image"] ]
         if imgs == []:
+            if ignoreError:
+                return ""
             raise relImgNotFound
         return imgs[0].get("srcset").split(", ")[-1].split(" ")[0]
 
 # get metadata from imdb
-def getMetadataFromIMDB(moviename:str) -> dict:
+def getMetadataFromIMDB(moviename:str, ignoreError=False) -> dict:
     header = {"user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36" ,"referer":"https://www.google.com/"}
 
     requestURL = "https://www.imdb.com/find/?q="+urllib.parse.quote_plus(moviename)
     request = requests.get(requestURL, headers=header)
     if request.status_code != 200:
+        if ignoreError:
+            return {}
         raise Exception(f"HTTP response code: {request.status_code}")
     html = BeautifulSoup(request.content, features="html.parser")
     
     page = html.find("a", attrs={"class": "ipc-metadata-list-summary-item__t"})
     if page is None:
+        if ignoreError:
+            return {}
         raise Exception("Movie not found")
     
     metadata = {}
@@ -122,6 +140,8 @@ def getMetadataFromIMDB(moviename:str) -> dict:
     requestURL = metadata["imdb_url"] + "/fullcredits/"
     request = requests.get(requestURL, headers=header)
     if request.status_code != 200:
+        if ignoreError:
+            return {}
         raise Exception(f"HTTP response code: {request.status_code}")
     html = BeautifulSoup(request.content, features="html.parser")
 
@@ -154,8 +174,8 @@ if __name__ == "__main__":
 
         metadata_file = os.path.join(movie_directory, moviename+".txt")
         if os.path.isfile(metadata_file):
-            movie_metadata |= parseMetadataFromFile(metadata_file)
-        movie_metadata |= getMetadataFromIMDB(moviename)
+            movie_metadata |= parseMetadataFromFile(metadata_file, ignoreError=True)
+        movie_metadata |= getMetadataFromIMDB(moviename, ignoreError=True)
         
         movie_metadata["movieID"] = str(movieID)
         metadata[movieID] = movie_metadata
