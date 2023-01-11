@@ -40,21 +40,32 @@ def index():
 	return render_template("index.html", movies=movies_json)
 
 # detailed movie data
-@app.route('/movie/<movieID>/')
+@app.route("/movie/<movieID>/")
 def movie(movieID):
 	return render_template("movie.html", movie=movies_json[movieID])
 
 # stream movie
-@app.route('/movie/<movieID>/stream/')
+@app.route("/movie/<movieID>/stream/")
 def movie_stream(movieID):
 	movie_data = movies_json[movieID]
 	return send_from_directory(movie_data["directory"], f'{movie_data["filename"]}.{movie_data["extension"]}', as_attachment=False)
 
 # get subtitles
-@app.route('/movie/<movieID>/subtitles/<language>/')
+@app.route("/movie/<movieID>/subtitles/<language>/")
 def movie_subtitles_language(movieID, language):
 	movie_data = movies_json[movieID]
 	return send_from_directory(movie_data["directory"], f'{movie_data["filename"]}.{language}.vtt', as_attachment=False)
+
+# search for software updates
+@app.route("/update/")
+def update_software():
+	return render_template("update_software.html")
+
+# re-load movie data
+@app.route("/reload/")
+def reload_moviedata():
+	return render_template("reload_moviedata.html")
+
 
 # run webserver
 if __name__ == "__main__":
