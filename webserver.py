@@ -9,10 +9,13 @@ from flask import redirect, url_for, render_template, send_from_directory
 app = Flask(__name__)
 
 # load movies data file into global variable
-with open(os.path.join("static", "movies.json"), "r", encoding="utf-8") as file:
-	movies_json = json.load(file)
+def load_movies() -> dict:
+	with open(os.path.join("static", "data", "movies.json"), "r", encoding="utf-8") as file:
+		return json.load(file)
+movies_json = load_movies()
 
 # ---------- custom jinja filters ----------
+
 app.jinja_env.filters["urlEncode"] = lambda value: quote_plus(value)
 
 # truncate string and append ellipsis
@@ -27,9 +30,7 @@ app.jinja_env.filters["truncate"] = truncate
 # set context variables for useage in templates
 @app.context_processor
 def utility_processor():
-	return {
-		"palette": "2-2"
-	}
+	return {"palette": "2-2"}
 
 # ---------- url routes ----------
 
