@@ -1,27 +1,13 @@
 <!doctype html>
 <html theme="{{ theme }}" lang="de">
 	<head>
-		{% set title = 'Filmbibliothek' %}
+		{% set title = 'Nach Updates suchen' %}
 		{% include 'head.html' %}
 	</head>
 	<body>
-		{% set with_search = True %}
 		{% include 'header.html' %}
 
-		<main id="movie-index">
-			{% for movieID, data in movies.items() %}
-				<div id="movie-{{ movieID }}" class="movie-overview">
-					<a href="movie/{{ movieID }}/">
-						<img class="poster" src="{{ data.get('poster') }}">
-					</a>
-					<div class="title">
-						{{ data.title }}
-					</div>
-					<div class="year">
-						{{ data.get('date', 'YYYY').split('.')[-1] }}
-					</div>
-				</div>
-			{% endfor %}
+		<main>
 		</main>
 
 		{% include 'footer.html' %}
