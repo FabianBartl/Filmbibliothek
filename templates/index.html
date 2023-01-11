@@ -8,49 +8,17 @@
 		{% set with_search = True %}
 		{% include 'header.html' %}
 
-		<main class="overview">
+		<main id="movie-index">
 			{% for movieID, data in movies.items() %}
-				<div id="movie-{{ movieID }}" class="movie">
+				<div id="movie-{{ movieID }}" class="movie-overview">
+					<a href="movie/{{ movieID }}/">
+						<img class="poster" src="{{ data.get('poster') }}">
+					</a>
 					<div class="title">
 						{{ data.title }}
 					</div>
-					<div class="summary">
-						<div class="poster">
-							<img src="{{ data.get('poster') }}">
-						</div>
-						<div class="details">
-							<div class="badges">
-								{% if data.get('badges') %}
-									<ul>
-										{% for badge in data.get('badges', []) %}
-											<li>{{ badge }}</li>
-										{% endfor %}
-									</ul>
-								{% endif %}
-							</div>
-							<div class="metadata">
-								<ul>
-									<li>{{ data.get('date', 'YYYY').split('.')[-1] }}</li>
-									<li>{{ data.get('channel') }}</li>
-									<li>{{ data.get('duration') }}</li>
-								</ul>
-							</div>
-							<div class="description">{{ data.get('description', '') | truncate(150) }}</div>
-							<div class="links">
-								<ul>
-									<li class="more-information">
-										<a href="movie/{{ movieID }}/">
-											Mehr Informationen
-										</a>
-									</li>
-									<li class="watch-now">
-										<a href="movie/{{ movieID }}/stream/" target="_blank">
-											Jetzt anschauen
-										</a>
-									</li>
-								</ul>
-							</div>
-						</div>
+					<div class="year">
+						{{ data.get('date', 'YYYY').split('.')[-1] }}
 					</div>
 				</div>
 			{% endfor %}

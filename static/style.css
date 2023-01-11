@@ -1,6 +1,7 @@
 
 @import url("theme.css");
 @import url("fonts.css");
+/* @import url("debug.css"); */
 
 /* variables */
 html {
@@ -49,62 +50,39 @@ a:hover {
     color: var(--color-highlight);
 }
 
-/* movie */
-main.overview {
+/* movie index */
+#movie-index {
     width: 100%;
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
     flex-wrap: wrap;
     flex-direction: row;
-    flex-basis: 50vw;
 }
-.movie {
-    --movie-width: 33vw;
-    min-width: calc(var(--var-width) - 0.1vw);
-    max-width: var(--movie-width);
+
+/* movie overview (poster, title, year) */
+.movie-overview {
+    --movie-width: 10vw;
+    width: var(--movie-width);
+    margin: 15px;
+    line-height: 110%;
 }
-/* movie title */
-.title {
-    font-family: "Dubai Medium";
-    font-size: 2rem;
-}
-/* movie summary (poster) */
-.summary {
-    display: flex;
-    justify-content: flex-start;
-}
-.summary > div {
-    margin: 0.5em;
-}
-.summary .poster {}
-.summary .poster img {
-    width: 10em;
+.movie-overview .poster {
+    width: var(--movie-width);
     border-radius: 10px;
+    margin-bottom: 5px;
 }
-/* movie details */
-.details .title {
-    font-size: 3rem;
+.movie-overview .title {
+    width: var(--movie-width);
+    font-size: 1.2em;
+    margin-bottom: 2px;
 }
-.details .badges {}
-.details .badges ul li {
-    border: 1.5px solid var(--color-accent);
-    color: var(--color-accent);
-    border-radius: 5px;
-    padding: 3px 4px;
-    margin-right: 0.4rem;
-    line-height: 100%;
-    font-size: 70%;
+.movie-overview .year {
+    width: var(--movie-width);
+    font-size: 0.9em;
+    filter: grayscale(0.9);
 }
-.details .badges ul li:not(:last-child)::after {
-    content: "";
-    margin: 0;
-}
-.details .metadata {}
-.details .metadata ul li {
-    font-size: 80%;
-}
-.details .description {
-    line-height: 1.2rem;
+.movie-overview .poster:hover {
+    box-shadow: 0 10px 30px 0 #000e;
 }
 
 /* search */
@@ -120,23 +98,6 @@ main.overview {
     width: 100%;
 }
 #search-input {
-	width: 15em;
+	width: 20rem;
 	transition: width 0.2s ease-in-out;
 }
-
-/* debug */
-* {
-	/* color: #0f0 !important; */
-	/* outline: 1px #f00 solid !important; */
-	/* background: #000 !important;
-	background-color: rgba(255, 0, 0, 0.2) !important; */
-}
-
-/* * *               { background-color: rgba(  0, 255,   0, 0.2) !important; }
-* * *             { background-color: rgba(  0,   0, 255, 0.2) !important; }
-* * * *           { background-color: rgba(255,   0, 255, 0.2) !important; }
-* * * * *         { background-color: rgba(  0, 255, 255, 0.2) !important; }
-* * * * * *       { background-color: rgba(255, 255,   0, 0.2) !important; }
-* * * * * * *     { background-color: rgba(255,   0,   0, 0.2) !important; }
-* * * * * * * *   { background-color: rgba(  0, 255,   0, 0.2) !important; }
-* * * * * * * * * { background-color: rgba(  0,   0, 255, 0.2) !important; } */
