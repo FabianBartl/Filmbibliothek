@@ -3,7 +3,7 @@ import json, os
 from urllib.parse import unquote_plus, quote_plus
 
 from flask import Flask
-from flask import redirect, url_for, render_template, send_from_directory
+from flask import redirect, url_for, render_template, send_from_directory, abort
 
 # init flask app
 app = Flask(__name__)
@@ -42,19 +42,24 @@ def index():
 # detailed movie data
 @app.route("/movie/<movieID>/")
 def movie(movieID):
-	return render_template("movie.html", movie=movies_json[movieID])
+	if movie := movies_json.get(movieID):
+		return render_template("movie.html", movie=movie)
+	return abort(404)
 
 # stream movie
 @app.route("/movie/<movieID>/stream/")
 def movie_stream(movieID):
-	movie_data = movies_json[movieID]
-	return send_from_directory(movie_data["directory"], f'{movie_data["filename"]}.{movie_data["extension"]}', as_attachment=False)
+	if movie_data := movies_json.get(movieID):
+		return send_from_directory(movie_data["directory"], f'{movie_data["filename"]}.{movie_data["extension"]}', as_attachment=False)
+	return render_template("404.html")
 
 # get subtitles
 @app.route("/movie/<movieID>/subtitles/<language>/")
 def movie_subtitles_language(movieID, language):
-	movie_data = movies_json[movieID]
-	return send_from_directory(movie_data["directory"], f'{movie_data["filename"]}.{language}.vtt', as_attachment=False)
+	if movie_data := movies_json.get(movieID):
+		if os.path.isfile(os.path.join(movie_data["directory"], file := f'{movie_data["filename"]}.{language}.vtt')):
+			return send_from_directory(movie_data["directory"], file, as_attachment=False)
+	return abort(404)
 
 # search for software updates
 @app.route("/update/")
@@ -64,6 +69,7 @@ def update():
 # reload movie data
 @app.route("/reload/")
 def reload():
+	movies_json = load_movies()
 	return render_template("reload.html")
 
 
