@@ -3,45 +3,20 @@ import requests, json, sys, os
 import urllib.parse
 from bs4 import BeautifulSoup
 from tqdm import tqdm
+from colorama import Fore, Back, Style, init
+init(autoreset=True)
 
-# readout metadata file and store it as dictionary
-def parseMetadataFromFile(filename:str, only_description:bool=True) -> dict:
-	metadata = {}
-
+# readout description from metadata file
+def getDescriptionFromFile(filename:str) -> dict:
 	with open(filename, "r", encoding="utf-8") as file:
-		if not only_description:
-			metadata["channel"] = file.readline()
-			metadata["topic"] = file.readline()
+		for _ in range(16):
 			file.readline()
-			metadata["title"] = file.readline()
-			file.readline()
-			metadata["date"] = file.readline()
-			metadata["time"] = file.readline()
-			metadata["duration"] = file.readline()
-			metadata["filesize"] = file.readline()
-			file.readline()
-			file.readline()
-
-			for param in metadata:
-				metadata[param] = metadata[param].strip()[13:]
-
-			metadata["website"] = file.readline().strip()
-			file.readline()
-			file.readline()
-			metadata["url"] = file.readline().strip()
-			file.readline()
-
-		else:
-			for _ in range(16):
-				file.readline()
 
 		description = []
 		while line := file.readline():
 			if line.strip() == "": continue
 			description.append(line.strip())
-		metadata["description"] = " ".join(description)
-
-	return metadata
+		return " ".join(description)
 
 # get movie poster as url
 def getMoviePoster(moviename:str, ignoreError:bool=False) -> str:
@@ -101,13 +76,25 @@ def getMetadataFromIMDB(moviename:str, ignoreError:bool=False) -> dict:
 
 	return metadata
 
+# get metadata from user defined json file
+def getMetadataFromFile(filename:str) -> dict:
+	with open(filename, "r", encoding="utf-8") as file:
+		metadata = json.load(file)
+
+	permitted_datafields = ["filename", "extension", "filepath", "directory", "movieID"]
+	for key in metadata:
+		if key in permitted_datafields:
+			del metadata[key]
+	
+	return metadata
+
 # save collected metadata as json format
 def saveMetadata(filename:str, metadata:dict) -> None:
 	with open(filename, "w", encoding="utf-8") as file:
 		json.dump(metadata, file, indent=2)
 
-# run cli
-def run(movie_directory):
+# run
+def run(movie_directory:str) -> None:
 	metadata = {}
 	movieID = 0
 	for filename in tqdm(os.listdir(movie_directory), unit="File", desc="Progress"):
@@ -122,19 +109,29 @@ def run(movie_directory):
 		movie_metadata["title"] = movie_metadata["filename"]
 		movie_metadata["movieID"] = str(movieID)
 
-		metadata_file = os.path.join(movie_directory, movie_metadata["filename"]+".txt")
-		if os.path.isfile(metadata_file):
-			movie_metadata |= parseMetadataFromFile(metadata_file)
 		movie_metadata |= getMetadataFromIMDB(movie_metadata["title"], ignoreError=True)
+
+		metadata_file = os.path.join(movie_directory, movie_metadata["filename"])
+		if os.path.isfile(file := f"{metadata_file}.txt"):
+			movie_metadata["description"] = getDescriptionFromFile(file)
+		if os.path.isfile(file := f"{metadata_file}.json"):
+			movie_metadata |= getMetadataFromFile(file)
 		
 		metadata[movieID] = movie_metadata
 		movieID += 1
 	
 	saveMetadata(os.path.join("static", "data", "movies.json"), metadata)
 
-# cli
+# run with valid directory
 if __name__ == "__main__":
+	# get and check path from command line parameter
 	if len(sys.argv) >= 2:
-		run(os.path.abspath(sys.argv[1]))
-	else:
-		print("Movie directory not given")
+		if os.path.isdir(sys.argv[1]):
+			run(os.path.abspath(sys.argv[1]))
+			exit()
+		raise ValueError("Directory not found")
+	
+	# request correct path from user input
+	while not os.path.isdir(movie_directory := input("Movie directory: ")):
+		print(Fore.RED + "Directory not found\n")
+	run(os.path.abspath(movie_directory))
