@@ -7,52 +7,57 @@
 	<body>
 		{% include 'header.html' %}
 
-		<main class="detailed">
-			<div>
-				<div class="title">
-					{{ movie.title }}
-				</div>
-				<div class="summary">
-					<div class="poster">
-						<img src="{{ movie.get('poster') }}">
+		<main id="movie-details">
+			<div class="row">
+				<img class="poster" src="{{ movie.get('poster') }}">
+				<div>
+					<div class="title">
+						{{ movie.title }}
 					</div>
-					<div class="details">
-						<div class="badges">
-							{% if movie.get('badges') %}
-								<ul>
-									{% for badge in movie.get('badges', []) %}
-										<li>{{ badge }}</li>
-									{% endfor %}
-								</ul>
-							{% endif %}
-						</div>
-						<div class="metadata">
+					<ul class="row">
+						<li class="year">
+							{{ movie.get('date', 'YYYY').split('.')[-1] }}
+						</li>
+						<li class="duration">
+							{{ movie.get('duration') }}
+						</li>
+					</ul>
+					{% if movie.get('badges') %}
+						<ul class="row badges">
+							{% for badge in movie.get('badges', []) %}
+								<li class="badge">{{ badge }}</li>
+							{% endfor %}
+						</ul>
+					{% endif %}
+					<ul class="row actions">
+						<li>
+							<a href="stream/" target="_blank">Abspielen</a>
+							<!-- <a href="#movie-stream" target="_blank">Abspielen</a> -->
+						</li>
+					</ul>
+					<div class="description">
+						{{ movie.get('description') }}
+					</div>
+					{% if movie.get('credits') %}
+						<div class="row credits">
 							<ul>
-								<li>{{ movie.get('date', 'YYYY').split('.')[-1] }}</li>
-								<li>{{ movie.get('channel') }}</li>
-								<li>{{ movie.get('duration') }}</li>
+								{% for category, names in movie.get('credits').items() %}
+									<li class="{{ category }}">
+										{{ ', '.join(names) }}
+									</li>
+								{% endfor %}
 							</ul>
 						</div>
-						<div class="description">{{ movie.get('description') }}</div>
-						<div class="links">
-							<ul>
-								<li class="watch-now">
-									<a href="stream/" target="_blank">
-										Jetzt anschauen
-									</a>
-								</li>
-							</ul>
-						</div>
-					</div>
+					{% endif %}
 				</div>
-				<div class="stream">
-					<vidoe controls>
-						<source src="stream/" type="video/mp4">
-						<source src="stream/ogg/" type="video/mp4">
-						<track src="subtitles/de/" kind="subtitles" srclang="de" label="Deutsch">
-						<track src="subtitles/en/" kind="subtitles" srclang="en" label="Englisch">
-					</vidoe>
-				</div>
+			</div>
+
+			<div id="movie-stream">
+				<video controls>
+					<source src="stream/" type="video/mp4">
+					<!-- <track src="subtitles/de/" kind="subtitles" srclang="de" label="Deutsch"> -->
+					<!-- <track src="subtitles/en/" kind="subtitles" srclang="en" label="Englisch"> -->
+				</video>
 			</div>
 		</main>
 

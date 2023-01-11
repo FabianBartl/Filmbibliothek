@@ -46,12 +46,8 @@ def movie(movieID):
 # stream movie
 @app.route('/movie/<movieID>/stream/')
 def movie_stream(movieID):
-	return movie_stream_filetype(movieID, "mp4")
-
-@app.route('/movie/<movieID>/stream/<filetype>/')
-def movie_stream_filetype(movieID, filetype):
 	movie_data = movies_json[movieID]
-	return send_from_directory(movie_data["directory"], f'{movie_data["filename"]}.{filetype}', as_attachment=False)
+	return send_from_directory(movie_data["directory"], f'{movie_data["filename"]}.{movie_data["extension"]}', as_attachment=False)
 
 # get subtitles
 @app.route('/movie/<movieID>/subtitles/<language>/')
