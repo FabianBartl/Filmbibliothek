@@ -1,5 +1,5 @@
 <!doctype html>
-<html palette="{{ palette }}">
+<html palette="{{ palette }}" lang="de">
 	<head>
 		{% set title = 'Film: "' + movie.title + '"' %}
 		{% include 'head.html' %}
@@ -24,7 +24,7 @@
 					</ul>
 					{% if movie.get('badges') %}
 						<ul class="row badges">
-							{% for badge in movie.get('badges', []) %}
+							{% for badge in movie.get('badges') %}
 								<li class="badge">{{ badge }}</li>
 							{% endfor %}
 						</ul>
@@ -39,12 +39,14 @@
 						{{ movie.get('description') }}
 					</div>
 					{% if movie.get('credits') %}
-						<div class="row credits">
+						<div class="row short-credits">
 							<ul>
 								{% for category, names in movie.get('credits').items() %}
-									<li class="{{ category }}">
-										{{ ', '.join(names) }}
-									</li>
+									{% if category in ['director', 'author', 'studio', 'genre'] and names != [] %}
+										<li class="{{ category }}">
+											{{ ', '.join(names) }}
+										</li>
+									{% endif %}
 								{% endfor %}
 							</ul>
 						</div>
@@ -54,7 +56,7 @@
 
 			<div id="movie-stream">
 				<video controls>
-					<source src="stream/" type="video/mp4">
+					<!-- <source src="stream/" type="video/mp4"> -->
 					<!-- <track src="subtitles/de/" kind="subtitles" srclang="de" label="Deutsch"> -->
 					<!-- <track src="subtitles/en/" kind="subtitles" srclang="en" label="Englisch"> -->
 				</video>
