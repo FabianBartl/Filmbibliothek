@@ -101,3 +101,15 @@ a:hover {
 	width: 20rem;
 	transition: width 0.2s ease-in-out;
 }
+
+/* error page */
+#error-page {
+    padding: 10vh;
+    padding-left: 1em;
+}
+#error-page > .code {
+    font-size: 1.3em;
+}
+#error-page > .message {
+    font-size: 1.1em;
+}

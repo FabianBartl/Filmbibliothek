@@ -1,0 +1,21 @@
+<!doctype html>
+<html theme="{{ theme }}" lang="de">
+	<head>
+		{% set title = 'Error 404 - Not Found' %}
+		{% include 'head.html' %}
+	</head>
+	<body>
+		{% include 'header.html' %}
+
+		<main id="error-page">
+			<div class="code">
+				Error 404
+			</div>
+			<div class="message">
+				Die angeforderte Seite konnte leider nicht gefunden werden.
+			</div>
+		</main>
+
+		{% include 'footer.html' %}
+	</body>
+</html>
