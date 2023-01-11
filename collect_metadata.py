@@ -71,7 +71,7 @@ def getMetadataFromIMDB(moviename:str, ignoreError:bool=False) -> dict:
 	
 	metadata = {}
 	metadata["imdb_id"] = page.get("href").split("/")[2]
-	metadata["imdb_url"] = "https://www.imdb.com/title/" + metadata["imdb_id"]
+	metadata["imdb_url"] = "https://www.imdb.com/title/"
 	metadata["poster"] = getMoviePoster(moviename, "imdb")
 
 	return metadata
@@ -81,7 +81,7 @@ def getMetadataFromFile(filename:str) -> dict:
 	with open(filename, "r", encoding="utf-8") as file:
 		metadata = json.load(file)
 
-	permitted_datafields = ["filename", "extension", "filepath", "directory", "movieID"]
+	permitted_datafields = ["filename", "extension", "filepath", "directory", "movieID", "imdb_url"]
 	for key in metadata:
 		if key in permitted_datafields:
 			del metadata[key]
