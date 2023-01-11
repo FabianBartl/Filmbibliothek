@@ -30,7 +30,7 @@ app.jinja_env.filters["truncate"] = truncate
 # set context variables for useage in templates
 @app.context_processor
 def utility_processor():
-	return {"palette": "2-2"}
+	return {"theme": "dark"}
 
 # ---------- url routes ----------
 
@@ -58,13 +58,13 @@ def movie_subtitles_language(movieID, language):
 
 # search for software updates
 @app.route("/update/")
-def update_software():
-	return render_template("update_software.html")
+def update():
+	return render_template("update.html")
 
-# re-load movie data
+# reload movie data
 @app.route("/reload/")
-def reload_moviedata():
-	return render_template("reload_moviedata.html")
+def reload():
+	return render_template("reload.html")
 
 
 # run webserver
