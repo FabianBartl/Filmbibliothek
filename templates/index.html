@@ -1,32 +1,33 @@
-<!doctype html>
-<html theme="{{ config.get('theme') }}" lang="de">
-	<head>
-		{% set title = 'Filmbibliothek' %}
-		{% include 'head.html' %}
-	</head>
-	<body>
-		{% include 'header.html' %}
+{% extends 'default.html' %}
 
-		<aside>
-			<input id="search-input" type="text" placeholder="Filme durchsuchen ...">
-		</aside>
+{% set title = 'Filmbibliothek' %}
+{% set asideID = 'search-bar' %}
+{% set mainID = 'movie-index' %}
 
-		<main id="movie-index">
-			{% for movieID, data in movies.items() %}
-				<div id="movie-{{ movieID }}" class="movie-overview">
-					<a href="movie/{{ movieID }}/">
-						<img class="poster" src="{{ data.get('poster') }}">
-					</a>
-					<div class="title">
-						{{ data.title | truncate(config.get('title_length')) }}
-					</div>
-					<div class="year">
-						{{ data.get('year') }}
-					</div>
-				</div>
-			{% endfor %}
-		</main>
+{% block aside %}
+	<input id="search-input" type="text" placeholder="Filme durchsuchen ...">
+{% endblock %}
 
-		{% include 'footer.html' %}
-	</body>
-</html>
+{% block main %}
+	{% for movieID, data in movies.items() %}
+		<div id="movie-{{ movieID }}" class="movie-overview">
+			<a href="movie/{{ movieID }}/">
+				<img class="poster" src="{{ data.get('poster') }}">
+			</a>
+			<div class="title">
+				{{ data.title | truncate(config.get('title_length')) }}
+			</div>
+			<div class="year">
+				{{ data.get('year') }}
+			</div>
+		</div>
+	{% endfor %}
+{% endblock %}
+
+{% block footer %}
+	<form action="/" method="post" class="row buttons">
+		<button name="update_software" submit>Nach Updates suchen</button>
+		<button name="reload_movies" submit>Filmdaten neu laden</button>
+		<button name="collect_metadata" submit>Filmdaten neu sammeln</button>
+	</form>
+{% endblock %}
