@@ -1,5 +1,5 @@
 
-import json, os
+import json, yaml, os
 from urllib.parse import unquote_plus, quote_plus
 
 from flask import Flask
@@ -8,19 +8,15 @@ from flask import redirect, url_for, render_template, send_from_directory, abort
 # ---------- functions ----------
 
 # load movies data file into global variable
+movies_json = {}
 def load_movies() -> dict:
+	global movies_json
 	with open(os.path.join("static", "data", "movies.json"), "r", encoding="utf-8") as file:
-		return json.load(file)
-movies_json = load_movies()
+		movies_json = json.load(file)
 
 # search for software updates
 def update_software():
 	pass
-
-# reload movie data stored in movies_json
-def reload_movies():
-	global movies_json
-	movies_json = load_movies()
 
 # collect metadata and reload movie data
 def collect_metadata():
@@ -61,9 +57,12 @@ def not_found(error):
 def index():
 	global movies_json
 	# post actions
-	if request.form.get("update_software"): update_software()
-	if request.form.get("reload_movies"): reload_movies()
-	if request.form.get("collect_metadata"): collect_metadata()
+	if request.form.get("update_software"):
+		update_software()
+	if request.form.get("reload_movies"):
+		load_movies()
+	if request.form.get("collect_metadata"):
+		collect_metadata()
 	return render_template("index.html", movies=movies_json)
 
 # detailed movie data
@@ -94,3 +93,4 @@ def movie_subtitles_language(movieID, language):
 # run webserver
 if __name__ == "__main__":
 	app.run(debug=True, port=80)
+	load_movies()

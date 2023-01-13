@@ -6,3 +6,4 @@ flask
 winshell
 pywin32
 colorama
+pyyaml
