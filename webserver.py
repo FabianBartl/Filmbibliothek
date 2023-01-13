@@ -5,14 +5,26 @@ from urllib.parse import unquote_plus, quote_plus
 from flask import Flask
 from flask import redirect, url_for, render_template, send_from_directory, abort, request
 
+# ---------- global used variables ----------
+
+movies_json = {}
+config_yaml = {}
+
 # ---------- functions ----------
 
 # load movies data file into global variable
-movies_json = {}
 def load_movies() -> dict:
-	global movies_json
 	with open(os.path.join("static", "data", "movies.json"), "r", encoding="utf-8") as file:
+		global movies_json
 		movies_json = json.load(file)
+		return movies_json
+
+# load config from yaml file
+def load_config():
+	with open("config.yml", "r", encoding="utf-8") as file:
+		global config_yaml
+		config_yaml = yaml.safe_load(file)
+		return config_yaml
 
 # search for software updates
 def update_software():
@@ -40,8 +52,9 @@ app.jinja_env.filters["truncate"] = truncate
 
 # set context variables for useage in templates
 @app.context_processor
-def utility_processor():
-	return {"config": {"theme": "dark"}}
+def inject_variables():
+	global config_yaml
+	return {"config": config_yaml}
 
 # ---------- error pages ----------
 
@@ -55,7 +68,6 @@ def not_found(error):
 @app.route("/")
 @app.route("/", methods=["POST"])
 def index():
-	global movies_json
 	# post actions
 	if request.form.get("update_software"):
 		update_software()
@@ -63,6 +75,8 @@ def index():
 		load_movies()
 	if request.form.get("collect_metadata"):
 		collect_metadata()
+	# return page
+	global movies_json
 	return render_template("index.html", movies=movies_json)
 
 # detailed movie data
@@ -92,5 +106,6 @@ def movie_subtitles_language(movieID, language):
 
 # run webserver
 if __name__ == "__main__":
-	app.run(debug=True, port=80)
 	load_movies()
+	load_config()
+	app.run(debug=True, port=80)

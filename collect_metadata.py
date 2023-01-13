@@ -1,5 +1,5 @@
 
-import requests, json, sys, os
+import requests, json, yaml, os
 import urllib.parse
 from bs4 import BeautifulSoup
 from tqdm import tqdm
@@ -124,14 +124,12 @@ def run(movie_directory:str) -> None:
 
 # run with valid directory
 if __name__ == "__main__":
-	# get and check path from command line parameter
-	if len(sys.argv) >= 2:
-		if os.path.isdir(sys.argv[1]):
-			run(os.path.abspath(sys.argv[1]))
-			exit()
-		raise ValueError("Directory not found")
+	# load config from yaml file
+	with open("config.yml", "r", encoding="utf-8") as file:
+		config_yaml = yaml.safe_load(file)
 	
-	# request correct path from user input
-	while not os.path.isdir(movie_directory := input("Movie directory: ")):
-		print(Fore.RED + "Directory not found\n")
-	run(os.path.abspath(movie_directory))
+	# get and check path from config
+	if os.path.isdir(movie_directory := config_yaml.get("movie_directory")):
+		run(os.path.abspath(movie_directory))
+		exit()
+	raise ValueError("Directory not found")

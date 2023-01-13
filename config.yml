@@ -1,2 +1,13 @@
+
+# color theme of the webpage
+# possible strings: "dark", "light"
 theme: dark
-movie_directory: 
+
+# directory of movies and related metadata files
+# possible strings: absolute path, relative path 
+movie_directory: N:\\Videos\\Filme
+
+# length of title displayed in movie overview
+# possible integers: >= 0
+# note: use 0 to not limit the length of the title
+title_length: 30
