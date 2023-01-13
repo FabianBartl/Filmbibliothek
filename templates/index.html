@@ -1,5 +1,5 @@
 <!doctype html>
-<html theme="{{ config.get('theme', 'light') }}" lang="de">
+<html theme="{{ config.get('theme') }}" lang="de">
 	<head>
 		{% set title = 'Filmbibliothek' %}
 		{% include 'head.html' %}
@@ -15,7 +15,7 @@
 						<img class="poster" src="{{ data.get('poster') }}">
 					</a>
 					<div class="title">
-						{{ data.title }}
+						{{ data.title | truncate(config.get('title_length')) }}
 					</div>
 					<div class="year">
 						{{ data.get('year') }}
