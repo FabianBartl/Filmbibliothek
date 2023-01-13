@@ -1,5 +1,5 @@
 
-import os, sys, subprocess
+import os, sys, yaml, subprocess
 
 # install python packages
 with open("requirements.txt", "r", encoding="utf-8") as file:
@@ -27,10 +27,18 @@ with open("C:\\Windows\\System32\\drivers\\etc\\hosts", "a", encoding="utf-8") a
 
 print(Fore.GREEN + f"Host '{host}' added to DNS resolver\n")
 
-# create movies.json
+# create movies.json and store movie_directory in config.yml
 while not os.path.isdir(movie_directory := input("Movie directory: ")):
     print(Fore.RED + "Directory not found\n")
-collect_metadata.run(os.path.abspath(movie_directory))
+# load config.yml
+with open("config.yml", "r", encoding="utf-8") as file:
+    config_yaml = yaml.safe_load(file)
+    config_yaml["movie_directory"] = os.path.abspath(movie_directory)
+# store movie_directory in config.yml
+with open("config.yml", "w+", encoding="utf-8") as file:
+    yaml.dump(config_yaml, file)
+# collect metadata
+collect_metadata.run(config_yaml["movie_directory"])
 
 print(Fore.GREEN + "Movie data collected and stored\n")
 
