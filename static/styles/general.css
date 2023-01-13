@@ -1,7 +1,7 @@
 
 @import url("theme.css");
 @import url("fonts.css");
-/* @import url("debug.css"); */
+
 
 /* variables */
 html {
@@ -148,4 +148,12 @@ button:hover {
 }
 #error-page > .message {
     font-size: 1.1em;
+}
+
+
+/* style for smaller screens */
+@media screen and (max-width: 1500px) {
+    .movie-overview {
+        --movie-width: 20vw;
+    }
 }
