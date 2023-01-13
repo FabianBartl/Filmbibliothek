@@ -26,13 +26,19 @@ body {
     background-color: var(--color-background);
 }
 
-/* inline lists */
-ul {
-    list-style: none;
-    padding-left: 0;
+/* inline elements */
+.row {
     display: flex;
 }
-ul li:not(:last-child)::after {
+.row > :not(:last-child) {
+    margin-right: 0.5em;
+}
+/* as list */
+ul.row {
+    list-style: none;
+    padding-left: 0;
+}
+ul.row li:not(:last-child)::after {
     content: "●";
     margin-right: 0.4rem;
     margin-left: 0.4rem;
@@ -83,6 +89,21 @@ a:hover {
 }
 .movie-overview .poster:hover {
     box-shadow: 0 10px 30px 0 #000e;
+}
+
+/* form button */
+button {
+    font-family: var(--text-font);
+    color: var(--color-link);
+    background-color: var(--color-background);
+    border: 2px solid var(--color-link);
+    border-radius: 5px;
+    padding: 2px 6px;
+    cursor: pointer;
+}
+button:hover {
+    color: var(--color-highlight);
+    border: 2px solid var(--color-highlight);
 }
 
 /* search */
