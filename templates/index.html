@@ -5,8 +5,11 @@
 		{% include 'head.html' %}
 	</head>
 	<body>
-		{% set with_search = True %}
 		{% include 'header.html' %}
+
+		<aside>
+			<input id="search-input" type="text" placeholder="Filme durchsuchen ...">
+		</aside>
 
 		<main id="movie-index">
 			{% for movieID, data in movies.items() %}
