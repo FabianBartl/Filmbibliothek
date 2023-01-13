@@ -1,5 +1,5 @@
 <!doctype html>
-<html theme="{{ theme }}" lang="de">
+<html theme="{{ config.get('theme', 'light') }}" lang="de">
 	<head>
 		{% set title = 'Film: "' + movie.title + '"' %}
 		{% include 'head.html' %}
