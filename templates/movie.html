@@ -1,67 +1,64 @@
-<!doctype html>
-<html theme="{{ config.get('theme') }}" lang="de">
-	<head>
-		{% set title = 'Film: "' + movie.title + '"' %}
-		{% include 'head.html' %}
-	</head>
-	<body>
-		{% include 'header.html' %}
+{% extends 'default.html' %}
 
-		<main id="movie-details">
-			<div class="row">
-				<img class="poster" src="{{ movie.get('poster') }}">
-				<div>
-					<div class="title">
-						{{ movie.title }}
-					</div>
-					<ul class="row">
-						<li class="year">
-							{{ movie.get('date') }}
-						</li>
-						<li class="duration">
-							{{ movie.get('duration') }}
-						</li>
+{% set title = 'Film: "' + movie.title + '"' %}
+{% set asideID = 'search-bar' %}
+{% set mainID = 'movie-details' %}
+
+{% block aside %}
+	<input id="search-input" type="text" placeholder="Filme durchsuchen ...">
+{% endblock %}
+
+{% block main %}
+	<div class="row">
+		<img class="poster" src="{{ movie.get('poster') }}">
+		<div>
+			<div class="title">
+				{{ movie.title }}
+			</div>
+			<ul class="row">
+				<li class="year">
+					{{ movie.get('date') }}
+				</li>
+				<li class="duration">
+					{{ movie.get('duration') }}
+				</li>
+			</ul>
+			{% if movie.get('badges') %}
+				<ul class="row badges">
+					{% for badge in movie.get('badges') %}
+						<li class="badge">{{ badge }}</li>
+					{% endfor %}
+				</ul>
+			{% endif %}
+			<ul class="row actions">
+				<li>
+					<a href="#movie-stream" target="_blank">Abspielen</a>
+				</li>
+			</ul>
+			<div class="description">
+				{{ movie.get('description') }}
+			</div>
+			{% if movie.get('credits') %}
+				<div class="row short-credits">
+					<ul>
+						{% for category, names in movie.get('credits').items() %}
+							{% if category in ['director', 'author', 'studio', 'genre'] and names != [] %}
+								<li class="{{ category }}">
+									{{ ', '.join(names) }}
+								</li>
+							{% endif %}
+						{% endfor %}
 					</ul>
-					{% if movie.get('badges') %}
-						<ul class="row badges">
-							{% for badge in movie.get('badges') %}
-								<li class="badge">{{ badge }}</li>
-							{% endfor %}
-						</ul>
-					{% endif %}
-					<ul class="row actions">
-						<li>
-							<a href="#movie-stream" target="_blank">Abspielen</a>
-						</li>
-					</ul>
-					<div class="description">
-						{{ movie.get('description') }}
-					</div>
-					{% if movie.get('credits') %}
-						<div class="row short-credits">
-							<ul>
-								{% for category, names in movie.get('credits').items() %}
-									{% if category in ['director', 'author', 'studio', 'genre'] and names != [] %}
-										<li class="{{ category }}">
-											{{ ', '.join(names) }}
-										</li>
-									{% endif %}
-								{% endfor %}
-							</ul>
-						</div>
-					{% endif %}
 				</div>
-			</div>
+			{% endif %}
+		</div>
+	</div>
 
-			<div id="movie-stream">
-				<video controls>
-					<source src="stream/" type="video/mp4">
-					<!-- <track src="subtitles/de/" kind="subtitles" srclang="de" label="Deutsch"> -->
-					<!-- <track src="subtitles/en/" kind="subtitles" srclang="en" label="Englisch"> -->
-				</video>
-			</div>
-		</main>
-
-		{% include 'footer.html' %}
-	</body>
-</html>
+	<div id="movie-stream">
+		<video controls>
+			<source src="stream/" type="video/mp4">
+			<!-- <track src="subtitles/de/" kind="subtitles" srclang="de" label="Deutsch"> -->
+			<!-- <track src="subtitles/en/" kind="subtitles" srclang="en" label="Englisch"> -->
+		</video>
+	</div>
+{% endblock %}
