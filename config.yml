@@ -4,10 +4,18 @@
 theme: dark
 
 # directory of movies and related metadata files
-# possible strings: absolute path, relative path 
+# possible strings: [absolute path], [relative path] 
 movie_directory: N:\\Videos\\Filme
 
 # length of title displayed in movie overview
 # possible integers: >= 0
 # note: use 0 to not limit the length of the title
 title_length: 30
+
+# port of webserver, where the webpage is available
+# possible integers: 80, >=1025
+server_port: 80
+
+# debug mode (debug console of webserver, css debug style)
+# possible values: true, false
+debug_mode: false

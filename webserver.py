@@ -9,6 +9,7 @@ from flask import redirect, url_for, render_template, send_from_directory, abort
 
 movies_json = {}
 config_yaml = {}
+debug_mode = False
 
 # ---------- functions ----------
 
@@ -76,15 +77,15 @@ def index():
 	if request.form.get("collect_metadata"):
 		collect_metadata()
 	# return page
-	global movies_json
-	return render_template("index.html", movies=movies_json)
+	global movies_json, debug_mode
+	return render_template("index.html", movies=movies_json, debug_mode=debug_mode)
 
 # detailed movie data
 @app.route("/movie/<movieID>/")
 def movie(movieID):
-	global movies_json
+	global movies_json, debug_mode
 	if movie := movies_json.get(movieID):
-		return render_template("movie.html", movie=movie)
+		return render_template("movie.html", movie=movie, debug_mode=debug_mode)
 	return abort(404)
 
 # stream movie
@@ -108,4 +109,8 @@ def movie_subtitles_language(movieID, language):
 if __name__ == "__main__":
 	load_movies()
 	load_config()
-	app.run(debug=True, port=80)
+
+	port = config_yaml.get("server_port", 80)
+	debug_mode = config_yaml.get("debug_mode", False)
+	
+	app.run(debug=debug_mode, port=port)
