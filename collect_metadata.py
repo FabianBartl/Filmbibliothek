@@ -82,7 +82,7 @@ def getMetadataFromIMDB(moviename:str, ignoreError:bool=False) -> dict:
 # get metadata from user defined json file
 def getMetadataFromFile(filename:str) -> dict:
 	with open(filename, "r", encoding="utf-8") as file:
-		metadata = json.load(file)
+		metadata = yaml.save_load(file)
 
 	permitted_datafields = ["filename", "extension", "filepath", "directory", "movieID", "imdb_url", "duration", "resolution"]
 	for key in metadata:
