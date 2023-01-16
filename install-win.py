@@ -55,4 +55,4 @@ print(Fore.GREEN + "Webserver added to windows startup directory\n")
 print(Fore.YELLOW + "Please restart your system\n")
 
 # TODO: add client shortcut to desktop
-print(Fore.YELLOW + f"After restarting, the webpage will be available at: http://{host}/\n")
+print(Fore.YELLOW + f"After restarting, the webpage will be available at: http://localhost/ or http://{host}/\n")
