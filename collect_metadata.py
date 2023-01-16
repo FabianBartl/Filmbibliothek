@@ -29,29 +29,25 @@ def getMoviePoster(moviename:str, ignoreError:bool=False) -> str:
 	requestURL = "https://www.imdb.com/find/?q=" + urllib.parse.quote_plus(moviename)
 	request = requests.get(requestURL, headers=header)
 	if request.status_code != 200:
-		if ignoreError:
-			return ""
+		if ignoreError: return ""
 		raise Exception(f"HTTP response code: {request.status_code}")
 	html = BeautifulSoup(request.content, features="html.parser")
 
 	page = html.find("a", attrs={"class": "ipc-metadata-list-summary-item__t"})
 	if page is None:
-		if ignoreError:
-			return ""
+		if ignoreError: return ""
 		raise relImgNotFound
 	pageURL = "https://www.imdb.com" + page.get("href")
 
 	request = requests.get(pageURL, headers=header)
 	if request.status_code != 200:
-		if ignoreError:
-			return ""
+		if ignoreError: return ""
 		raise Exception(f"HTTP response code: {request.status_code}")
 	html = BeautifulSoup(request.content, features="html.parser")
 	
 	imgs = [ tag for tag in html.findAll("img", attrs={"class": "ipc-image"}) if tag.get("class") == ["ipc-image"] ]
 	if imgs == []:
-		if ignoreError:
-			return ""
+		if ignoreError: return ""
 		raise relImgNotFound
 	return imgs[0].get("srcset").split(", ")[-1].split(" ")[0]
 
@@ -61,15 +57,13 @@ def getMetadataFromIMDB(moviename:str, ignoreError:bool=False) -> dict:
 	requestURL = "https://www.imdb.com/find/?q=" + urllib.parse.quote_plus(moviename)
 	request = requests.get(requestURL, headers=header)
 	if request.status_code != 200:
-		if ignoreError:
-			return {}
+		if ignoreError: return {}
 		raise Exception(f"HTTP response code: {request.status_code}")
 	html = BeautifulSoup(request.content, features="html.parser")
 	
 	page = html.find("a", attrs={"class": "ipc-metadata-list-summary-item__t"})
 	if page is None:
-		if ignoreError:
-			return {}
+		if ignoreError: return {}
 		raise Exception("Movie not found")
 	
 	metadata = {}
@@ -82,9 +76,9 @@ def getMetadataFromIMDB(moviename:str, ignoreError:bool=False) -> dict:
 # get metadata from user defined json file
 def getMetadataFromFile(filename:str) -> dict:
 	with open(filename, "r", encoding="utf-8") as file:
-		metadata = yaml.save_load(file)
+		metadata = yaml.safe_load(file)
 
-	permitted_datafields = ["filename", "extension", "filepath", "directory", "movieID", "imdb_url", "duration", "resolution"]
+	permitted_datafields = ["filename", "extension", "filepath", "directory", "movieID", "imdb_url", "duration"]
 	for key in metadata:
 		if key in permitted_datafields:
 			del metadata[key]
@@ -103,8 +97,7 @@ def run(movie_directories:list[str]) -> None:
 	for directoryNum, movie_directory in enumerate(movie_directories):
 
 		for filename in tqdm(os.listdir(movie_directory), unit="File", desc=f"Scan directory {directoryNum}"):
-			if not filename.endswith((".mp4", ".mov", ".m4v", ".mkv")):
-				continue
+			if not filename.endswith((".mp4", ".mov", ".m4v", ".mkv")): continue
 
 			movie_metadata = {}
 			movie_metadata["filename"] = filename.rsplit(".", 1)[0]
@@ -128,7 +121,7 @@ def run(movie_directories:list[str]) -> None:
 			metadata_file = os.path.join(movie_directory, movie_metadata["filename"])
 			if os.path.isfile(file := f"{metadata_file}.txt"):
 				movie_metadata["description"] = getDescriptionFromFile(file)
-			if os.path.isfile(file := f"{metadata_file}.json"):
+			if os.path.isfile(file := f"{metadata_file}.yml"):
 				movie_metadata |= getMetadataFromFile(file)
 			
 			metadata[movieID] = movie_metadata
