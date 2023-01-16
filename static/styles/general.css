@@ -73,7 +73,7 @@ a:hover {
 
 /* movie overview (poster, title, year) */
 .movie-overview {
-    --movie-width: 10vw;
+    --movie-width: 15em;
     width: var(--movie-width);
     margin: 15px;
     line-height: 110%;
@@ -85,7 +85,7 @@ a:hover {
     transition: box-shadow 0.2s ease-in-out;
 }
 .movie-overview .title {
-    width: var(--movie-width);
+    width: calc(var(--movie-width) - 2em);
     font-size: 1.2em;
     margin-bottom: 2px;
 }
@@ -155,6 +155,6 @@ button:hover {
 /* style for smaller screens */
 @media screen and (max-width: 1500px) {
     .movie-overview {
-        --movie-width: 20vw;
+        --movie-width: 20em;
     }
 }
