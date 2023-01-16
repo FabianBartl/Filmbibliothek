@@ -113,4 +113,4 @@ if __name__ == "__main__":
 	port = config_yaml.get("server_port", 80)
 	debug_mode = config_yaml.get("debug_mode", False)
 	
-	app.run(debug=debug_mode, port=port)
+	app.run(debug=True, port=port)

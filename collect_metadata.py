@@ -3,6 +3,7 @@ import requests, json, yaml, os
 import urllib.parse
 
 from pymediainfo import MediaInfo
+from math import ceil
 from bs4 import BeautifulSoup
 from tqdm import tqdm
 from colorama import Fore, Back, Style, init
@@ -116,9 +117,11 @@ def run(movie_directories:list[str]) -> None:
 			info = MediaInfo.parse(movie_metadata["filepath"])
 			track = info.video_tracks[0].to_data()
 			if duration := track.get("duration"):
-				movie_metadata["duration"] = int(float(duration)) // 1_000
+				seconds = int(float(duration)) // 1_000
+				hours = int(seconds / 60 / 60)
+				movie_metadata["duration"] = [hours, int(seconds/60 - hours*60)]
 			if height := track.get("height"):
-				movie_metadata["resolution"] = int(float(height))
+				movie_metadata["resolution"] = f"{ceil(int(float(height)) / 1_000)}K"
 
 			movie_metadata |= getMetadataFromIMDB(movie_metadata["title"], ignoreError=True)
 

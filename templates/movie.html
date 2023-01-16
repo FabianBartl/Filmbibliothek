@@ -20,16 +20,17 @@
 					{{ movie.get('date') }}
 				</li>
 				<li class="duration">
-					{{ movie.get('duration') }}
+					{{ movie.get('duration')[0] }}h
+					{{ movie.get('duration')[1] }}min
 				</li>
 			</ul>
-			{% if movie.get('badges') %}
-				<ul class="row badges">
-					{% for badge in movie.get('badges') %}
-						<li class="badge">{{ badge }}</li>
-					{% endfor %}
-				</ul>
-			{% endif %}
+			<ul class="row badges">
+				{% for badge in ['fsk', 'resolution'] %}
+					{% if movie.get(badge) %}
+						<li class="badge">{{ movie.get(badge) }}</li>
+					{% endif %}
+				{% endfor %}
+			</ul>
 			<ul class="row actions">
 				<li>
 					<a href="#movie-stream" target="_blank">Abspielen</a>
