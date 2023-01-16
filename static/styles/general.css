@@ -82,6 +82,7 @@ a:hover {
     width: var(--movie-width);
     border-radius: 10px;
     margin-bottom: 5px;
+    transition: box-shadow 0.2s ease-in-out;
 }
 .movie-overview .title {
     width: var(--movie-width);
