@@ -33,12 +33,12 @@ while not os.path.isdir(movie_directory := input("Movie directory: ")):
 # load config.yml
 with open("config.yml", "r", encoding="utf-8") as file:
     config_yaml = yaml.safe_load(file)
-    config_yaml["movie_directory"] = os.path.abspath(movie_directory)
+    config_yaml["movie_directories"] = [os.path.abspath(movie_directory)]
 # store movie_directory in config.yml
 with open("config.yml", "w+", encoding="utf-8") as file:
     yaml.dump(config_yaml, file)
 # collect metadata
-collect_metadata.run(config_yaml["movie_directory"])
+collect_metadata.run(config_yaml["movie_directories"])
 
 print(Fore.GREEN + "Movie data collected and stored\n")
 
