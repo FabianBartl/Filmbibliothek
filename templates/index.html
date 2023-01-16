@@ -15,7 +15,11 @@
 				<img class="poster" src="{{ data.get('poster') }}">
 			</a>
 			<div class="title">
-				{{ data.title | truncate(config.get('title_length')) }}
+				{% if config.get('title_length') != 0 %}
+					{{ data.title | truncate(config.get('title_length')) }}
+				{% else %}
+					{{ data.title }}
+				{% endif %}
 			</div>
 			<div class="year">
 				{{ data.get('year') }}

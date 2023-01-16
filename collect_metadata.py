@@ -1,6 +1,8 @@
 
 import requests, json, yaml, os
 import urllib.parse
+
+from pymediainfo import MediaInfo
 from bs4 import BeautifulSoup
 from tqdm import tqdm
 from colorama import Fore, Back, Style, init
@@ -81,7 +83,7 @@ def getMetadataFromFile(filename:str) -> dict:
 	with open(filename, "r", encoding="utf-8") as file:
 		metadata = json.load(file)
 
-	permitted_datafields = ["filename", "extension", "filepath", "directory", "movieID", "imdb_url"]
+	permitted_datafields = ["filename", "extension", "filepath", "directory", "movieID", "imdb_url", "duration", "resolution"]
 	for key in metadata:
 		if key in permitted_datafields:
 			del metadata[key]
@@ -94,31 +96,40 @@ def saveMetadata(filename:str, metadata:dict) -> None:
 		json.dump(metadata, file, indent=2)
 
 # run
-def run(movie_directory:str) -> None:
+def run(movie_directories:list[str]) -> None:
 	metadata = {}
 	movieID = 0
-	for filename in tqdm(os.listdir(movie_directory), unit="File", desc="Progress"):
-		if not filename.endswith(".mp4"):
-			continue
+	for directoryNum, movie_directory in enumerate(movie_directories):
 
-		movie_metadata = {}
-		movie_metadata["filename"] = ".".join(filename.split(".")[:-1])
-		movie_metadata["extension"] = filename.split(".")[-1]
-		movie_metadata["filepath"] = os.path.join(movie_directory, filename)
-		movie_metadata["directory"] = movie_directory
-		movie_metadata["title"] = movie_metadata["filename"]
-		movie_metadata["movieID"] = str(movieID)
+		for filename in tqdm(os.listdir(movie_directory), unit="File", desc=f"Scan directory {directoryNum}"):
+			if not filename.endswith((".mp4", ".mov", ".m4v", ".mkv")):
+				continue
 
-		movie_metadata |= getMetadataFromIMDB(movie_metadata["title"], ignoreError=True)
+			movie_metadata = {}
+			movie_metadata["filename"] = filename.rsplit(".", 1)[0]
+			movie_metadata["extension"] = filename.rsplit(".", 1)[-1]
+			movie_metadata["filepath"] = os.path.join(movie_directory, filename)
+			movie_metadata["directory"] = movie_directory
+			movie_metadata["title"] = movie_metadata["filename"]
+			movie_metadata["movieID"] = str(movieID)
+			
+			info = MediaInfo.parse(movie_metadata["filepath"])
+			track = info.video_tracks[0].to_data()
+			if duration := track.get("duration"):
+				movie_metadata["duration"] = int(float(duration)) // 1_000
+			if height := track.get("height"):
+				movie_metadata["resolution"] = int(float(height))
 
-		metadata_file = os.path.join(movie_directory, movie_metadata["filename"])
-		if os.path.isfile(file := f"{metadata_file}.txt"):
-			movie_metadata["description"] = getDescriptionFromFile(file)
-		if os.path.isfile(file := f"{metadata_file}.json"):
-			movie_metadata |= getMetadataFromFile(file)
-		
-		metadata[movieID] = movie_metadata
-		movieID += 1
+			movie_metadata |= getMetadataFromIMDB(movie_metadata["title"], ignoreError=True)
+
+			metadata_file = os.path.join(movie_directory, movie_metadata["filename"])
+			if os.path.isfile(file := f"{metadata_file}.txt"):
+				movie_metadata["description"] = getDescriptionFromFile(file)
+			if os.path.isfile(file := f"{metadata_file}.json"):
+				movie_metadata |= getMetadataFromFile(file)
+			
+			metadata[movieID] = movie_metadata
+			movieID += 1
 	
 	saveMetadata(os.path.join("static", "data", "movies.json"), metadata)
 
@@ -128,8 +139,10 @@ if __name__ == "__main__":
 	with open("config.yml", "r", encoding="utf-8") as file:
 		config_yaml = yaml.safe_load(file)
 	
-	# get and check path from config
-	if os.path.isdir(movie_directory := config_yaml.get("movie_directory")):
-		run(os.path.abspath(movie_directory))
-		exit()
-	raise ValueError("Directory not found")
+	# get and check paths from config
+	movie_directories = config_yaml.get("movie_directories")
+	for i, movie_directory in enumerate(movie_directories):
+		if not os.path.isdir(movie_directory):
+			raise ValueError(f"Directory '{movie_directory}' not found")
+		movie_directories[i] = os.path.abspath(movie_directory)
+	run(movie_directories)

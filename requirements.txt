@@ -7,3 +7,5 @@ winshell
 pywin32
 colorama
 pyyaml
+pymediainfo
+datetime
