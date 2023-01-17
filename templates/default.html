@@ -1,5 +1,5 @@
 <!doctype html>
-<html theme="{{ config.get('theme') }}" lang="de">
+<html theme="{{ config.get('theme') | e }}" lang="de">
 	<head>
         {% block head %}
         {% endblock %}
@@ -34,7 +34,7 @@
 		</aside>
 
 		<main id="{{ mainID }}">
-            {% block main %}
+            {% block main required %}
             {% endblock %}
 		</main>
 
