@@ -10,7 +10,7 @@ from colorama import Fore, Back, Style, init
 init(autoreset=True)
 
 # readout description from metadata file
-def getDescriptionFromFile(filename:str) -> dict:
+def getDescFromFile(filename:str) -> dict:
 	with open(filename, "r", encoding="utf-8") as file:
 		for _ in range(16):
 			file.readline()
@@ -74,7 +74,7 @@ def getMetadataFromIMDB(moviename:str, ignoreError:bool=False) -> dict:
 	return metadata
 
 # get metadata from user defined json file
-def getMetadataFromFile(filename:str) -> dict:
+def getUserDefMetadata(filename:str) -> dict:
 	with open(filename, "r", encoding="utf-8") as file:
 		metadata = yaml.safe_load(file)
 
@@ -96,8 +96,9 @@ def run(movie_directories:list[str]) -> None:
 	movieID = 0
 	for directoryNum, movie_directory in enumerate(movie_directories):
 
-		for filename in tqdm(os.listdir(movie_directory), unit="File", desc=f"Scan directory {directoryNum}"):
-			if not filename.endswith((".mp4", ".mov", ".m4v", ".mkv")): continue
+		for filename in tqdm(os.listdir(movie_directory), unit="File", desc=f"Scan directory '{movie_directory}'"):
+			if not filename.lower().endswith((".mp4", ".mov", ".m4v", ".mkv")):
+				continue
 
 			movie_metadata = {}
 			movie_metadata["filename"] = filename.rsplit(".", 1)[0]
@@ -113,16 +114,22 @@ def run(movie_directories:list[str]) -> None:
 				seconds = int(float(duration)) // 1_000
 				hours = int(seconds / 60 / 60)
 				movie_metadata["duration"] = [hours, int(seconds/60 - hours*60)]
-			if height := track.get("height"):
-				movie_metadata["resolution"] = f"{ceil(int(float(height)) / 1_000)}K"
+			if width := track.get("width"):
+				width = float(width)
+				if   width <= 1200: movie_metadata["resolution"] = "VGA"
+				elif width <= 1900: movie_metadata["resolution"] = "HD"
+				elif width <= 3400: movie_metadata["resolution"] = "FullHD"
+				elif width <= 5100: movie_metadata["resolution"] = "4K"
+				elif width <= 7600: movie_metadata["resolution"] = "5K"
+				else:               movie_metadata["resolution"] = "8K"
 
 			movie_metadata |= getMetadataFromIMDB(movie_metadata["title"], ignoreError=True)
 
 			metadata_file = os.path.join(movie_directory, movie_metadata["filename"])
 			if os.path.isfile(file := f"{metadata_file}.txt"):
-				movie_metadata["description"] = getDescriptionFromFile(file)
+				movie_metadata["description"] = getDescFromFile(file)
 			if os.path.isfile(file := f"{metadata_file}.yml"):
-				movie_metadata |= getMetadataFromFile(file)
+				movie_metadata |= getUserDefMetadata(file)
 			
 			metadata[movieID] = movie_metadata
 			movieID += 1
