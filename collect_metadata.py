@@ -116,12 +116,13 @@ def run(movie_directories:list[str]) -> None:
 				movie_metadata["duration"] = [hours, int(seconds/60 - hours*60)]
 			if width := track.get("width"):
 				width = float(width)
-				if   width <= 1200: movie_metadata["resolution"] = "VGA"
+				# https://upload.wikimedia.org/wikipedia/commons/6/63/Vector_Video_Standards.svg
+				if width <= 1200: movie_metadata["resolution"] = "VGA"
 				elif width <= 1900: movie_metadata["resolution"] = "HD"
 				elif width <= 3400: movie_metadata["resolution"] = "FullHD"
 				elif width <= 5100: movie_metadata["resolution"] = "4K"
 				elif width <= 7600: movie_metadata["resolution"] = "5K"
-				else:               movie_metadata["resolution"] = "8K"
+				else: movie_metadata["resolution"] = "8K"
 
 			movie_metadata |= getMetadataFromIMDB(movie_metadata["title"], ignoreError=True)
 

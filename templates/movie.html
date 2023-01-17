@@ -1,12 +1,7 @@
 {% extends 'default.html' %}
 
 {% set title = 'Film: "' + movie.title + '"' %}
-{% set asideID = 'search-bar' %}
 {% set mainID = 'movie-details' %}
-
-{% block aside %}
-	<input id="search-input" type="text" placeholder="Filme durchsuchen ...">
-{% endblock %}
 
 {% block main %}
 	<div class="row">
@@ -26,7 +21,7 @@
 					</li>
 				</ul>
 				<ul class="row badges">
-					{% for badge in ['fsk', 'resolution'] %}
+					{% for badge in ['age-rating', 'resolution'] %}
 						{% if movie.get(badge) %}
 							<li class="badge">{{ movie.get(badge) }}</li>
 						{% endif %}
@@ -35,7 +30,9 @@
 			</div>
 			<ul class="row actions">
 				<li>
-					<a href="#movie-stream" target="_blank">Abspielen</a>
+					<a onclick="playAsFullscreen('#movie-stream > video');">
+						<i class="fa fa-play"></i>Abspielen
+					</a>
 				</li>
 			</ul>
 			<div class="description">
@@ -45,9 +42,13 @@
 				<div class="row short-credits">
 					<ul>
 						{% for category, names in movie.get('credits').items() %}
-							{% if category in ['director', 'author', 'studio', 'genre'] and names != [] %}
+							{% if category in ['director', 'author', 'studio', 'genre'] and names != [] and names != "" %}
 								<li class="{{ category }}">
-									{{ ', '.join(names) }}
+									{% if type(names) == list %}
+										{{ ', '.join(names) }}
+									{% else %}
+										{{ names }}
+									{% endif %}
 								</li>
 							{% endif %}
 						{% endfor %}
