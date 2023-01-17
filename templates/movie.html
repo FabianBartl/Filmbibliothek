@@ -47,7 +47,7 @@
 				</div>
 			{% endif %}
 			<div class="short-credits">
-				{% set credits = {'director': 'REGIE', 'author': 'AUTOR', 'studio': 'STUDIO', 'genre': 'GENRE'} %}
+				{% set credits = {'director':'REGIE', 'author':'AUTOR', 'studio':'STUDIO', 'genre':'GENRE', 'main-cast':'HAUPTBESETZUNG'} %}
 				{% for credit in credits %}
 					{% if movie.get(credit) %}
 						<div class="row">
