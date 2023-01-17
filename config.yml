@@ -1,6 +1,6 @@
 
 # color theme of the webpage
-# possible strings: "dark", "light"
+# possible strings: dark, light, debug
 theme: dark
 
 # directory of movies and related metadata files
@@ -18,6 +18,6 @@ title_length: 0
 # possible integers: 80, >=1025
 server_port: 80
 
-# debug mode (debug console of webserver, css debug style)
+# debug mode (debug console of webserver
 # possible values: true, false
-debug_mode: false
+debug_mode: true

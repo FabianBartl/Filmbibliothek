@@ -94,4 +94,4 @@ if __name__ == "__main__":
 	DEBUG = CONFIG.get("debug_mode", False)
 	port = CONFIG.get("server_port", 80)
 	
-	app.run(debug=True, port=port)
+	app.run(debug=DEBUG, port=port)
