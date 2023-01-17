@@ -109,6 +109,7 @@ form {
     margin-bottom: 1em;
 }
 /* for buttons */
+.button,
 button {
     font-family: var(--text-font);
     color: var(--color-link);
@@ -118,6 +119,7 @@ button {
     padding: 2px 6px;
     cursor: pointer;
 }
+.button:hover,
 button:hover {
     color: var(--color-highlight);
     border: 2px solid var(--color-highlight);

@@ -12,9 +12,11 @@
 			</div>
 			<div class="row">
 				<ul class="row">
-					<li class="year">
-						{{ movie.get('date') }}
-					</li>
+					{% if movie.get('year') %}
+						<li class="year">
+							{{ movie.get('year') }}
+						</li>
+					{% endif %}
 					<li class="duration">
 						{{ movie.get('duration')[0] }} h
 						{{ movie.get('duration')[1] }} min
@@ -30,31 +32,30 @@
 			</div>
 			<ul class="row actions">
 				<li>
-					<a onclick="playAsFullscreen('#movie-stream > video');">
-						<i class="fa fa-play"></i>Abspielen
+					<a class="button" onclick="playAsFullscreen('#movie-stream > video');">
+						<i class="fa fa-play"></i>&ensp;Abspielen
 					</a>
 				</li>
 			</ul>
 			<div class="description">
 				{{ movie.get('description') }}
 			</div>
-			{% if movie.get('credits') %}
-				<div class="row short-credits">
-					<ul>
-						{% for category, names in movie.get('credits').items() %}
-							{% if category in ['director', 'author', 'studio', 'genre'] and names != [] and names != "" %}
-								<li class="{{ category }}">
-									{% if type(names) == list %}
-										{{ ', '.join(names) }}
-									{% else %}
-										{{ names }}
-									{% endif %}
-								</li>
-							{% endif %}
-						{% endfor %}
-					</ul>
-				</div>
-			{% endif %}
+			<div class="row short-credits">
+				<ul>
+					{% for credit in ['director', 'author', 'studio', 'genre'] %}
+						{% if movie.get(credit) %}
+							<li data-credit="{{ credit }}">
+								{% set names = movie.get(credit) %}
+								{% if names is string %}
+									{{ names }}
+								{% else %}
+									{{ ', '.join(names) }}
+								{% endif %}
+							</li>
+						{% endif %}
+					{% endfor %}
+				</ul>
+			</div>
 		</div>
 	</div>
 
