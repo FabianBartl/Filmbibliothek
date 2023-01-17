@@ -10,10 +10,10 @@
 		{% else %}
 			<img class="poster" src="{{ url_for('static', filename='images/blank-poster.jpg') }}">
 		{% endif %}
-		<div>
-			<div class="title">
+		<div class="short-details">
+			<h2 class="title">
 				{{ movie.title | e }}
-			</div>
+			</h2>
 			<div class="row">
 				<ul class="row">
 					{% if movie.get('year') %}
@@ -46,21 +46,25 @@
 					{{ movie.get('description') | e }}
 				</div>
 			{% endif %}
-			<div class="row short-credits">
-				<ul>
-					{% for credit in ['director', 'author', 'studio', 'genre'] %}
-						{% if movie.get(credit) %}
-							<li data-credit="{{ credit }}">
+			<div class="short-credits">
+				{% set credits = {'director': 'REGIE', 'author': 'AUTOR', 'studio': 'STUDIO', 'genre': 'GENRE'} %}
+				{% for credit in credits %}
+					{% if movie.get(credit) %}
+						<div class="row">
+							<div class="credit-name">
+								{{ credits[credit] }}
+							</div>
+							<div class="credit-content">
 								{% set names = movie.get(credit) %}
 								{% if names is string %}
 									{{ names | e }}
 								{% else %}
 									{{ ', '.join(names) | e }}
 								{% endif %}
-							</li>
-						{% endif %}
-					{% endfor %}
-				</ul>
+							</div>
+						</div>
+					{% endif %}
+				{% endfor %}
 			</div>
 		</div>
 	</div>

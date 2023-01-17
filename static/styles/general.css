@@ -2,13 +2,15 @@
 @import url("theme.css");
 @import url("fonts.css");
 
+/* ---------------------------------------- general styling and variable ---------------------------------------- */
 
 /* variables */
 html {
-	--text-font: "Dubai", sans-serif;
+    --text-font: "Dubai", sans-serif;
+    --animate-all: all 0.2s ease-in-out;
 }
 
-/* general */
+/* everything */
 * {
 	scroll-behavior: smooth;
 	scrollbar-gutter: stable;
@@ -16,9 +18,9 @@ html {
 	-webkit-font-smoothing: antialiased;
 }
 
-/* font style */
+/* font settings */
 body {
-	font-family: var(--text-font);
+    font-family: var(--text-font);
 	font-size: 12pt;
     color: var(--color-text);
 	hyphens: auto;
@@ -26,11 +28,17 @@ body {
     background-color: var(--color-background);
 }
 
-/* spacing of content */
+/* spacings */
+body {
+    width: 90%;
+    margin: auto;
+}
 main {
     margin-top: 2em;
     margin-bottom: 2em;
 }
+
+/* ---------------------------------------- design templates ---------------------------------------- */
 
 /* inline elements */
 .row {
@@ -43,11 +51,16 @@ main {
 ul.row {
     list-style: none;
     padding-left: 0;
+    height: fit-content;
+    margin-top: auto;
+    margin-bottom: auto;
 }
 ul.row li:not(:last-child)::after {
     content: "●";
-    margin-right: 0.4rem;
     margin-left: 0.4rem;
+}
+ul.row:not(:last-child) {
+    margin-right: 1.5em;
 }
 
 /* links */
@@ -57,46 +70,11 @@ a:focus {
     text-decoration: none;
     color: var(--color-link);
     cursor: pointer;
+    transition: var(--animate-all);
 }
 a:hover {
     text-decoration: none;
     color: var(--color-highlight);
-}
-
-/* movie index */
-#movie-index {
-    width: 100%;
-    display: flex;
-    justify-content: flex-start;
-    flex-wrap: wrap;
-    flex-direction: row;
-}
-
-/* movie overview (poster, title, year) */
-.movie-overview {
-    --movie-width: 15em;
-    width: var(--movie-width);
-    margin: 15px;
-    line-height: 110%;
-}
-.movie-overview .poster {
-    width: var(--movie-width);
-    border-radius: 10px;
-    margin-bottom: 5px;
-    transition: box-shadow 0.2s ease-in-out;
-}
-.movie-overview .title {
-    width: calc(var(--movie-width) - 2em);
-    font-size: 1.2em;
-    margin-bottom: 2px;
-}
-.movie-overview .year {
-    width: var(--movie-width);
-    font-size: 0.9em;
-    filter: grayscale(0.9);
-}
-.movie-overview .poster:hover {
-    box-shadow: 0 10px 30px 0 #000e;
 }
 
 /* movie streams */
@@ -104,26 +82,50 @@ video {
     width: 100%;
 }
 
-/* form */
-form {
-    margin-bottom: 1em;
-}
-/* for buttons */
-.button,
-button {
-    font-family: var(--text-font);
-    color: var(--color-link);
-    background-color: var(--color-background);
-    border: 2px solid var(--color-link);
+/* buttons */
+.button {
+    font-weight: bold;
+    color: var(--color-background);
     border-radius: 5px;
-    padding: 2px 6px;
+    background-color: var(--color-link);
+    padding: 2px 9px;
     cursor: pointer;
+    transition: var(--animate-all);
 }
-.button:hover,
-button:hover {
-    color: var(--color-highlight);
-    border: 2px solid var(--color-highlight);
+.button > i.fa {
+    vertical-align: middle;
 }
+.button:hover {
+    color: var(--color-background);
+    background-color: var(--color-highlight);
+}
+
+/* badges */
+.badges > .badge {
+    font-weight: bold;
+    border: 2px solid var(--color-text);
+    border-radius: 5px;
+    padding: 2px 7px 1px;
+    font-size: 0.8em;
+}
+.badges > .badge:not(:last-child) {
+    margin-right: 0.8em;
+}
+ul.row.badges li.badge:not(:last-child)::after {
+    content: "";
+    margin-left: 0;
+}
+
+/* ---------------------------------------- individual changes for other screen sizes ---------------------------------------- */
+
+/* style for smaller screens */
+@media screen and (max-width: 1520px) {
+    .movie-overview {
+        --movie-width: 20em;
+    }
+}
+
+/* ---------------------------------------- special elements / pages ---------------------------------------- */
 
 /* search */
 #search-input:focus,
@@ -139,7 +141,7 @@ button:hover {
 }
 #search-input {
 	width: 20rem;
-	transition: width 0.2s ease-in-out;
+	transition: var(--animate-all);
 }
 
 /* error page */
@@ -154,10 +156,68 @@ button:hover {
     font-size: 1.1em;
 }
 
+/* ---------------------------------------- main pages ---------------------------------------- */
 
-/* style for smaller screens */
-@media screen and (max-width: 1500px) {
-    .movie-overview {
-        --movie-width: 20em;
-    }
+/* movie index page */
+#movie-index {
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    flex-direction: row;
+}
+
+.movie-overview {
+    --movie-width: 15em;
+    width: var(--movie-width);
+    margin: 15px;
+    line-height: 110%;
+}
+.movie-overview .poster {
+    width: var(--movie-width);
+    border-radius: 10px;
+    margin-bottom: 5px;
+    transition: var(--animate-all);
+}
+.movie-overview .title {
+    width: calc(var(--movie-width) - 2.5em);
+    font-size: 1.2em;
+    margin-bottom: 2px;
+}
+.movie-overview .year {
+    width: var(--movie-width);
+    font-size: 0.9em;
+    filter: grayscale(0.9);
+}
+.movie-overview .poster:hover {
+    box-shadow: 0 10px 30px 0 #000e;
+}
+
+/* movie details page */
+#movie-details .poster {
+    width: 30em;
+    border-radius: 15px;
+}
+#movie-details .short-details {
+    margin-left: 2em;
+}
+
+.short-details > :not(.title) {
+    margin-bottom: 3em;
+}
+.short-details > .description {
+    max-width: 100em;
+}
+
+.short-credits > :not(:first-child) {
+    margin-bottom: 0.5em;
+}
+.short-credits .credit-name {
+    font-weight: bold;
+    width: 5em;
+}
+
+/* on page movie stream */
+#movie-stream {
+    margin: 3em auto;
 }
