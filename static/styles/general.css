@@ -37,6 +37,9 @@ main {
     margin-top: 2em;
     margin-bottom: 2em;
 }
+footer {
+    margin-bottom: 1em;
+}
 
 /* ---------------------------------------- design templates ---------------------------------------- */
 
@@ -189,8 +192,8 @@ ul.row.badges li.badge:not(:last-child)::after {
     font-size: 0.9em;
     filter: grayscale(0.9);
 }
-.movie-overview .poster:hover {
-    box-shadow: 0 10px 30px 0 #000e;
+.movie-overview a > .poster:hover {
+    box-shadow: 0 10px 30px 0 var(--color-blur);
 }
 
 /* movie details page */
@@ -214,7 +217,7 @@ ul.row.badges li.badge:not(:last-child)::after {
 }
 .short-credits .credit-name {
     font-weight: bold;
-    width: 5em;
+    min-width: 5em;
 }
 
 /* on page movie stream */
