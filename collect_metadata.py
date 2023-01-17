@@ -51,6 +51,11 @@ def getMoviePoster(moviename:str, ignoreError:bool=False) -> str:
 		raise relImgNotFound
 	return imgs[0].get("srcset").split(", ")[-1].split(" ")[0]
 
+# get metadata from Moviepilot
+# https://www.moviepilot.de/movies/23-nichts-ist-so-wie-es-scheint
+def getMetadatFromMoviepilot(moviename:str, ignoreError:bool=False) -> dict:
+	pass
+
 # get metadata from imdb
 def getMetadataFromIMDB(moviename:str, ignoreError:bool=False) -> dict:
 	header = {"user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36" ,"referer":"https://www.google.com/"}
