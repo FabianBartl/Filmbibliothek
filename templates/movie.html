@@ -37,9 +37,11 @@
 					</a>
 				</li>
 			</ul>
-			<div class="description">
-				{{ movie.get('description') }}
-			</div>
+			{% if movie.get('description') %}
+				<div class="description">
+					{{ movie.get('description') }}
+				</div>
+			{% endif %}
 			<div class="row short-credits">
 				<ul>
 					{% for credit in ['director', 'author', 'studio', 'genre'] %}
