@@ -12,26 +12,20 @@
 	{% for movieID, data in movies.items() %}
 		<div id="movie-{{ movieID }}" class="movie-overview">
 			<a href="movie/{{ movieID }}/">
-				<img class="poster" src="{{ data.get('poster') }}">
+				<img class="poster" src="{{ data.get('poster') }}" alt="no poster found">
 			</a>
 			<div class="title">
-				{% if config.get('title_length') != 0 %}
+				{% if config.get('title_length', 0) != 0 %}
 					{{ data.title | truncate(config.get('title_length')) }}
 				{% else %}
 					{{ data.title }}
 				{% endif %}
 			</div>
-			<div class="year">
-				{{ data.get('year') }}
-			</div>
+			{% if data.get('year') %}
+				<div class="year">
+					{{ data.get('year') }}
+				</div>
+			{% endif %}
 		</div>
 	{% endfor %}
-{% endblock %}
-
-{% block footer %}
-	<form action="/" method="post" class="row buttons">
-		<button name="update_software" submit>Nach Updates suchen</button>
-		<button name="reload_movies" submit>Filmdaten neu laden</button>
-		<button name="collect_metadata" submit>Filmdaten neu sammeln</button>
-	</form>
 {% endblock %}
