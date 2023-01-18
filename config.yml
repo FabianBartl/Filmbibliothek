@@ -1,4 +1,6 @@
 
+# the webserver requires a restart in order to apply changes to the configuration
+
 # color theme of the webpage
 # possible strings: dark, light, debug
 theme: dark
@@ -19,7 +21,8 @@ title-length: 0
 # possible strings: unclickable, hidden, blurred, grayed, darkened, inverted, faded, cleared
 # (multiple values possible)
 not-result-filter:
-  - cleared
+  - blurred
+  - faded
   - unclickable
 
 # webpage icon

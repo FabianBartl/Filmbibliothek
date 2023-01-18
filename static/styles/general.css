@@ -5,10 +5,15 @@
 /* ---------------------------------------- general styling and variable ---------------------------------------- */
 
 /* variables */
-html {
+:root {
     --text-font: "Dubai", sans-serif;
     --animate-all: all 0.2s ease-in-out;
     --badge-border: 2px solid var(--color-text);
+    /* default filter values */
+    --blur-value: 0;
+    --grayscale-value: 0;
+    --brightness-value: 1;
+    --invert-value: 0;    
 }
 
 /* everything */
@@ -125,13 +130,27 @@ ul.row.badges li.badge:not(:last-child)::after {
     pointer-events: none;
     cursor: default;
 }
-.hidden     { display: none; }
-.blurred    { filter: blur(7px); }
-.grayed     { filter: grayscale(1); }
-.darkened   { filter: brightness(0.3); }
-.inverted   { filter: invert(1); }
-.faded      { opacity: 30%; }
-.cleared    { opacity: 0%; }
+.hidden {
+    display: none;
+}
+
+.faded { opacity: 30%; }
+.cleared { opacity: 0%; }
+
+/* apply all filter values */
+/* https://stackoverflow.com/questions/27421135/use-multiple-css-filters-at-the-same-time */
+.filter {
+    filter:
+        blur(var(--blur-value)) 
+        grayscale(var(--grayscale-value))
+        brightness(var(--brightness-value))
+        invert(var(--invert-value));
+}
+/* modify fliter values */
+.blurred { --blur-value: 7px; }
+.grayed { --grayscale-value: 1; }
+.darkened { --brightness-value: 0.3; }
+.inverted { --invert-value: 1; }
 
 /* ---------------------------------------- individual changes for other screen sizes ---------------------------------------- */
 

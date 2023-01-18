@@ -33,11 +33,14 @@
 						return result;
 					},
 
-					[{% for filter in config.get("not-result-filter") %}
-						{% if filter in ["unclickable", "hidden", "blurred", "grayed", "darkened", "inverted", "faded", "cleared"] %}
-							"{{ filter }}",
-						{% endif %}
-					{% endfor %}], 1
+					[
+						{% for filter in config.get("not-result-filter", []) %}
+							{% if filter in ["unclickable", "hidden", "blurred", "grayed", "darkened", "inverted", "faded", "cleared"] %}
+								"{{ filter }}",
+							{% endif %}
+						{% endfor %}
+						"filter"
+					], 1
 				);
 			});
 			search_input.keyup();
