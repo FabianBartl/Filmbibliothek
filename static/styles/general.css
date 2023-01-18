@@ -120,20 +120,16 @@ ul.row.badges li.badge:not(:last-child)::after {
     margin-left: 0;
 }
 
-/* apply effects  */
-.hidden {
-    display: none;
-}
-.blurred {
-    filter: blur(7px);
-}
+/* effects  */
 .unclickable {
     pointer-events: none;
     cursor: default;
 }
-.grayed {
-    filter: grayscale(1);
-}
+.hidden     { display: none; }
+.blurred    { filter: blur(7px); }
+.grayed     { filter: grayscale(1); }
+.darkened   { filter: brightness(0.3); }
+.inverted   { filter: invert(); }
 
 /* ---------------------------------------- individual changes for other screen sizes ---------------------------------------- */
 
