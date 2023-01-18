@@ -62,6 +62,15 @@ def index():
 	search_query = request.args.get("query")
 	return render_template("index.html", movies=MOVIES, movies_array=movies_array, search_query=search_query, debug_mode=DEBUG)
 
+# favicon image
+@app.route("/favicon.ico")
+def favicon():
+	global CONFIG
+	images_dir = os.path.abspath(os.path.join("static", "images"))
+	if os.path.isfile(os.path.join(images_dir, favicon := CONFIG.get("favicon"))):
+		return send_from_directory(images_dir, favicon, as_attachment=False)
+	abort(404)
+
 # detailed movie data
 @app.route("/movie/<movieID>/")
 def movie(movieID):

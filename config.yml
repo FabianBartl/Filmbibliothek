@@ -4,7 +4,7 @@
 theme: dark
 
 # directories of movies and related metadata files
-# possible strings: [absolute path], [relative path]
+# possible strings: [absolute path]
 # (multiple values possible)
 movie-directories:
   - N:\\Videos\\Filme
@@ -21,6 +21,10 @@ title-length: 0
 not-result-filter:
   - blurred
   - unclickable
+
+# webpage icon
+# possible values: [path relative to 'static/images/']
+favicon: favicon.png
 
 # port of webserver, where the webpage is available
 # possible integers: 80, >=1025
