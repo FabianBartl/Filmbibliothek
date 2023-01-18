@@ -131,6 +131,9 @@ ul.row.badges li.badge:not(:last-child)::after {
     pointer-events: none;
     cursor: default;
 }
+.grayed {
+    filter: grayscale(1);
+}
 
 /* ---------------------------------------- individual changes for other screen sizes ---------------------------------------- */
 
@@ -208,7 +211,7 @@ ul.row.badges li.badge:not(:last-child)::after {
     filter: grayscale(0.9);
 }
 .movie-overview a > .poster:hover {
-    box-shadow: 0 10px 30px 0 var(--color-blur);
+    box-shadow: 0 10px 30px 0 var(--color-shadow);
 }
 
 /* movie details page */

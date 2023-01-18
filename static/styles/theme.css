@@ -16,7 +16,7 @@ html[theme="dark"] {
 	--color-text: var(--beige);
 	--color-link: var(--orange);
 	--color-highlight: var(--yellow);
-	--color-blur: #000e;
+	--color-shadow: #000e;
 }
 html[theme="light"] {
 	--color-background: var(--beige);
@@ -24,7 +24,7 @@ html[theme="light"] {
 	--color-text: var(--blue);
 	--color-link: var(--orange);
 	--color-highlight: var(--yellow);
-	--color-blur: #444e;
+	--color-shadow: #444e;
 }
 
 /* debug */

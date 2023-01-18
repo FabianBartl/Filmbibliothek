@@ -23,7 +23,7 @@ not-result-filter:
   - unclickable
 
 # webpage icon
-# possible values: [path relative to 'static/images/']
+# possible strings: [path relative to 'static/images/']
 favicon: favicon.png
 
 # port of webserver, where the webpage is available
