@@ -16,7 +16,7 @@ movie-directories:
 title-length: 0
 
 # filters that are applied to movie elements not included in the search results
-# possible strings: blurred, hidden, unclickable
+# possible strings: unclickable, hidden, blurred, grayed, darkened, inverted
 # (multiple values possible)
 not-result-filter:
   - blurred
