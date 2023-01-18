@@ -1,35 +1,35 @@
 {% extends 'default.html' %}
 
-{% set title = 'Film: "' + movie.title|e + '"' %}
+{% set title = 'Film: "' + movie.title + '"' %}
 {% set mainID = 'movie-details' %}
 
 {% block main %}
 	<div class="row">
 		{% if movie.get('poster') %}
-			<img class="poster" src="{{ movie.get('poster') | e }}">
+			<img class="poster" src="{{ movie.get('poster') }}">
 		{% else %}
 			<img class="poster" src="{{ url_for('static', filename='images/blank-poster.jpg') }}">
 		{% endif %}
 		<div class="short-details">
 			<h2 class="title">
-				{{ movie.title | e }}
+				{{ movie.title }}
 			</h2>
 			<div class="row">
 				<ul class="row">
 					{% if movie.get('year') %}
 						<li class="year">
-							{{ movie.get('year') | e }}
+							{{ movie.get('year') }}
 						</li>
 					{% endif %}
 					<li class="duration">
-						{{ movie.get('duration')[0] | e }} h
-						{{ movie.get('duration')[1] | e }} min
+						{{ movie.get('duration')[0] }} h
+						{{ movie.get('duration')[1] }} min
 					</li>
 				</ul>
 				<ul class="row badges">
 					{% for badge in ['age-rating', 'resolution'] %}
 						{% if movie.get(badge) %}
-							<li class="badge">{{ movie.get(badge) | e }}</li>
+							<li class="badge">{{ movie.get(badge) }}</li>
 						{% endif %}
 					{% endfor %}
 				</ul>
@@ -43,7 +43,7 @@
 			</ul>
 			{% if movie.get('description') %}
 				<div class="description">
-					{{ movie.get('description') | e }}
+					{{ movie.get('description') }}
 				</div>
 			{% endif %}
 			<div class="short-credits">
@@ -57,9 +57,9 @@
 							<div class="credit-content">
 								{% set names = movie.get(credit) %}
 								{% if names is string %}
-									{{ names | e }}
+									{{ names }}
 								{% else %}
-									{{ ', '.join(names) | e }}
+									{{ ', '.join(names) }}
 								{% endif %}
 							</div>
 						</div>

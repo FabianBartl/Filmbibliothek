@@ -119,6 +119,18 @@ ul.row.badges li.badge:not(:last-child)::after {
     margin-left: 0;
 }
 
+/* apply effects  */
+.hidden {
+    display: none;
+}
+.blurred {
+    filter: blur(5px);
+}
+.unclickable {
+    pointer-events: none;
+    cursor: default;
+}
+
 /* ---------------------------------------- individual changes for other screen sizes ---------------------------------------- */
 
 /* style for smaller screens */
@@ -134,7 +146,7 @@ ul.row.badges li.badge:not(:last-child)::after {
 #search-input:focus,
 #search-input {
 	padding: 0.5em;
-	color: var(--color-text);
+	color: var(--color-background);
 	border-radius: 5px;
 	text-overflow: ellipsis;
     font-size: 1.1rem;
@@ -168,6 +180,9 @@ ul.row.badges li.badge:not(:last-child)::after {
     justify-content: flex-start;
     flex-wrap: wrap;
     flex-direction: row;
+}
+#movie-index .movie-overview {
+    transition: var(--animate-all);
 }
 
 .movie-overview {
@@ -212,8 +227,8 @@ ul.row.badges li.badge:not(:last-child)::after {
     max-width: 100em;
 }
 
-.short-credits > :not(:first-child) {
-    margin-bottom: 0.5em;
+.short-credits > div {
+    margin-bottom: 0.3em;
 }
 .short-credits .credit-name {
     font-weight: bold;
