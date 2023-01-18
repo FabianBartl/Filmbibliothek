@@ -34,7 +34,9 @@
 						return result;
 					},
 
-					["blurred", "unclickable"], 1
+					[{% for filter in config.get("not-result-filter") %}
+						"{{ filter }}",
+					{% endfor %}], 1
 				);
 			});
 			search_input.keyup();
@@ -54,7 +56,7 @@
 			</a>
 			<div class="title">
 				{% if config.get('title_length', 0) != 0 %}
-					{{ data.title | truncate(config.get('title_length')) }}
+					{{ data.title | truncate(config.get('title-length')) }}
 				{% else %}
 					{{ data.title }}
 				{% endif %}

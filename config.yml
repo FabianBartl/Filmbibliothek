@@ -3,21 +3,29 @@
 # possible strings: dark, light, debug
 theme: dark
 
-# directory of movies and related metadata files
-# possible strings: [absolute path], [relative path] 
-movie_directories:
+# directories of movies and related metadata files
+# possible strings: [absolute path], [relative path]
+# (multiple values possible)
+movie-directories:
   - N:\\Videos\\Filme
   - N:\\Videos\\Kinderfilme
 
 # length of title displayed in movie overview
 # possible integers: >= 0
 # note: use 0 to not limit the length of the title
-title_length: 0
+title-length: 0
+
+# filters that are applied to movie elements not included in the search results
+# possible strings: blurred, hidden, unclickable
+# (multiple values possible)
+not-result-filter:
+  - blurred
+  - unclickable
 
 # port of webserver, where the webpage is available
 # possible integers: 80, >=1025
-server_port: 80
+server-port: 80
 
 # debug mode (debug console of webserver
 # possible values: true, false
-debug_mode: true
+debug-mode: true
