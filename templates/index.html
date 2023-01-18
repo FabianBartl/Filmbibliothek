@@ -5,7 +5,41 @@
 {% set mainID = 'movie-index' %}
 
 {% block aside %}
-	<input id="search-input" type="text" placeholder="Filme durchsuchen ...">
+<input id="search-input" type="text" {% if search_query %}value="{{ search_query }}"{% endif %} placeholder="Filme durchsuchen ...">
+	<script>
+		$(document).ready(function(){
+			// search input field and data source
+			var search_input = $("#search-input");
+			const movies_data = {{ movies_array | safe }};
+			
+			// call on typing in search field
+			search_input.keyup(function(event) {
+				searchResults(
+					event, movies_data, search_input,
+
+					// searchable values
+					function(movie) {
+						const keys = ["title", "description", "age-rating", "year", "resolution", "director", "author", "genre", "main-cast"];
+						var result = [];
+						keys.forEach(function(key) {
+							var value = movie[key];
+							if (value !== null && value !== undefined) {
+								if (typeof(value) === Array) {
+									result.push(value.join(""));
+								} else {
+									result.push(value.toString());
+								}
+							}
+						});
+						return result;
+					},
+
+					["blurred", "unclickable"], 1
+				);
+			});
+			search_input.keyup();
+		});
+	</script>
 {% endblock %}
 
 {% block main %}
@@ -13,21 +47,21 @@
 		<div id="movie-{{ movieID }}" class="movie-overview">
 			<a href="movie/{{ movieID }}/">
 				{% if data.get('poster') %}
-					<img class="poster" src="{{ data.get('poster') | e }}">
+					<img class="poster" src="{{ data.get('poster') }}">
 				{% else %}
 					<img class="poster" src="{{ url_for('static', filename='images/blank-poster.jpg') }}">
 				{% endif %}
 			</a>
 			<div class="title">
 				{% if config.get('title_length', 0) != 0 %}
-					{{ data.title | truncate(config.get('title_length')) | e }}
+					{{ data.title | truncate(config.get('title_length')) }}
 				{% else %}
-					{{ data.title | e }}
+					{{ data.title }}
 				{% endif %}
 			</div>
 			{% if data.get('year') %}
 				<div class="year">
-					{{ data.get('year') | e }}
+					{{ data.get('year') }}
 				</div>
 			{% endif %}
 		</div>

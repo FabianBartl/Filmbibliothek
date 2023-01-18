@@ -55,9 +55,12 @@ def not_found(error):
 
 # movie overview
 @app.route("/")
+@app.route("/", methods=["GET"])
 def index():
 	global MOVIES, DEBUG
-	return render_template("index.html", movies=MOVIES, debug_mode=DEBUG)
+	movies_array = str(list(MOVIES.values()))
+	search_query = request.args.get("query")
+	return render_template("index.html", movies=MOVIES, movies_array=movies_array, search_query=search_query, debug_mode=DEBUG)
 
 # detailed movie data
 @app.route("/movie/<movieID>/")
