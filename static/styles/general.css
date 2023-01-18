@@ -129,7 +129,9 @@ ul.row.badges li.badge:not(:last-child)::after {
 .blurred    { filter: blur(7px); }
 .grayed     { filter: grayscale(1); }
 .darkened   { filter: brightness(0.3); }
-.inverted   { filter: invert(); }
+.inverted   { filter: invert(1); }
+.faded      { opacity: 30%; }
+.cleared    { opacity: 0%; }
 
 /* ---------------------------------------- individual changes for other screen sizes ---------------------------------------- */
 
