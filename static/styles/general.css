@@ -8,6 +8,7 @@
 html {
     --text-font: "Dubai", sans-serif;
     --animate-all: all 0.2s ease-in-out;
+    --badge-border: 2px solid var(--color-text);
 }
 
 /* everything */
@@ -106,7 +107,7 @@ video {
 /* badges */
 .badges > .badge {
     font-weight: bold;
-    border: 2px solid var(--color-text);
+    border: var(--badge-border);
     border-radius: 5px;
     padding: 2px 7px 1px;
     font-size: 0.8em;
@@ -124,7 +125,7 @@ ul.row.badges li.badge:not(:last-child)::after {
     display: none;
 }
 .blurred {
-    filter: blur(5px);
+    filter: blur(7px);
 }
 .unclickable {
     pointer-events: none;
@@ -143,20 +144,19 @@ ul.row.badges li.badge:not(:last-child)::after {
 /* ---------------------------------------- special elements / pages ---------------------------------------- */
 
 /* search */
-#search-input:focus,
 #search-input {
 	padding: 0.5em;
-	color: var(--color-background);
+	color: var(--color-text);
+    background-color: var(--color-background);
+    border: var(--badge-border);
 	border-radius: 5px;
 	text-overflow: ellipsis;
     font-size: 1.1rem;
+    width: 20rem;
+    transition: var(--animate-all);
 }
 #search-input:focus {
     width: 100%;
-}
-#search-input {
-	width: 20rem;
-	transition: var(--animate-all);
 }
 
 /* error page */

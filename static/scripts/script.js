@@ -27,6 +27,7 @@ function searchResults(event, objectArray, inputElement, toArray, notResultClass
 	var invalidChars = /[^a-z0-9\-]/gi;
 	var query=inputElement.val().toLowerCase(), validQuery=query.replace(invalidChars, "");
 	
+    // remove previous added search classes
     objectArray.forEach((object) => {
         notResultClasses.forEach(function(resultClass) {
             document.getElementById("movie-"+object.movieID).classList.remove(resultClass);
@@ -34,6 +35,7 @@ function searchResults(event, objectArray, inputElement, toArray, notResultClass
     });
 
 	if (validQuery.length >= minLenght) {
+        // search for query in array
 		objectArray.filter((object) => {
 			objectArray = toArray(object).map((attribute) => {
 				return attribute.toLowerCase().replace(invalidChars, "");
@@ -47,14 +49,16 @@ function searchResults(event, objectArray, inputElement, toArray, notResultClass
 				}
 			});
 			return !anyIsTrue;
-		
+
 		}).forEach((object) => {
+            // add search classes
             notResultClasses.forEach(function(resultClass) {
                 document.getElementById("movie-"+object.movieID).classList.add(resultClass);
             });
         });
     }
 
+    // save search query in url
     if (event.keyCode === 13 || validQuery.length % ((minLenght+1)*2) === 0) {
 		window.history.pushState({},
 			document.title,

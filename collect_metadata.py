@@ -149,7 +149,7 @@ if __name__ == "__main__":
 		config_yaml = yaml.safe_load(file)
 	
 	# get and check paths from config
-	movie_directories = config_yaml.get("movie_directories")
+	movie_directories = config_yaml.get("movie-directories")
 	for i, movie_directory in enumerate(movie_directories):
 		if not os.path.isdir(movie_directory):
 			raise ValueError(f"Directory '{movie_directory}' not found")

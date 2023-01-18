@@ -94,7 +94,7 @@ if __name__ == "__main__":
 	MOVIES = load_movies()
 	CONFIG = load_config()
 
-	DEBUG = CONFIG.get("debug_mode", False)
-	port = CONFIG.get("server_port", 80)
+	DEBUG = CONFIG.get("debug-mode", False)
+	port = CONFIG.get("server-port", 80)
 	
 	app.run(debug=DEBUG, port=port)
