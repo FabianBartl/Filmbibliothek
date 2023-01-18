@@ -34,7 +34,9 @@
 					},
 
 					[{% for filter in config.get("not-result-filter") %}
-						"{{ filter }}",
+						{% if filter in ["unclickable", "hidden", "blurred", "grayed", "darkened", "inverted", "faded", "cleared"] %}
+							"{{ filter }}",
+						{% endif %}
 					{% endfor %}], 1
 				);
 			});
