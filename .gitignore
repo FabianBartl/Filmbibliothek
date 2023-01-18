@@ -127,14 +127,4 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
-
-#
-Videos/23 - Nichts ist so wie es scheint.mp4
-Videos/23 - Nichts ist so wie es scheint.txt
-request.html
-request_page.html
-23 - Nichts ist so wie es scheint.json
-movies.json
-movies/23 - Nichts ist so wie es scheint.mp4
-movies/23 - Nichts ist so wie es scheint.txt
-Screenshot 2023-01-09 131715.png
+static/data/movies.json
