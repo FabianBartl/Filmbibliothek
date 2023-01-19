@@ -31,8 +31,6 @@ movie-directories:
   - N:\\Videos\\Kinderfilme
 ```
 
-<br>
-
 #### Search functionality
 
 ![](screenshot_index-page_search-results.png)
@@ -50,8 +48,6 @@ not-result-filter:
 ```
 
 Run [collect_metadata.py](collect_metadata.py) to update the listed movies and their data stored in [static/data/movies.json](static/data/movies.json) if you have added movies or changed user-defined metadata files.
-
-<br>
 
 #### Movie page
 
@@ -79,7 +75,7 @@ main-cast:
   - Dieter Landuris
 ```
 
-In this case, the description is not defined in the YAML file, but read from a metadata file created by the movie download tool [MediadiathekView]():
+In this case, the description is not defined in the YAML file, but read from a metadata file created by the movie download tool [MediadiathekView](https://mediathekview.de/):
 
 ```
 Sender:      ARD
