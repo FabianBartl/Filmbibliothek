@@ -35,13 +35,13 @@ movie-directories:
 
 ![](screenshot_index-page_search-results.png)
 
-Configured filters are applied to movies that are not included in the search results. These filters can be set with the `not-result-filter` setting in the [config.yml](config.yml) file:
+Configured filters are applied to movies that are not included in the search results. These filters can be set with the `not-result-filters` setting in the [config.yml](config.yml) file:
 
 ```yml
 # filters that are applied to movie elements not included in the search results
 # possible strings: unclickable, hidden, blurred, grayed, darkened, inverted, faded, cleared
 # (multiple values possible)
-not-result-filter:
+not-result-filters:
   - blurred
   - faded
   - unclickable

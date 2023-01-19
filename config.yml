@@ -20,7 +20,7 @@ title-length: 0
 # filters that are applied to movie elements not included in the search results
 # possible strings: unclickable, hidden, blurred, grayed, darkened, inverted, faded, cleared
 # (multiple values possible)
-not-result-filter:
+not-result-filters:
   - blurred
   - faded
   - unclickable
