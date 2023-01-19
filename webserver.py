@@ -1,11 +1,11 @@
 
 import json, yaml, os
-from urllib.parse import unquote_plus, quote_plus
+from urllib.parse import unquote_plus, quote_plus, unquote, quote
 from colorama import Fore, Back, Style, init
 init(autoreset=True)
 
 from flask import Flask
-from flask import redirect, url_for, render_template, send_from_directory, abort, request
+from flask import redirect, url_for, render_template, send_from_directory, abort, send_file, request
 
 # ---------- global used variables ----------
 
@@ -45,7 +45,7 @@ app.jinja_env.filters["truncate"] = truncate
 @app.context_processor
 def inject_variables():
 	global CONFIG
-	return {"config": CONFIG}
+	return {"config": CONFIG, "app_config": app.config}
 
 # ---------- error pages ----------
 
@@ -63,6 +63,14 @@ def index():
 	movies_array = str(list(MOVIES.values()))
 	search_query = request.args.get("query")
 	return render_template("index.html", movies=MOVIES, movies_array=movies_array, search_query=search_query, debug_mode=DEBUG)
+
+# return ANY local file requested by url path
+# (Note: Never pass file paths provided by a user to send_file() function)
+@app.route("/localpath/<path:filepath>")
+def localpath(filepath):
+	if os.path.isfile(filepath):
+		return send_file(filepath)
+	return abort(404)
 
 # favicon image
 @app.route("/favicon.ico")
