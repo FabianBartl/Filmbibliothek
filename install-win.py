@@ -34,7 +34,7 @@ try:
     customHost = True
     print(Fore.GREEN + f"Host '{host}' added to DNS resolver")
 except PermissionError:
-    print(Fore.YELLOW + f"Run the installation script as administrator to add '{host}' as host to DNS resolver")
+    print(Fore.YELLOW + f"Run the installation script as administrator to add '{host}' as host to local DNS resolver")
 
 # add webserver shortcut to startup
 shell = Dispatch("WScript.shell")

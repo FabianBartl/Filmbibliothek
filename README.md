@@ -1,7 +1,7 @@
 
 # Filmbibliothek
 
-## Release: v0.2.0
+## Release: v0.2.1
 
 - Own modern designed webpage
 - Provides an installation script for Windows: [install-win.py](install-win.py)
