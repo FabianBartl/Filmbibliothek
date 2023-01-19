@@ -49,6 +49,8 @@ not-result-filter:
   - unclickable
 ```
 
+Run [collect_metadata.py](collect_metadata.py) to update the listed movies and their data stored in [static/data/movies.json](static/data/movies.json) if you have added movies or changed user-defined metadata files.
+
 <br>
 
 #### Movie page
