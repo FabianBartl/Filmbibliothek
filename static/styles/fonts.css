@@ -1,0 +1,8 @@
+@font-face {
+	font-family: "Dubai";
+	font-weight: 400;
+	font-display: swap;
+	src: local("Dubai")
+		,url("../fonts/dubai-regular.woff2") format("woff2")
+		,url("../fonts/dubai-regular.ttf") format("ttf");
+}
