@@ -83,7 +83,7 @@ def getUserDefMetadata(filename:str) -> dict:
 	with open(filename, "r", encoding="utf-8") as file:
 		metadata = yaml.safe_load(file)
 
-	permitted_datafields = ["filename", "extension", "filepath", "directory", "movieID", "imdb_url", "duration"]
+	permitted_datafields = ["filename", "extension", "filepath", "directory", "movieID", "imdb_url", "duration", "resolution"]
 	for key in metadata:
 		if key in permitted_datafields:
 			del metadata[key]

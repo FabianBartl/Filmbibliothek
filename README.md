@@ -53,7 +53,7 @@ Run [collect_metadata.py](collect_metadata.py) to update the listed movies and t
 
 ![](screenshot_movie-page.png)
 
-The `poster`, `year`, `age-rating`, `resolution`, `description`, `director`, `author`, `genre` and the `main-cast` attribute can be set in the user-defined `[MOVIE NAME].yml` file. This file must be located in the same directory as the video file.
+The `poster`, `year`, `age-rating`, `description`, `director`, `author`, `genre` and the `main-cast` attribute can be set in the user-defined `[MOVIE NAME].yml` file. This file must be located in the same directory as the video file.
 
 ```yml
 poster: https://m.media-amazon.com/images/M/MV5BN2Y3NmQ5NGQtMjYwYi00ZDA5LThhZDYtN2FkZGZlNTA5MmY1L2ltYWdlL2ltYWdlXkEyXkFqcGdeQXVyMzA3Njg4MzY@._V1_QL75_UY562_CR9
