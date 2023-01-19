@@ -105,5 +105,8 @@ if __name__ == "__main__":
 
 	DEBUG = CONFIG.get("debug-mode", False)
 	port = CONFIG.get("server-port", 80)
+	if not (port == 80 or port >= 1025):
+		print("Invalid server port")
+		exit()
 	
 	app.run(debug=DEBUG, port=port)
