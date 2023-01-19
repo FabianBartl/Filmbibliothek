@@ -1,29 +1,20 @@
 
-import os, sys, yaml, subprocess
+import os, sys, subprocess
 
 # install python packages
-try:
-    import winshell, collect_metadata
-    from win32com.client import Dispatch
-    from colorama import Fore, Back, Style, init
-    
-    init(autoreset=True)
-    print(Fore.GREEN + "Packages already installed")
+with open("requirements.txt", "r", encoding="utf-8") as file:
+    requirements = [ line.strip() for line in file.readlines() ]
+for package in requirements:
+    if not package in sys.modules:
+        subprocess.check_call([sys.executable, "-m", "pip", "install", package])
 
-except:
-    with open("requirements.txt", "r", encoding="utf-8") as file:
-        requirements = [ line.strip() for line in file.readlines() ]
-    for package in requirements:
-        if not package in sys.modules:
-            subprocess.check_call([sys.executable, "-m", "pip", "install", package])
+# these packages are first available after the requirements.txt installation
+import winshell, collect_metadata, yaml
+from win32com.client import Dispatch
+from colorama import Fore, Back, Style, init
 
-    # these packages are first available after the requirements.txt installation
-    import winshell, collect_metadata
-    from win32com.client import Dispatch
-    from colorama import Fore, Back, Style, init
-    
-    init(autoreset=True)
-    print(Fore.GREEN + "Packages installed")
+init(autoreset=True)
+print(Fore.GREEN + "Packages installed")
 
 # load config.yml
 with open("config.yml", "r", encoding="utf-8") as file:
