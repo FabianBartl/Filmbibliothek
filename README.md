@@ -11,7 +11,7 @@
 ### Known issues
 
 - Sometimes wrong scraped movie posters
-- Most movie data incomplete (scraping not yet implemented)
+- Scraped movie data incomplete (currently only movie posters are being scraped)
 - Only German UI available
 
 ### Impressions
