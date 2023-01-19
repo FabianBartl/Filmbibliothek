@@ -65,7 +65,7 @@ def index():
 	return render_template("index.html", movies=MOVIES, movies_array=movies_array, search_query=search_query, debug_mode=DEBUG)
 
 # return ANY local file requested by url path
-# (Note: Never pass file paths provided by a user to send_file() function)
+# (Note from the documentation: Never pass file paths provided by a user to the send_file() function)
 @app.route("/localpath/<path:filepath>")
 def localpath(filepath):
 	if os.path.isfile(filepath):

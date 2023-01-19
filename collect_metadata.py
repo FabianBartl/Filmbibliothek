@@ -87,6 +87,8 @@ def getUserDefMetadata(filename:str) -> dict:
 	for key in metadata:
 		if key in permitted_datafields:
 			del metadata[key]
+	if not metadata.get("poster").startswith("http"):
+		metadata["poster"] = "/localpath/" + metadata["poster"]
 	
 	return metadata
 
