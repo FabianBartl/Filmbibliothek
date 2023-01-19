@@ -1,6 +1,8 @@
 
 import json, yaml, os
 from urllib.parse import unquote_plus, quote_plus
+from colorama import Fore, Back, Style, init
+init(autoreset=True)
 
 from flask import Flask
 from flask import redirect, url_for, render_template, send_from_directory, abort, request
@@ -97,7 +99,6 @@ def movie_subtitles_language(movieID, language):
 	return abort(404)
 
 
-
 # run webserver
 if __name__ == "__main__":
 	MOVIES = load_movies()
@@ -106,7 +107,8 @@ if __name__ == "__main__":
 	DEBUG = CONFIG.get("debug-mode", False)
 	port = CONFIG.get("server-port", 80)
 	if not (port == 80 or port >= 1025):
-		print("Invalid server port")
+		print(Fore.RED + "Invalid server port")
 		exit()
 	
+	print(Fore.RED + "DO NOT CLOSE THIS WINDOW")
 	app.run(debug=DEBUG, port=port)
