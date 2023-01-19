@@ -74,7 +74,7 @@ def getMetadataFromIMDB(moviename:str, ignoreError:bool=False) -> dict:
 	metadata = {}
 	metadata["imdb_id"] = page.get("href").split("/")[2]
 	metadata["imdb_url"] = "https://www.imdb.com/title/"
-	metadata["poster"] = getMoviePoster(moviename, "imdb")
+	metadata["poster"] = getMoviePoster(moviename, ignoreError=ignoreError)
 
 	return metadata
 
@@ -87,7 +87,7 @@ def getUserDefMetadata(filename:str) -> dict:
 	for key in metadata:
 		if key in permitted_datafields:
 			del metadata[key]
-	if not metadata.get("poster").startswith("http"):
+	if not metadata.get("poster").startswith(("http", "/localpath/")):
 		metadata["poster"] = "/localpath/" + metadata["poster"]
 	
 	return metadata
@@ -138,7 +138,7 @@ def run(movie_directories:list[str]) -> None:
 				movie_metadata["description"] = getDescFromFile(file)
 			if os.path.isfile(file := f"{metadata_file}.yml"):
 				movie_metadata |= getUserDefMetadata(file)
-			
+
 			metadata[movieID] = movie_metadata
 			movieID += 1
 	
