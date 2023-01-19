@@ -33,6 +33,9 @@ favicon: favicon.png
 # possible integers: 80, >=1025
 server-port: 80
 
+# host added by the installation script to dns resolver
+server-host: filmbibliothek
+
 # debug mode (debug console of webserver
 # possible values: true, false
 debug-mode: true
