@@ -42,8 +42,12 @@ try:
     logger.info(f"added {host=} to local dns resolver")
     print(Fore.GREEN + f"Host '{host}' added to DNS resolver")
 except PermissionError:
-    logger.warning(f"failed to add {host=} to local dns resolver")
+    logger.warning(f"PermissionError: failed to add {host=} to local dns resolver")
     print(Fore.YELLOW + f"Run the installation script as administrator to add '{host}' as host to local DNS resolver")
+except Exception as error:
+    logger.critical(error)
+    print(error)
+    exit()
 
 # add webserver.py to startup directory
 logger.debug("add webserver.py to windows startup directory")
