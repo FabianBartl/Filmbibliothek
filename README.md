@@ -1,7 +1,7 @@
 
 # Filmbibliothek
 
-## Release: v0.2.1
+## Release: v0.2.2
 
 - Own modern designed webpage
 - Provides an installation script for Windows: [install-win.py](install-win.py)
@@ -13,6 +13,10 @@
 - Sometimes wrong scraped movie posters
 - Scraped movie data incomplete (currently only movie posters are being scraped)
 - Only German UI available
+
+### Patch notes
+
+- Added logging for troubleshooting
 
 ### Impressions
 
