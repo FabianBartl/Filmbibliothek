@@ -1,4 +1,8 @@
 
+import custom_logger
+logger = custom_logger.init(__file__)
+logger.debug(f"start of script: {__file__}")
+
 import json, yaml, os
 from urllib.parse import unquote_plus, quote_plus, unquote, quote
 from colorama import Fore, Back, Style, init
@@ -16,21 +20,44 @@ DEBUG = False
 # init flask app
 app = Flask(__name__)
 
+logger.debug(f"global variables initialized")
+
 # ---------- functions ----------
 
 # load movies data file into global variable
 def load_movies() -> dict:
-	with open(os.path.join("static", "data", "movies.json"), "r", encoding="utf-8") as file:
-		return json.load(file)
+	filename = os.path.abspath(os.path.join("static", "data", "movies.json"))
+	logger.debug(f"try: open {filename=}")
+	try:
+		with open(filename, "r", encoding="utf-8") as file:
+			data = json.load(file)
+			logger.info("loaded json movie data")
+			return data
+	# unexpected error
+	except Exception as error:
+		logger.critical(error)
+		print(Fore.RED + f"Couldn't load movie data from '{filename}'")
+		exit()
 
 # load config from yaml file
 def load_config() -> dict:
-	with open("config.yml", "r", encoding="utf-8") as file:
-		return yaml.safe_load(file)
+	filename = os.path.abspath("config.yml")
+	logger.debug(f"try: open {filename=}")
+	try:
+		with open(filename, "r", encoding="utf-8") as file:
+			data = yaml.safe_load(file)
+			logger.info("loaded yaml config data")
+			return data
+	# unexpected error
+	except Exception as error:
+		logger.critical(error)
+		print(Fore.RED + f"Couldn't load config data from '{filename}'")
+		exit()
 
 # ---------- custom jinja filters ----------
 
 app.jinja_env.filters["urlEncode"] = lambda url: quote_plus(url)
+app.jinja_env.filters["urlEncodePlus"] = lambda url: quote(url)
 
 # truncate string and append ellipsis
 def truncate(value, length, ellipsis="..."):
@@ -39,6 +66,8 @@ def truncate(value, length, ellipsis="..."):
 	return value
 app.jinja_env.filters["truncate"] = truncate
 
+logger.debug(f"custom jinja filters defined")
+
 # ---------- jinja context variable ----------
 
 # set context variables for useage in templates
@@ -46,6 +75,8 @@ app.jinja_env.filters["truncate"] = truncate
 def inject_variables():
 	global CONFIG
 	return {"config": CONFIG, "app_config": app.config}
+
+logger.debug(f"added yaml config and app config to jinja context")
 
 # ---------- error pages ----------
 
@@ -106,17 +137,29 @@ def movie_subtitles_language(movieID, language):
 			return send_from_directory(movie["directory"], file, as_attachment=False)
 	return abort(404)
 
+logger.debug(f"end of script: {__file__}")
 
-# run webserver
-if __name__ == "__main__":
-	MOVIES = load_movies()
-	CONFIG = load_config()
+# ---------- start routine ----------
 
-	DEBUG = CONFIG.get("debug-mode", False)
-	port = CONFIG.get("server-port", 80)
-	if not (port == 80 or port >= 1025):
-		print(Fore.RED + "Invalid server port")
-		exit()
-	
-	print(Fore.RED + "DO NOT CLOSE THIS WINDOW")
-	app.run(debug=DEBUG, port=port)
+# load movies and config
+MOVIES = load_movies()
+logger.debug(f"movies loaded")
+CONFIG = load_config()
+logger.debug(f"config loaded: {CONFIG=}")
+
+# load port and host
+DEBUG = CONFIG.get("debug-mode", False)
+port = CONFIG.get("server-port", 80)
+host = CONFIG.get("server-host", "filmbibliothek")
+if not (port == 80 or port >= 1025):
+	logger.critical(f"invalid server port: {port}")
+	print(Fore.RED + "Invalid server port")
+	exit()
+
+# run flask app
+print(Fore.RED + "DO NOT CLOSE THIS WINDOW")
+logger.info(f"run flask app as '{host}' with {DEBUG=} and {port=}")
+app.name = host
+app.run(debug=DEBUG, port=port)
+
+logger.debug(f"end of script: {__file__}")
