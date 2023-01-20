@@ -94,7 +94,7 @@ def getUserDefMetadata(filename:str) -> dict:
 
 # save collected metadata as json format
 def saveMetadata(filename:str, metadata:dict) -> None:
-	with open(filename, "w", encoding="utf-8") as file:
+	with open(filename, "w+", encoding="utf-8") as file:
 		json.dump(metadata, file, indent=2)
 
 # run
@@ -103,7 +103,7 @@ def run(movie_directories:list[str]) -> None:
 	movieID = 0
 	for directoryNum, movie_directory in enumerate(movie_directories):
 
-		for filename in tqdm(os.listdir(movie_directory), unit="File", desc=f"Scan directory '{movie_directory}'"):
+		for filename in tqdm(os.listdir(movie_directory), unit="File", desc=f"Scan directory {directoryNum+1}/{len(movie_directories)} '{movie_directory}'"):
 			if not filename.lower().endswith((".mp4", ".mov", ".m4v", ".mkv")):
 				continue
 
@@ -142,7 +142,7 @@ def run(movie_directories:list[str]) -> None:
 			metadata[movieID] = movie_metadata
 			movieID += 1
 	
-	saveMetadata(os.path.join("static", "data", "movies.json"), metadata)
+	saveMetadata(os.path.abspath(os.path.join("static", "data", "movies.json")), metadata)
 
 # run with valid directory
 if __name__ == "__main__":
