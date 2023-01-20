@@ -137,8 +137,6 @@ def movie_subtitles_language(movieID, language):
 			return send_from_directory(movie["directory"], file, as_attachment=False)
 	return abort(404)
 
-logger.debug(f"end of script: {__file__}")
-
 # ---------- start routine ----------
 
 # load movies and config

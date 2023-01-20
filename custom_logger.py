@@ -8,7 +8,7 @@ def init(name, *, name_is_path:bool=True):
         name = os.path.basename(name)
 
     # logging parameter
-    level = 10
+    level = logging.WARNING
     timestamp = datetime.today().strftime("%Y-%m-%d_%H-%M-%S")
     path = os.path.abspath(os.path.join("logs", f"{name}_{timestamp}.log"))
     encoding = "utf-8"
