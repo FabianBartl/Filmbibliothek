@@ -1,6 +1,7 @@
 
 import os, sys, subprocess, custom_logger
 logger = custom_logger.init(__file__)
+logger.debug(f"start of script: {__file__}")
 
 # install python packages
 logger.debug("install requirements")
@@ -102,4 +103,4 @@ logger.debug("run webserver.py")
 print("Run webserver.py")
 subprocess.check_call([sys.executable, "webserver.py"])
 
-logger.debug("end of script: install-win.py")
+logger.debug(f"end of script: {__file__}")
