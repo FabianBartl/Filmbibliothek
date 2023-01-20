@@ -1,7 +1,7 @@
 
 # Filmbibliothek
 
-## Release: v0.2.2
+## [Release: v0.2.2](https://github.com/FabianBartl/Filmbibliothek/releases/tag/v0.2.2)
 
 - Own modern designed webpage
 - Provides an installation script for Windows: [install-win.py](install-win.py)
