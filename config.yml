@@ -1,16 +1,25 @@
 
-# the webserver requires a restart in order to apply changes to the configuration
+# the webserver requires a restart in order to apply changes of the configuration
 
 # color theme of the webpage
 # possible strings: dark, light, debug
 theme: dark
 
-# directories of movies and related metadata files
+# directories of movies
 # possible strings: [absolute path]
-# (multiple values possible)
+# (multiple values allowed)
 movie-directories:
   - N:\\Videos\\Filme
   - N:\\Videos\\Kinderfilme
+
+# directories to search for associated metadata files of the movies
+# possible strings: [absolute path]
+# note: must be in the same order as the 'movie-directories' entries
+#       e.g. the first directory of the 'metadata-directories' contains the metadata yaml files for the movies in the first directory of the 'movie-directories'
+# (multiple values allowed)
+metadata-directories:
+  - N:\\Videos\\Filme\\data
+  - N:\\Videos\\Kinderfilme\\data
 
 # length of title displayed in movie overview
 # possible integers: >= 0
@@ -19,7 +28,7 @@ title-length: 0
 
 # filters that are applied to movie elements not included in the search results
 # possible strings: unclickable, hidden, blurred, grayed, darkened, inverted, faded, cleared
-# (multiple values possible)
+# (multiple values allowed)
 not-result-filters:
   - blurred
   - faded

@@ -84,7 +84,7 @@ for movie_directory in movie_directories:
     if not os.path.isdir(str(movie_directory)):
         logger.error(f"directory {movie_directory=} not found")
         print(Fore.RED + f"Directory '{movie_directory}' not found")
-        print(Fore.YELLOW + "Please use valid absolute paths as movie directory. Then run the installation script again.")
+        print(Fore.YELLOW + "Please use valid absolute paths as movie directories inside the config.yml file. Then run the installation script again.")
         input(Style.DIM + "Press Enter to close ...")
         exit()
 
