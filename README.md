@@ -1,6 +1,12 @@
 
 # Filmbibliothek
 
+![Latest GitHub release](https://img.shields.io/github/v/release/fabianbartl/filmbibliothek)&nbsp;
+![MIT license](https://img.shields.io/badge/license-MIT-green)&nbsp;
+![Python 3](https://img.shields.io/badge/python-3-blue)&nbsp;
+![visitors](https://visitor-badge.laobi.icu/badge?page_id=fabianbartl/filmbibliothek)&nbsp;
+<!-- ![visitors](https://visitor-badge.laobi.icu/badge?page_id=fabianbartl/filmbibliothek&query_only)&nbsp; -->
+
 ## [Release: v0.2.2](https://github.com/FabianBartl/Filmbibliothek/releases/tag/v0.2.2)
 
 - Own modern designed webpage
