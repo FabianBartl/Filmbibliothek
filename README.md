@@ -29,6 +29,7 @@
 #### Movie overview
 
 ![](screenshot_index-page.png)
+`http://filmbibliothek/`
 
 Here are listed all movies contained in the configured movie directories:
 
@@ -44,6 +45,7 @@ movie-directories:
 #### Search functionality
 
 ![](screenshot_index-page_search-results.png)
+`http://filmbibliothek/?query=der`
 
 Configured filters are applied to movies that are not included in the search results. These filters can be set with the `not-result-filters` setting in the [config.yml](config.yml) file:
 
@@ -62,6 +64,7 @@ Run [collect_metadata.py](collect_metadata.py) to update the listed movies and t
 #### Movie page
 
 ![](screenshot_movie-page.png)
+`http://filmbibliothek/movie/0/`
 
 The `poster`, `year`, `age-rating`, `description`, `director`, `author`, `genre` and the `main-cast` attribute can be set in the user-defined `[MOVIE NAME].yml` file. This file must be located in the same directory as the video file.
 
