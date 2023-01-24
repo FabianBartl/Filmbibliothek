@@ -36,7 +36,7 @@ def load_movies() -> dict:
 	except Exception as error:
 		logger.critical(error)
 		print(Fore.RED + f"Couldn't load movie data from '{filename}'")
-		exit()
+		exit(1)
 
 # load config from yaml file
 def load_config() -> dict:
@@ -51,7 +51,7 @@ def load_config() -> dict:
 	except Exception as error:
 		logger.critical(error)
 		print(Fore.RED + f"Couldn't load config data from '{filename}'")
-		exit()
+		exit(1)
 
 # ---------- custom jinja filters ----------
 
@@ -157,7 +157,7 @@ port = CONFIG.get("server-port", 80)
 if not (port == 80 or port >= 1025):
 	logger.critical(f"invalid server port {port}")
 	print(Fore.RED + f"Invalid server port: {port}")
-	exit()
+	exit(2)
 
 # run flask app
 if __name__ == "__main__":

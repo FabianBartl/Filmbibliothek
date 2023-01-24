@@ -223,7 +223,7 @@ def run(movie_directories:list[str], metadata_directories:list[str]) -> None:
 
 # run with valid directory
 if __name__ == "__main__":
-	msg_closeAndRunAgain = lambda _: input(Style.DIM + "Press Enter to close, then run the script again.")
+	msg_closeAndRunAgain = lambda: input(Style.BRIGHT + "Press Enter to close, then run the script again.")
 
 	# load config from yaml file
 	logger.debug("load config.yml")
@@ -245,7 +245,7 @@ if __name__ == "__main__":
 		print(Fore.RED + f"No movie directories configured")
 		print(Fore.YELLOW + "Please add your movie directories to the config.yml file.")
 		msg_closeAndRunAgain()
-		exit()
+		exit(1)
 
 	if not type(movie_directories) is list:
 		logger.debug(f"convert single movie directory string to list: {movie_directories=}")
@@ -259,7 +259,7 @@ if __name__ == "__main__":
 			print(Fore.RED + f"Directory '{movie_directory}' not found")
 			print(Fore.YELLOW + "Please use valid absolute paths as movie directory.")
 			msg_closeAndRunAgain()
-			exit()
+			exit(1)
 		movie_directories[i] = os.path.abspath(movie_directory)
 		logger.debug(f"valid movie directory: {movie_directory=} {movie_directories[i]=}")
 
@@ -271,7 +271,7 @@ if __name__ == "__main__":
 		print(Fore.RED + f"No metadata directories configured")
 		print(Fore.YELLOW + "Please add your metadata directories to the config.yml file.")
 		msg_closeAndRunAgain()
-		exit()
+		exit(1)
 
 	if not type(metadata_directories) is list:
 		logger.debug(f"convert single movie directory string to list: {metadata_directories=}")
@@ -285,7 +285,7 @@ if __name__ == "__main__":
 			print(Fore.RED + f"Directory '{metadata_directory}' not found")
 			print(Fore.YELLOW + "Please use valid absolute paths as movie directory.")
 			msg_closeAndRunAgain()
-			exit()
+			exit(1)
 		metadata_directories[i] = os.path.abspath(metadata_directory)
 		logger.debug(f"valid metadata directory: {metadata_directory=} {metadata_directories[i]=}")
 
@@ -293,7 +293,7 @@ if __name__ == "__main__":
 		logger.error(f"the length of the metadata directories (={len(metadata_directories)}) does not match the length of the movie directories (={len(movie_directories)})")
 		print(Fore.RED + f"The length of the metadata directories (={len(metadata_directories)}) needs to match with the length of the movie directories (={len(movie_directories)})")
 		msg_closeAndRunAgain()
-		exit()
+		exit(1)
 
 	# run
 	logger.debug(f"collect metadata with {movie_directories=} {metadata_directories=}")

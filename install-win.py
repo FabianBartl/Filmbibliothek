@@ -46,7 +46,7 @@ except PermissionError:
 except Exception as error:
 	logger.critical(error)
 	print(error)
-	exit()
+	exit(-1)
 
 # add webserver.py to startup directory
 logger.debug("add webserver.py to windows startup directory")
@@ -64,11 +64,19 @@ logger.info("added webserver.py to windows startup directory")
 print(Fore.GREEN + "Webserver script added to windows startup directory")
 
 # collect metadata
-subprocess.check_call([sys.executable, "collect_metadata.py"])
+try:
+	subprocess.check_call([sys.executable, "collect_metadata.py"])
+except Exception as error:
+	logger.error(error)
+	exit()
 
 # start webserver
 logger.debug("run webserver.py")
 print("Run webserver.py")
-subprocess.check_call([sys.executable, "webserver.py"])
+try:
+	subprocess.check_call([sys.executable, "webserver.py"])
+except Exception as error:
+	logger.error(error)
+	exit()
 
 logger.debug(f"end of script: {__file__}")
