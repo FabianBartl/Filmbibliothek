@@ -132,8 +132,9 @@ def movie_stream(movieID):
 def movie_subtitles_language(movieID, language):
 	global MOVIES
 	if movie := MOVIES.get(movieID):
-		if os.path.isfile(os.path.join(movie["directory"], file := f'{movie["filename"]}.{language}.vtt')):
-			return send_from_directory(movie["directory"], file, as_attachment=False)
+		if subtitles := movie.get("subtitles", {}).get(language):
+			if os.path.isfile(subtitles):
+				return send_from_directory(os.path.dirname(subtitles), os.path.basename(subtitles), as_attachment=False)
 	return abort(404)
 
 # ---------- start routine ----------

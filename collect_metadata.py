@@ -3,10 +3,8 @@ import custom_logger
 logger = custom_logger.init(__file__)
 logger.debug(f"start of script: {__file__}")
 
-import requests, json, yaml, os
-import urllib.parse
+import requests, json, yaml, os, urllib.parse, webvtt
 from pymediainfo import MediaInfo
-from math import ceil
 from bs4 import BeautifulSoup
 from tqdm import tqdm
 from colorama import Fore, Back, Style, init
@@ -118,12 +116,24 @@ def getUserDefMetadata(filename:str) -> dict:
 		if key in permitted_datafields:
 			logger.warning(f"remove datafield '{key}' with '{metadata[key]}'")
 			del metadata[key]
-	# modify path of poster to get local path as url
+	
+	# get local path as url
 	logger.debug("check if poster path/url is local file path")
 	if (poster := metadata.get("poster")) and not poster.startswith(("http", "/localpath/")):
-		logger.debug(f"modify path of poster to get local path as url")
+		logger.debug(f"get local path as url")
 		metadata["poster"] = "/localpath/" + os.path.abspath(os.path.join(os.path.dirname(filename), poster))
 		logger.info(metadata["poster"])
+	
+	# get absolute path from relative path
+	logger.debug("check if subtitle file paths/urls are abolute file paths or urls")
+	for language, subtitles in metadata.get("subtitles", {}).items():
+		if not subtitles.startswith(("http", "/localpath/")):
+			logger.debug(f"get absolute path")
+			metadata["subtitles"][language] = os.path.abspath(os.path.join(os.path.dirname(filename), subtitles))
+		# warn if not supported format used
+		if not subtitles.endswith("vtt"):
+			logger.warning(f"used subtitle format (.{subtitles.rsplit('.', 1)[-1]}) not supported; only WebVTT format (.vtt) is supported")
+	logger.info(f"subtitles: {metadata.get('subtitles')}")
 	
 	logger.info(f"return {metadata=}")
 	return metadata
@@ -134,6 +144,7 @@ def saveMetadata(filename:str, metadata:dict) -> None:
 	with open(filename, "w+", encoding="utf-8") as file:
 		logger.debug("dump json data")
 		json.dump(metadata, file, indent=2)
+
 
 # run
 def run(movie_directories:list[str], metadata_directories:list[str]) -> None:
