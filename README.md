@@ -64,21 +64,43 @@ not-result-filters:
   - unclickable
 ```
 
-Run [collect_metadata.py](collect_metadata.py) to update the listed movies and their data stored in [static/data/movies.json](static/data/movies.json) if you have added movies or changed user-defined metadata files.
+Run [collect_metadata.py](collect_metadata.py) to update the listed movies and their data stored in [static/data/movies.json](static/data/movies.json), if you have added movies or changed user-defined metadata files.
 
 #### Movie page
 
 ![](screenshot_movie-page.png)
 `http://filmbibliothek/movie/0/`
 
-The `poster`, `year`, `age-rating`, `description`, `director`, `author`, `genre` and the `main-cast` attribute can be set in the user-defined `[MOVIE NAME].yml` file. This file must be located in the same directory as the video file.
+The movie will be streamed from the local directory and played on the same tab.
+
+Most movie attributes can be set in an user-defined YAML file, named like `[MOVIE NAME].yml`. This file must be located in the corresponding metadata directory specified in the [config.yml](config.yml) file as `metadata-directories`:
 
 ```yml
+# directories to search for associated metadata files of the movies
+# possible strings: [absolute path]
+# note: must be in the same order as the 'movie-directories' entries
+#       e.g. the first directory of the 'metadata-directories' contains the metadata yaml files for the movies in the first directory of the 'movie-directories'
+# (multiple values allowed)
+metadata-directories:
+  - N:\\Videos\\Filme-Sammlung_1\\data
+  - N:\\Videos\\Filme-Sammlung_2
+```
+
+Example for an user-defined YAML file:
+
+*Here: The movie file `23.mp4` is located at `N:\\Videos\\Filme-Sammlung-1` and the corresponding `23.yml` file is located at `N:\\Videos\\Filme-Sammlung-1\\data`*
+
+```yml
+# can be url or relative path
 poster: https://m.media-amazon.com/images/M/MV5BN2Y3NmQ5NGQtMjYwYi00ZDA5LThhZDYtN2FkZGZlNTA5MmY1L2ltYWdlL2ltYWdlXkEyXkFqcGdeQXVyMzA3Njg4MzY@._V1_QL75_UY562_CR9
+
+# can by any string
 age-rating: FSK 12
+title: 23 - Nichts ist so wie es scheint
+# should be an integer
 year: 1998
 
-# can be a list or a single string:
+# can be a list of strings or a single string
 director: Hans-Christian Schmid
 author:
   - Michael Gutmann
@@ -91,9 +113,26 @@ main-cast:
   - August Diehl
   - Fabian Busch
   - Dieter Landuris
+
+# can be url or relative path
+# only WebVTT format is supported
+subtitles:
+  de: 23_de.vtt
+  en: 23_en.vtt
+
+# can be any string; here with multiline syntax
+description: |
+  In den 1980er Jahren wurde eine Gruppe junger westdeutscher
+  Computerhacker wegen Spionagetätigkeiten für den sowjetischen
+  Geheimdienst KGB verhaftet. Anlässlich des 'Tags der
+  internationalen Computersicherheit' am 30.11.22 zeigt ONE die
+  Verfilmung dieser Geschehnisse und über das Leben des
+  Mitbegründers dieser Hackerbande aus Hannover, Karl Koch.
 ```
 
-In this case, the description is not defined in the YAML file, but read from a metadata file created by the movie download tool [MediadiathekView](https://mediathekview.de/):
+*All these attributes are optional. Some attributes are scraped by the [collect_metadata.py](collect_metadata.py) script, but the user-defined values override them.*
+
+The description can also be read from a metadata file created by the movie download tool [MediadiathekView](https://mediathekview.de/):
 
 ```
 Sender:      ARD
@@ -119,7 +158,3 @@ internationalen Computersicherheit' am 30.11.22 zeigt ONE die
 Verfilmung dieser Geschehnisse und über das Leben des
 Mitbegründers dieser Hackerbande aus Hannover, Karl Koch.
 ```
-
-*All these attributes are optional.*
-
-The movie will be streamed from the local directory and played on the same tab.
