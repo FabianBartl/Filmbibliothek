@@ -45,13 +45,14 @@ class CustomFormatter(logging.Formatter):
 		return formatter.format(record)
 
 
-def init(name, *, name_is_path:bool=True, log_to_file:bool=True, log_to_console:bool=False):
+# returns configured logging handler object
+def init(name, *, name_is_path:bool=True, log_to_file:bool=True, log_to_console:bool=False, log_level:int=logging.DEBUG, colored_console:bool=True):
 	# extract filename from path
 	if name_is_path:
 		name = os.path.basename(name)
 
 	# logging parameter
-	level = logging.DEBUG
+	level = log_level
 	timestamp = datetime.today().strftime("%Y-%m-%d_%H-%M-%S")
 	path = os.path.abspath(os.path.join("logs", f"{name}_{timestamp}.log"))
 	encoding = "utf-8"
@@ -72,10 +73,22 @@ def init(name, *, name_is_path:bool=True, log_to_file:bool=True, log_to_console:
 	if log_to_console:
 		console_handler = logging.StreamHandler()
 		console_handler.setLevel(level)
-		console_handler.setFormatter(CustomFormatter(fmt=format, datefmt=datefmt, colored=True))
+		console_handler.setFormatter(CustomFormatter(fmt=format, datefmt=datefmt, colored=colored_console))
 		handlers.append(console_handler)
 
 	# logging config
 	logging.basicConfig(level=level, encoding=encoding, format=format, datefmt=datefmt, handlers=handlers)
 
 	return logging.getLogger(name)
+
+
+# converts logging level string to corresponding level integer
+def level_to_int(level:str) -> int:
+	levels = {
+		"DEBUG": logging.DEBUG,
+		"INFO": logging.INFO,
+		"WARNING": logging.WARNING,
+		"ERROR": logging.ERROR,
+		"CRITICAL": logging.CRITICAL,
+	}
+	return levels.get(level, logging.DEBUG)
