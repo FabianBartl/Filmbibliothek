@@ -13,7 +13,7 @@ for package in requirements:
 		subprocess.check_call([sys.executable, "-m", "pip", "install", package])
 
 # these packages are first available after the requirements.txt installation
-import winshell, collect_metadata, yaml
+import winshell, yaml
 from win32com.client import Dispatch
 from colorama import Fore, Back, Style, init
 
@@ -64,35 +64,8 @@ shortcut.save()
 logger.info("added webserver.py to windows startup directory")
 print(Fore.GREEN + "Webserver script added to windows startup directory")
 
-# create movies.json and load movie directories from config.yml
-logger.debug(f"load movie directories from config.yml")
-movie_directories = config_yaml.get("movie-directories", [])
-if movie_directories == [] or movie_directories == "" or movie_directories == None:
-	logger.error("no movie directories configured")
-	print(Fore.RED + f"No directories configured")
-	print(Fore.YELLOW + "Please add your movie directories to the config.yml file. Then run the installation script again.")
-	input(Style.DIM + "Press Enter to close ...")
-	exit()
-	
-if not type(movie_directories) is list:
-	logger.debug(f"convert single movie directory string to list: {movie_directories=}")
-	movie_directories = [ movie_directories ]
-	logger.debug(f"as list: {movie_directories=}")
-
-logger.debug("check validity of movie directories")
-for movie_directory in movie_directories:
-	if not os.path.isdir(str(movie_directory)):
-		logger.error(f"directory {movie_directory=} not found")
-		print(Fore.RED + f"Directory '{movie_directory}' not found")
-		print(Fore.YELLOW + "Please use valid absolute paths as movie directories inside the config.yml file. Then run the installation script again.")
-		input(Style.DIM + "Press Enter to close ...")
-		exit()
-
 # collect metadata
-logger.debug(f"run collect_metadata.py with {movie_directories=}")
-collect_metadata.run(movie_directories)
-logger.info("movie data collected and stored")
-print(Fore.GREEN + "Movie data collected and stored")
+subprocess.check_call([sys.executable, "collect_metadata.py"])
 
 # start webserver
 port = config_yaml.get("server-port", 80)
