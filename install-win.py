@@ -20,6 +20,10 @@ from colorama import Fore, Back, Style, init
 init(autoreset=True)
 print(Fore.GREEN + "Packages installed")
 
+# re-call logger with colored output since colorama is now available 
+logger = custom_logger.init(__file__)
+logger.debug("re-call logger with colored output")
+
 # load config.yml
 logger.debug("load config.yml")
 with open("config.yml", "r", encoding="utf-8") as file:
@@ -28,29 +32,26 @@ with open("config.yml", "r", encoding="utf-8") as file:
 
 # add host if server-name is not set to 0.0.0.0
 host = config_yaml.get("server-host", "filmbibliothek")
-if host != "0.0.0.0":
-	logger.debug("try: add host to local dns resolver")
-	customHost = False
-	try:
-		with open("C:\\Windows\\System32\\drivers\\etc\\hosts", "r", encoding="utf-8") as file:
-			content = file.read()
-		with open("C:\\Windows\\System32\\drivers\\etc\\hosts", "a", encoding="utf-8") as file:
-			if not host in content:
-				file.write(f"\n# host for flask webserver of '{host}' project")
-				file.write(f"\n127.0.0.1    {host}\n")
-		
-		customHost = True
-		logger.info(f"added {host=} to local dns resolver")
-		print(Fore.GREEN + f"Host '{host}' added to DNS resolver")
-	except PermissionError:
-		logger.warning(f"PermissionError: failed to add {host=} to local dns resolver")
-		print(Fore.YELLOW + f"Run the installation script as administrator to add '{host}' as host to local DNS resolver")
-	except Exception as error:
-		logger.critical(error)
-		print(error)
-		exit()
-else:
-	logger.warning(f"host not added to local dns resolver, because server-name={host}")
+logger.debug("try: add host to local dns resolver")
+customHost = False
+try:
+	with open("C:\\Windows\\System32\\drivers\\etc\\hosts", "r", encoding="utf-8") as file:
+		content = file.read()
+	with open("C:\\Windows\\System32\\drivers\\etc\\hosts", "a", encoding="utf-8") as file:
+		if not host in content:
+			file.write(f"\n# host for flask webserver of '{host}' project")
+			file.write(f"\n127.0.0.1    {host}\n")
+	
+	customHost = True
+	logger.info(f"added {host=} to local dns resolver")
+	print(Fore.GREEN + f"Host '{host}' added to DNS resolver")
+except PermissionError:
+	logger.warning(f"PermissionError: failed to add {host=} to local dns resolver")
+	print(Fore.YELLOW + f"Run the installation script as administrator to add '{host}' as host to local DNS resolver")
+except Exception as error:
+	logger.critical(error)
+	print(error)
+	exit()
 
 # add webserver.py to startup directory
 logger.debug("add webserver.py to windows startup directory")
@@ -71,14 +72,6 @@ print(Fore.GREEN + "Webserver script added to windows startup directory")
 subprocess.check_call([sys.executable, "collect_metadata.py"])
 
 # start webserver
-port = config_yaml.get("server-port", 80)
-logger.debug(f"show webserver address: {host=} {port=}")
-print(
-	Fore.GREEN + "The webpage will be available at:",
-	Fore.GREEN + f"http://localhost{':'+port if port!=80 else ''}/",
-	Fore.GREEN + "or " + Fore.GREEN+f"http://{host}{':'+port if port!=80 else ''}/" if customHost else ""
-)
-
 logger.debug("run webserver.py")
 print("Run webserver.py")
 subprocess.check_call([sys.executable, "webserver.py"])

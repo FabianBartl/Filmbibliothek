@@ -43,8 +43,9 @@ favicon: favicon.png
 server-port: 80
 
 # host added by the installation script to dns resolver
-server-host: filmbibliothek
+server-name: filmbibliothek
 
-# debug mode (debug console of webserver
+# makes the local webserver accessible in your (local) network
+# to reach the website on a different device in the same network, use the local ip address of the host device
 # possible values: true, false
-debug-mode: false
+accessible-in-network: true

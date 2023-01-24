@@ -23,7 +23,7 @@ class CustomFormatter(logging.Formatter):
 			# set colored formats
 			reset_color = Fore.RESET + Back.RESET + Style.RESET_ALL
 			self.FORMATS = {
-				logging.DEBUG: Style.DIM + self.fmt,
+				logging.DEBUG: Style.DIM + self.fmt + reset_color,
 				logging.INFO: Fore.BLUE + self.fmt + reset_color,
 				logging.WARNING: Fore.YELLOW + self.fmt + reset_color,
 				logging.ERROR: Fore.RED + Style.BRIGHT + self.fmt + reset_color,
@@ -45,7 +45,7 @@ class CustomFormatter(logging.Formatter):
 		return formatter.format(record)
 
 
-def init(name, *, name_is_path:bool=True, log_to_file:bool=False, log_to_console:bool=True):
+def init(name, *, name_is_path:bool=True, log_to_file:bool=True, log_to_console:bool=False):
 	# extract filename from path
 	if name_is_path:
 		name = os.path.basename(name)
