@@ -7,11 +7,11 @@
 ![visitors](https://visitor-badge.laobi.icu/badge?page_id=fabianbartl/filmbibliothek)&nbsp;
 <!-- ![visitors](https://visitor-badge.laobi.icu/badge?page_id=fabianbartl/filmbibliothek&query_only)&nbsp; -->
 
-## [Release: v0.2.2](https://github.com/FabianBartl/Filmbibliothek/releases/tag/v0.2.2)
+## [Release: v0.3.0](https://github.com/FabianBartl/Filmbibliothek/releases/tag/v0.3.0)
 
 - Own modern designed webpage
 - Provides an installation script for Windows: [install-win.py](install-win.py)
-- Operates with *Flask* backend and can be accessed in the browser at http://filmbibliothek/ or http://localhost/
+- Operates with *Flask* backend and can be reached in the browser at http://filmbibliothek/ or http://localhost/ or from another devive in the same network
 - Scrapes movie information from IMDB and user-defined YAML files
 
 ### Known issues
@@ -20,9 +20,14 @@
 - Scraped movie data incomplete (currently only movie posters are being scraped)
 - Only German UI available
 
-### Patch notes
+<!-- ### Patch notes -->
 
-- Added logging for troubleshooting
+### Changes
+
+- New config option `metadata-directories` to specify separate location of metadata files
+- Allow relative paths inside user-defined YAML files
+- Config option `server-host` to `server-name` renamed
+- Added config options `accessible-in-network` and `log-level` 
 
 ### Impressions
 
@@ -38,8 +43,8 @@ Here are listed all movies contained in the configured movie directories:
 # possible strings: [absolute path]
 # (multiple values possible)
 movie-directories:
-  - N:\\Videos\\Filme
-  - N:\\Videos\\Kinderfilme
+  - N:\\Videos\\Filme-Sammlung_1
+  - N:\\Videos\\Filme-Sammlung_2
 ```
 
 #### Search functionality

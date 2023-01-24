@@ -1,24 +1,24 @@
 
 $(document).ready(function(){
-    // justify lenghts to length of widest element 
-    creditsName_maxWidth = 0;
-    $('.credit-name').each(function(){
-        creditsName_maxWidth = max($(this).width(), creditsName_maxWidth);
-    });
-    $('.credit-name').each(function(){
-        $(this).width(creditsName_maxWidth + 8);
-    });
+	// justify lenghts to length of widest element 
+	creditsName_maxWidth = 0;
+	$('.credit-name').each(function(){
+		creditsName_maxWidth = max($(this).width(), creditsName_maxWidth);
+	});
+	$('.credit-name').each(function(){
+		$(this).width(creditsName_maxWidth + 8);
+	});
 });
 
 
 // scroll-to video, make fullscreen, play it
 function playAsFullscreen(selector) {
-    video = document.querySelector(selector);
-    video.scrollIntoView();
-    setTimeout(function(){
-        video.requestFullscreen();
-        video.play();
-    }, 500);
+	video = document.querySelector(selector);
+	video.scrollIntoView();
+	setTimeout(function(){
+		video.requestFullscreen();
+		video.play();
+	}, 500);
 }
 
 
@@ -26,17 +26,17 @@ function playAsFullscreen(selector) {
 function searchResults(event, objectArray, inputElement, toArray, notResultClasses=["hidden"], minLenght=3) {
 	var invalidChars = /[^a-z0-9\-]/gi;
 	var query = inputElement.val().toLowerCase();
-    var validQuery = query.replace(invalidChars, "");
+	var validQuery = query.replace(invalidChars, "");
 	
-    // remove previous added search classes
-    objectArray.forEach((object) => {
-        notResultClasses.forEach(function(resultClass) {
-            document.getElementById("movie-"+object.movieID).classList.remove(resultClass);
-        });
-    });
+	// remove previous added search classes
+	objectArray.forEach((object) => {
+		notResultClasses.forEach(function(resultClass) {
+			document.getElementById("movie-"+object.movieID).classList.remove(resultClass);
+		});
+	});
 
 	if (validQuery.length >= minLenght) {
-        // search for query in array
+		// search for query in array
 		objectArray.filter((object) => {
 			objectArray = toArray(object).map((attribute) => {
 				return attribute.toLowerCase().replace(invalidChars, "");
@@ -52,20 +52,20 @@ function searchResults(event, objectArray, inputElement, toArray, notResultClass
 			return !anyIsTrue;
 
 		}).forEach((object) => {
-            // add search classes
-            notResultClasses.forEach(function(resultClass) {
-                document.getElementById("movie-"+object.movieID).classList.add(resultClass);
-            });
-        });
-    }
+			// add search classes
+			notResultClasses.forEach(function(resultClass) {
+				document.getElementById("movie-"+object.movieID).classList.add(resultClass);
+			});
+		});
+	}
 
-    // save search query in url
-    if (event.keyCode === 13 || validQuery.length % ((minLenght+1)*2) === 0) {
+	// save search query in url
+	if (event.keyCode === 13 || validQuery.length % ((minLenght+1)*2) === 0) {
 		window.history.pushState({},
 			document.title,
 			window.location.origin+window.location.pathname+"?query="+query.replace(/ /g,"+")
 		);
-    }
+	}
 }
 
 

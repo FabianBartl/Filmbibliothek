@@ -1,6 +1,6 @@
 
 import custom_logger
-logger = custom_logger.init(__file__)
+logger = custom_logger.init(__file__, log_to_console=True)
 logger.debug(f"start of script: {__file__}")
 
 import json, yaml, os
@@ -15,7 +15,6 @@ from flask import redirect, url_for, render_template, send_from_directory, abort
 
 MOVIES = {}
 CONFIG = {}
-DEBUG = False
 
 # init flask app
 app = Flask(__name__)
@@ -93,7 +92,7 @@ def index():
 	global MOVIES, DEBUG
 	movies_array = str(list(MOVIES.values()))
 	search_query = request.args.get("query")
-	return render_template("index.html", movies=MOVIES, movies_array=movies_array, search_query=search_query, debug_mode=DEBUG)
+	return render_template("index.html", movies=MOVIES, movies_array=movies_array, search_query=search_query)
 
 # return ANY local file requested by url path
 # (Note from the documentation: Never pass file paths provided by a user to the send_file() function)
@@ -117,7 +116,7 @@ def favicon():
 def movie(movieID):
 	global MOVIES, DEBUG
 	if movie := MOVIES.get(movieID):
-		return render_template("movie.html", movie=movie, debug_mode=DEBUG)
+		return render_template("movie.html", movie=movie)
 	return abort(404)
 
 # stream movie
@@ -137,8 +136,6 @@ def movie_subtitles_language(movieID, language):
 			return send_from_directory(movie["directory"], file, as_attachment=False)
 	return abort(404)
 
-logger.debug(f"end of script: {__file__}")
-
 # ---------- start routine ----------
 
 # load movies and config
@@ -147,19 +144,30 @@ logger.debug(f"movies loaded")
 CONFIG = load_config()
 logger.debug(f"config loaded: {CONFIG=}")
 
-# load port and host
-DEBUG = CONFIG.get("debug-mode", False)
+# update logging level
+log_level = custom_logger.level_to_int(CONFIG.get("log-level"))
+logger.setLevel(log_level)
+logger.info(f"update logger lever to {log_level}")
+
+# load port, name and host
+name = CONFIG.get("server-name", "filmbibliothek")
+app.name = name
+host = "0.0.0.0" if CONFIG.get("accessible-in-network") else "127.0.0.1"
 port = CONFIG.get("server-port", 80)
-host = CONFIG.get("server-host", "filmbibliothek")
 if not (port == 80 or port >= 1025):
-	logger.critical(f"invalid server port: {port}")
-	print(Fore.RED + "Invalid server port")
+	logger.critical(f"invalid server port {port}")
+	print(Fore.RED + f"Invalid server port: {port}")
 	exit()
 
 # run flask app
-print(Fore.RED + "DO NOT CLOSE THIS WINDOW")
-logger.info(f"run flask app as '{host}' with {DEBUG=} and {port=}")
-app.name = host
-app.run(debug=DEBUG, port=port)
+if __name__ == "__main__":
+	print(Fore.WHITE + Back.RED + " DO NOT CLOSE THIS WINDOW ")
+	logger.info(f"run flask app as {name=} and {port=} on {host=}")
+	print(Fore.GREEN + f"open in webbrowser as http://{name}:{port}/ or http://localhost:{port}/")
+	if host == "0.0.0.0":
+		logger.info("accessible in network")
+		print(Fore.YELLOW + f"accessible in your local network using the local network address of your computer")
+	# run app
+	app.run(debug=False, port=port, host=host)
 
 logger.debug(f"end of script: {__file__}")
