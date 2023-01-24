@@ -120,10 +120,10 @@ def getUserDefMetadata(filename:str) -> dict:
 			del metadata[key]
 	# modify path of poster to get local path as url
 	logger.debug("check if poster path/url is local file path")
-	if not metadata.get("poster").startswith(("http", "/localpath/")):
+	if (poster := metadata.get("poster")) and not poster.startswith(("http", "/localpath/")):
 		logger.debug(f"modify path of poster to get local path as url")
-		metadata["poster"] = "/localpath/" + metadata["poster"]
-		logger.info(f"{metadata['poster']}")
+		metadata["poster"] = "/localpath/" + os.path.abspath(os.path.join(os.path.dirname(filename), poster))
+		logger.info(metadata["poster"])
 	
 	logger.info(f"return {metadata=}")
 	return metadata
@@ -144,7 +144,7 @@ def run(movie_directories:list[str]) -> None:
 
 		logger.debug(f"iterate over files in {movie_directory=}")
 		for filename in tqdm(os.listdir(movie_directory), unit="File", desc=f"Scan directory {directoryNum+1}/{len(movie_directories)} '{movie_directory}'"):
-			if not filename.lower().endswith((".mp4", ".mov", ".m4v", ".mkv")):
+			if not filename.lower().endswith((".mp4", ".mov", ".m4v", ".mkv")) or not os.path.isfile(os.path.join(movie_directory, filename)):
 				logger.warning(f"'{filename}' is not a movie")
 				continue
 			logger.info(f"'{filename}' is a movie")
