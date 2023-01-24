@@ -19,7 +19,7 @@ movie-directories:
 # (multiple values allowed)
 metadata-directories:
   - N:\\Videos\\Filme\\data
-  - N:\\Videos\\Kinderfilme\\data
+  - N:\\Videos\\Kinderfilme
 
 # length of title displayed in movie overview
 # possible integers: >= 0

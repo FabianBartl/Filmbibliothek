@@ -157,6 +157,7 @@ if not (port == 80 or port >= 1025):
 # run flask app
 print(Fore.RED + "DO NOT CLOSE THIS WINDOW")
 logger.info(f"run flask app as '{host}' with {DEBUG=} and {port=}")
+print(Fore.GREEN + f"open in webbrowser as http://{host}:{port}/ or http://127.0.0.1:{port}/")
 app.name = host
 app.run(debug=DEBUG, port=port)
 
