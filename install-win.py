@@ -1,16 +1,11 @@
 
 import os, sys, subprocess, custom_logger
-logger = custom_logger.init(__file__)
+logger = custom_logger.init(__file__, log_to_console=True)
 logger.debug(f"start of script: {__file__}")
 
 # install python packages
 logger.debug("install requirements")
-with open("requirements.txt", "r", encoding="utf-8") as file:
-	requirements = [ line.strip() for line in file.readlines() ]
-for package in requirements:
-	if not package in sys.modules:
-		logger.info(f"install {package=}")
-		subprocess.check_call([sys.executable, "-m", "pip", "install", package])
+subprocess.check_call([sys.executable, "-m", "pip", "install", "-r", "requirements.txt"])
 
 # these packages are first available after the requirements.txt installation
 import winshell, yaml
@@ -20,15 +15,15 @@ from colorama import Fore, Back, Style, init
 init(autoreset=True)
 print(Fore.GREEN + "Packages installed")
 
-# re-call logger with colored output since colorama is now available 
-logger = custom_logger.init(__file__)
-logger.debug("re-call logger with colored output")
-
 # load config.yml
 logger.debug("load config.yml")
 with open("config.yml", "r", encoding="utf-8") as file:
 	config_yaml = yaml.safe_load(file)
 	logger.info("config.yml loaded")
+
+# re-call logger with colored output since colorama is now available
+logger = custom_logger.init(__file__, log_to_console=True)
+logger.debug("re-call logger with colored output")
 
 # add host if server-name is not set to 0.0.0.0
 host = config_yaml.get("server-host", "filmbibliothek")
