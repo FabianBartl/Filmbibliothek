@@ -49,3 +49,7 @@ server-name: filmbibliothek
 # to reach the website on a different device in the same network, use the local ip address of the host device
 # possible values: true, false
 accessible-in-network: true
+
+# minimum level of logging messages
+# possible strings: DEBUG, INFO, WARNING, ERROR, CRITICAL
+log-level: WARNING

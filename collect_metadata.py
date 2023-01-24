@@ -231,6 +231,11 @@ if __name__ == "__main__":
 		config_yaml = yaml.safe_load(file)
 		logger.info("config.yml loaded")
 	
+	# update logging level
+	log_level = custom_logger.level_to_int(config_yaml.get("log-level"))
+	logger.setLevel(log_level)
+	logger.info(f"update logger lever to {log_level}")
+	
 	# get and check paths from config
 	# movie-directories:
 	logger.debug(f"load movie directories from config.yml")

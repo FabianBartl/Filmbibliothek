@@ -144,6 +144,11 @@ logger.debug(f"movies loaded")
 CONFIG = load_config()
 logger.debug(f"config loaded: {CONFIG=}")
 
+# update logging level
+log_level = custom_logger.level_to_int(CONFIG.get("log-level"))
+logger.setLevel(log_level)
+logger.info(f"update logger lever to {log_level}")
+
 # load port, name and host
 name = CONFIG.get("server-name", "filmbibliothek")
 app.name = name
@@ -162,6 +167,7 @@ if __name__ == "__main__":
 	if host == "0.0.0.0":
 		logger.info("accessible in network")
 		print(Fore.YELLOW + f"accessible in your local network using the local network address of your computer")
+	# run app
 	app.run(debug=False, port=port, host=host)
 
 logger.debug(f"end of script: {__file__}")
