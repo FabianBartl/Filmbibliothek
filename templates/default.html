@@ -1,9 +1,7 @@
 <!doctype html>
 <html theme="{{ config.get('theme') }}" lang="de">
 	<head>
-		{% block head %}
-		{% endblock %}
-		
+		{% block head %}{% endblock %}
 		<title>
 			{{ title }}{% if title %} &minus; {% endif %}Filmbibliothek
 		</title>
@@ -12,7 +10,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 		<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/general.css') }}">
-	
+		
 		<script src="{{ url_for('static', filename='scripts/jquery-3.6.3.min.js') }}"></script>
 		<script src="{{ url_for('static', filename='scripts/script.js') }}"></script>
 		<script src="https://kit.fontawesome.com/9f5b8e5c93.js" crossorigin="anonymous"></script>
@@ -22,25 +20,19 @@
 			<h1>
 				<a href="/">Filmbibliothek</a>
 			</h1>
-
-			{% block header %}
-			{% endblock %}
+			{% block header %}{% endblock %}
 		</header>
 
 		<aside id="{{ asideID }}">
-			{% block aside %}
-			{% endblock %}
+			{% block aside %}{% endblock %}
 		</aside>
 
 		<main id="{{ mainID }}">
-			{% block main required %}
-			{% endblock %}
+			{% block main required %}{% endblock %}
 		</main>
 
 		<footer>
-			{% block footer %}
-			{% endblock %}
-
+			{% block footer %}{% endblock %}
 			designed &amp; programmed by <a href="https://github.com/FabianBartl" target="_blank">Fabian Bartl</a>
 		</footer>
 	</body>
