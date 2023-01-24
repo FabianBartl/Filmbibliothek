@@ -139,26 +139,27 @@ def movie_subtitles_language(movieID, language):
 
 # ---------- start routine ----------
 
-# load movies and config
-MOVIES = load_movies()
-logger.debug(f"movies loaded")
-CONFIG = load_config()
-logger.debug(f"config loaded: {CONFIG=}")
+if __name__ == "__main__":
+	# load movies and config
+	MOVIES = load_movies()
+	logger.debug(f"movies loaded")
+	CONFIG = load_config()
+	logger.debug(f"config loaded: {CONFIG=}")
 
-# load port and host
-DEBUG = CONFIG.get("debug-mode", False)
-port = CONFIG.get("server-port", 80)
-host = CONFIG.get("server-host", "filmbibliothek")
-if not (port == 80 or port >= 1025):
-	logger.critical(f"invalid server port: {port}")
-	print(Fore.RED + "Invalid server port")
-	exit()
+	# load port and host
+	port = CONFIG.get("server-port", 80)
+	host = CONFIG.get("server-host", "filmbibliothek")
+	if not (port == 80 or port >= 1025):
+		logger.critical(f"invalid server port {port}")
+		print(Fore.RED + f"Invalid server port: {port}")
+		exit()
 
-# run flask app
-print(Fore.RED + "DO NOT CLOSE THIS WINDOW")
-logger.info(f"run flask app as '{host}' with {DEBUG=} and {port=}")
-print(Fore.GREEN + f"open in webbrowser as http://{host}:{port}/ or http://127.0.0.1:{port}/")
-app.name = host
-app.run(debug=DEBUG, port=port)
+	# run flask app
+	DEBUG = CONFIG.get("debug-mode", False)
+	print(Fore.RED + "DO NOT CLOSE THIS WINDOW")
+	logger.info(f"run flask app as '{host}' with {DEBUG=} and {port=}")
+	print(Fore.GREEN + f"open in webbrowser as http://{host}:{port}/ or http://127.0.0.1:{port}/")
+	app.name = host
+	app.run(debug=DEBUG, port=port)
 
 logger.debug(f"end of script: {__file__}")
