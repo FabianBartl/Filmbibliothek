@@ -26,28 +26,31 @@ with open("config.yml", "r", encoding="utf-8") as file:
 	config_yaml = yaml.safe_load(file)
 	logger.info("config.yml loaded")
 
-# add host
-logger.debug("try: add host to local dns resolver")
+# add host if server-name is not set to 0.0.0.0
 host = config_yaml.get("server-host", "filmbibliothek")
-customHost = False
-try:
-	with open("C:\\Windows\\System32\\drivers\\etc\\hosts", "r", encoding="utf-8") as file:
-		content = file.read()
-	with open("C:\\Windows\\System32\\drivers\\etc\\hosts", "a", encoding="utf-8") as file:
-		if not host in content:
-			file.write(f"\n# host for flask webserver of '{host}' project")
-			file.write(f"\n127.0.0.1    {host}\n")
-	
-	customHost = True
-	logger.info(f"added {host=} to local dns resolver")
-	print(Fore.GREEN + f"Host '{host}' added to DNS resolver")
-except PermissionError:
-	logger.warning(f"PermissionError: failed to add {host=} to local dns resolver")
-	print(Fore.YELLOW + f"Run the installation script as administrator to add '{host}' as host to local DNS resolver")
-except Exception as error:
-	logger.critical(error)
-	print(error)
-	exit()
+if host != "0.0.0.0":
+	logger.debug("try: add host to local dns resolver")
+	customHost = False
+	try:
+		with open("C:\\Windows\\System32\\drivers\\etc\\hosts", "r", encoding="utf-8") as file:
+			content = file.read()
+		with open("C:\\Windows\\System32\\drivers\\etc\\hosts", "a", encoding="utf-8") as file:
+			if not host in content:
+				file.write(f"\n# host for flask webserver of '{host}' project")
+				file.write(f"\n127.0.0.1    {host}\n")
+		
+		customHost = True
+		logger.info(f"added {host=} to local dns resolver")
+		print(Fore.GREEN + f"Host '{host}' added to DNS resolver")
+	except PermissionError:
+		logger.warning(f"PermissionError: failed to add {host=} to local dns resolver")
+		print(Fore.YELLOW + f"Run the installation script as administrator to add '{host}' as host to local DNS resolver")
+	except Exception as error:
+		logger.critical(error)
+		print(error)
+		exit()
+else:
+	logger.warning(f"host not added to local dns resolver, because server-name={host}")
 
 # add webserver.py to startup directory
 logger.debug("add webserver.py to windows startup directory")
