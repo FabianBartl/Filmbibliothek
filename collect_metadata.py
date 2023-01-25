@@ -1,6 +1,6 @@
 
 import custom_logger
-logger = custom_logger.init(__file__)
+logger = custom_logger.init(__file__, log_to_console=True)
 logger.debug(f"start of script: {__file__}")
 
 import requests, json, yaml, os, urllib.parse
@@ -73,7 +73,7 @@ def getMetadataFromIMDB(moviename:str) -> dict:
 	metadata = {}
 	metadata["imdb_id"] = page.get("href").split("/")[2]
 	metadata["imdb_url"] = "https://www.imdb.com/title/"
-	logger.info(f"imdb movie page: {metadata['imdb_url']}{metadata['imdb_id']}/")
+	logger.debug(f"imdb movie page: {metadata['imdb_url']}{metadata['imdb_id']}/")
 	
 	# request imdb movie page
 	requestURL = f"{metadata['imdb_url']}{metadata['imdb_id']}/"
@@ -88,22 +88,64 @@ def getMetadataFromIMDB(moviename:str) -> dict:
 	
 	# get poster
 	logger.debug("get url of poster")
-	if 	img := html_scrap.css("img[class=ipc-image]::attr(srcset)").get():
-		posterURL = img.rsplit(", ",1)[-1].split(" ",1)[0]
-		metadata["poster"] = posterURL
-		logger.info(f"poster url: {posterURL}")
+	if img := html_scrap.css("img[class=ipc-image]::attr(srcset)").get():
+		poster = img.rsplit(", ",1)[-1].split(" ",1)[0]
+		metadata["poster"] = poster
+		logger.debug(f"{poster=}")
 	else:
-		logger.warning("related image not found")
+		logger.warning("poster not found")
 
-	# get director, writer, stars
+	# get simple attributes
+	attribute_xpaths = {
+		"director": "//*[@id='__next']/main/div/section[1]/section/div[3]/section/section/div[3]/div[2]/div[1]/div[3]/ul/li[1]/div/ul/li/a/text()",
+		"writer": "//*[@id='__next']/main/div/section[1]/section/div[3]/section/section/div[3]/div[2]/div[1]/div[3]/ul/li[2]/div/ul/li/a/text()",
+		"year": "//*[@id='__next']/main/div/section[1]/section/div[3]/section/section/div[2]/div[1]/div/ul/li[1]/a/text()",
+		"age-rating": "//*[@id='__next']/main/div/section[1]/section/div[3]/section/section/div[2]/div[1]/div/ul/li[2]/a/text()",
+		"description": "//*[@id='__next']/main/div/section[1]/section/div[3]/section/section/div[3]/div[2]/div[1]/div[1]/div[2]/span[3]/text()"
+	}
+	for attribute, xpath in attribute_xpaths.items():
+		logger.debug(f"get {attribute}")
+		if value := html_scrap.xpath(xpath).get():
+			if attribute == "age-rating":
+				value = f"ab {value}"
+			metadata[attribute] = value
+			logger.debug(f"{attribute}={value}")
+		else:
+			logger.warning(f"{attribute} not found")
 
-	# get year, description, genres, age-rating
+	# get list attributes
+	attribute_xpaths = {
+		"main-cast": "//*[@id='__next']/main/div/section[1]/section/div[3]/section/section/div[3]/div[2]/div[1]/div[3]/ul/li[3]/div/ul/li[{}]/a/text()",
+		"genre": "//*[@id='__next']/main/div/section[1]/section/div[3]/section/section/div[3]/div[2]/div[1]/div[1]/div[1]/div[2]/a[{}]/span/text()",
+		"studio": "//*[@id='__next']/main/div/section[1]/div/section/div/div[1]/section[7]/div[2]/ul/li[6]/div/ul/li[{}]/a/text()"
+	}
+	for attribute, xpath in attribute_xpaths.items():
+		logger.debug(f"get {attribute}")
+		values = []
+		i = 1
+		while value := html_scrap.xpath(xpath.format(i)).get():
+			values.append(value)
+			i += 1
+		if values != []:
+			metadata[attribute] = values
+			logger.debug(f"{attribute}={values}")
+		else:
+			logger.warning(f"{attribute} not found")
 
-	# get main cast
+	# get imdb rating
+	logger.debug(f"get imdb rating")
+	if html_scrap.xpath("//*[@id='__next']/main/div/section[1]/section/div[3]/section/section/div[2]/div[2]/div/div[1]/a/div/div/div[2]").get():
+		imdb_rating_points = html_scrap.xpath("//*[@id='__next']/main/div/section[1]/section/div[3]/section/section/div[2]/div[2]/div/div[1]/a/div/div/div[2]/div[1]/span[1]/text()").get()
+		imdb_rating_votes = html_scrap.xpath("//*[@id='__next']/main/div/section[1]/section/div[3]/section/section/div[2]/div[2]/div/div[1]/a/div/div/div[2]/div[3]/text()").get()
+		imdb_rating = { "imdb": {"points": imdb_rating_points, "votes": imdb_rating_votes} }
+		metadata["rating"] = imdb_rating
+		logger.debug(f"{imdb_rating=}")
+	else:
+		logger.warning(f"imdb rating not found")
 
-	# get rating
+	# TODO: get top cast with images
 
-	logger.info(f"collect {metadata=} and return ")
+	logger.info(f"collect {metadata=} and return")
 	return metadata
 
 
@@ -113,7 +155,7 @@ def getUserDefMetadata(filename:str) -> dict:
 	with open(filename, "r", encoding="utf-8") as file:
 		logger.debug("safe load yaml file")
 		metadata = yaml.safe_load(file)
-		logger.info(f"loaded {metadata=}")
+		logger.debug(f"loaded {metadata=}")
 
 	# remove permitted datafields
 	permitted_datafields = ["filename", "extension", "filepath", "directory", "movieID", "imdb_url", "duration", "resolution"]
@@ -128,7 +170,7 @@ def getUserDefMetadata(filename:str) -> dict:
 	if (poster := metadata.get("poster")) and not poster.startswith(("http", "/localpath/")):
 		logger.debug(f"get local path as url")
 		metadata["poster"] = "/localpath/" + os.path.abspath(os.path.join(os.path.dirname(filename), poster))
-		logger.info(metadata["poster"])
+		logger.debug(metadata["poster"])
 	
 	# get absolute path from relative path
 	logger.debug("check if subtitle file paths/urls are abolute file paths or urls")
@@ -139,7 +181,7 @@ def getUserDefMetadata(filename:str) -> dict:
 		# warn if not supported format used
 		if not subtitles.endswith("vtt"):
 			logger.warning(f"used subtitle format (.{subtitles.rsplit('.', 1)[-1]}) not supported; only WebVTT format (.vtt) is supported")
-	logger.info(f"subtitles: {metadata.get('subtitles')}")
+	logger.debug(f"subtitles: {metadata.get('subtitles')}")
 	
 	logger.info(f"return {metadata=}")
 	return metadata
