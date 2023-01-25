@@ -3,13 +3,15 @@ import custom_logger
 logger = custom_logger.init(__file__)
 logger.debug(f"start of script: {__file__}")
 
-import requests, json, yaml, os, urllib.parse, webvtt
+import requests, json, yaml, os, urllib.parse
+from scrapy.selector import Selector
 from pymediainfo import MediaInfo
 from bs4 import BeautifulSoup
 from tqdm import tqdm
 from colorama import Fore, Back, Style, init
 logger.debug("init colorama")
 init(autoreset=True)
+
 
 # readout description from metadata file
 def getDescFromFile(filename:str) -> dict:
@@ -37,35 +39,12 @@ def getDescFromFile(filename:str) -> dict:
 			logger.error(error)
 			return None
 
-# get movie poster as url
-def getMoviePosterFromIMDB(imdb_id:str) -> str:
-	logger.debug(f"get movie poster for imdb id '{imdb_id}'")
-
-	# request imdb movie page
-	header = {"user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36" ,"referer":"https://www.google.com/"}
-	requestURL = f"https://www.imdb.com/title/{imdb_id}/"
-	logger.debug(f"request url '{requestURL}'")
-	request = requests.get(requestURL, headers=header)
-	if request.status_code != 200:
-		logger.error(f"http response code: {request.status_code}")
-		return None
-	logger.debug("parse html")
-	html = BeautifulSoup(request.content, features="html.parser")
-	
-	# get url of poster
-	logger.debug("get url of poster")
-	imgs = [ tag for tag in html.findAll("img", attrs={"class": "ipc-image"}) if tag.get("class") == ["ipc-image"] ]
-	if imgs == []:
-		logger.warning("related image not found")
-		return None
-	posterURL = imgs[0].get("srcset").split(", ")[-1].split(" ")[0]
-	logger.info(f"poster url: {posterURL}")
-	return posterURL
 
 # get metadata from Moviepilot
 # https://www.moviepilot.de/movies/23-nichts-ist-so-wie-es-scheint
 def getMetadatFromMoviepilot(moviename:str) -> dict:
 	pass
+
 
 # get metadata from imdb
 def getMetadataFromIMDB(moviename:str) -> dict:
@@ -75,16 +54,16 @@ def getMetadataFromIMDB(moviename:str) -> dict:
 	header = {"user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36" ,"referer":"https://www.google.com/"}
 	requestURL = "https://www.imdb.com/find/?q=" + urllib.parse.quote_plus(moviename)
 	logger.debug(f"request url '{requestURL}'")
-	request = requests.get(requestURL, headers=header)
-	logger.debug(request)
-	if request.status_code != 200:
-		logger.error(f"http response code: {request.status_code}")
+	response = requests.get(requestURL, headers=header)
+	logger.debug(response)
+	if response.status_code != 200:
+		logger.error(f"http response code: {response.status_code}")
 		return None
 	logger.debug("parse html")
-	html = BeautifulSoup(request.content, features="html.parser")
+	html_bs4 = BeautifulSoup(response.content, features="html.parser")
 	
 	# get first search result
-	page = html.find("a", attrs={"class": "ipc-metadata-list-summary-item__t"})
+	page = html_bs4.find("a", attrs={"class": "ipc-metadata-list-summary-item__t"})
 	if page is None:
 		logger.error(f"no movie with title '{moviename}' found on imdb")
 		return None
@@ -95,11 +74,38 @@ def getMetadataFromIMDB(moviename:str) -> dict:
 	metadata["imdb_id"] = page.get("href").split("/")[2]
 	metadata["imdb_url"] = "https://www.imdb.com/title/"
 	logger.info(f"imdb movie page: {metadata['imdb_url']}{metadata['imdb_id']}/")
-	if poster := getMoviePosterFromIMDB(metadata["imdb_id"]):
-		metadata["poster"] = poster
+	
+	# request imdb movie page
+	requestURL = f"{metadata['imdb_url']}{metadata['imdb_id']}/"
+	logger.debug(f"request url '{requestURL}'")
+	response = requests.get(requestURL, headers=header)
+	if response.status_code != 200:
+		logger.error(f"http response code: {response.status_code}")
+		return None
+	logger.debug("parse html")
+	html_bs4 = BeautifulSoup(response.content, features="html.parser")
+	html_scrap = Selector(text=response.content)
+	
+	# get poster
+	logger.debug("get url of poster")
+	if 	img := html_scrap.css("img[class=ipc-image]::attr(srcset)").get():
+		posterURL = img.rsplit(", ",1)[-1].split(" ",1)[0]
+		metadata["poster"] = posterURL
+		logger.info(f"poster url: {posterURL}")
+	else:
+		logger.warning("related image not found")
+
+	# get director, writer, stars
+
+	# get year, description, genres, age-rating
+
+	# get main cast
+
+	# get rating
 
 	logger.info(f"collect {metadata=} and return ")
 	return metadata
+
 
 # get metadata from user defined json file
 def getUserDefMetadata(filename:str) -> dict:
@@ -137,6 +143,7 @@ def getUserDefMetadata(filename:str) -> dict:
 	
 	logger.info(f"return {metadata=}")
 	return metadata
+
 
 # save collected metadata as json format
 def saveMetadata(filename:str, metadata:dict) -> None:
