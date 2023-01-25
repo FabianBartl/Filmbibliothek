@@ -25,24 +25,23 @@ with open("config.yml", "r", encoding="utf-8") as file:
 logger = custom_logger.init(__file__, log_to_console=True)
 logger.debug("re-call logger with colored output")
 
-# add host if server-name is not set to 0.0.0.0
-host = config_yaml.get("server-host", "filmbibliothek")
-logger.debug("try: add host to local dns resolver")
-customHost = False
+# add server-name as host to local dns resolver
+name = config_yaml.get("server-name", "filmbibliothek")
+logger.debug("try: add server-name as host to local dns resolver")
 try:
-	with open("C:\\Windows\\System32\\drivers\\etc\\hosts", "r", encoding="utf-8") as file:
+	path = "C:\\Windows\\System32\\drivers\\etc\\hosts"
+	with open(path, "r", encoding="utf-8") as file:
 		content = file.read()
-	with open("C:\\Windows\\System32\\drivers\\etc\\hosts", "a", encoding="utf-8") as file:
-		if not host in content:
-			file.write(f"\n# host for flask webserver of '{host}' project")
-			file.write(f"\n127.0.0.1    {host}\n")
+	with open(path, "a", encoding="utf-8") as file:
+		if not f" {name}" in content:
+			file.write(f"\n# host for flask webserver of '{name}' project")
+			file.write(f"\n127.0.0.1 {name}\n")
 	
-	customHost = True
-	logger.info(f"added {host=} to local dns resolver")
-	print(Fore.GREEN + f"Host '{host}' added to DNS resolver")
+	logger.info(f"added {name=} to local dns resolver")
+	print(Fore.GREEN + f"Host '{name}' added to DNS resolver")
 except PermissionError:
-	logger.warning(f"PermissionError: failed to add {host=} to local dns resolver")
-	print(Fore.YELLOW + f"Run the installation script as administrator to add '{host}' as host to local DNS resolver")
+	logger.warning(f"PermissionError: failed to add {name=} to local dns resolver")
+	print(Fore.YELLOW + f"Run the installation script as administrator to add '{name}' as host to local DNS resolver")
 except Exception as error:
 	logger.critical(error)
 	print(error)
@@ -50,7 +49,7 @@ except Exception as error:
 
 # add webserver.py to startup directory
 logger.debug("add webserver.py to windows startup directory")
-startup_path = os.path.join(winshell.startup(), f"webserver_{host}.lnk")
+startup_path = os.path.join(winshell.startup(), f"webserver_{name}.lnk")
 target_path = os.path.abspath(os.path.join(os.path.curdir, "webserver.py"))
 working_dir = os.path.abspath(os.path.curdir)
 logger.debug(f"{startup_path=} {target_path=} {working_dir=}")
