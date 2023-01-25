@@ -1,6 +1,6 @@
 
 import custom_logger
-logger = custom_logger.init(__file__, log_to_console=True)
+logger = custom_logger.init(__file__, log_to_console=False)
 logger.debug(f"start of script: {__file__}")
 
 import requests, json, yaml, os, urllib.parse
@@ -72,11 +72,10 @@ def getMetadataFromIMDB(moviename:str) -> dict:
 	logger.debug("get imdb movie page")
 	metadata = {}
 	metadata["imdb_id"] = page.get("href").split("/")[2]
-	metadata["imdb_url"] = "https://www.imdb.com/title/"
-	logger.debug(f"imdb movie page: {metadata['imdb_url']}{metadata['imdb_id']}/")
+	logger.debug(f"imdb movie page: https://www.imdb.com/title/{metadata['imdb_id']}/")
 	
 	# request imdb movie page
-	requestURL = f"{metadata['imdb_url']}{metadata['imdb_id']}/"
+	requestURL = f"https://www.imdb.com/title/{metadata['imdb_id']}/"
 	logger.debug(f"request url '{requestURL}'")
 	response = requests.get(requestURL, headers=header)
 	if response.status_code != 200:
@@ -158,7 +157,7 @@ def getUserDefMetadata(filename:str) -> dict:
 		logger.debug(f"loaded {metadata=}")
 
 	# remove permitted datafields
-	permitted_datafields = ["filename", "extension", "filepath", "directory", "movieID", "imdb_url", "duration", "resolution"]
+	permitted_datafields = ["filename", "extension", "filepath", "directory", "movieID", "duration", "resolution", "imdb_id"]
 	logger.debug("iterate over metadate and remove permitted datafields")
 	for key in metadata:
 		if key in permitted_datafields:
@@ -251,13 +250,18 @@ def run(movie_directories:list[str], metadata_directories:list[str]) -> None:
 			except:
 				logger.error(f"failed to collect metadata from file attributes")
 
-			# get metadata and poster from imdb
-			logger.debug("get metadata from imdb")
-			if imdb_metadata := getMetadataFromIMDB(movie_metadata["title"]):
-				movie_metadata |= imdb_metadata
-				logger.info("metadata from imdb scraped")
-
 			metadata_file = os.path.join(metadata_directory, movie_metadata["filename"])
+			user_defined_metadata = getUserDefMetadata(file) if os.path.isfile(file := f"{metadata_file}.yml") else {}
+
+			# get metadata and poster from imdb
+			if user_defined_metadata.get("scrape_additional_data", True):
+				logger.debug("get metadata from imdb")
+				if imdb_metadata := getMetadataFromIMDB(movie_metadata["title"]):
+					movie_metadata |= imdb_metadata
+					logger.debug("metadata from imdb scraped")
+			else:
+				logger.debug("scraping of additional data is not wanted")
+
 			logger.debug(f"get metadata from local files: {metadata_file=}")
 			# get description from mediathek-view file
 			if os.path.isfile(file := f"{metadata_file}.txt"):
@@ -268,7 +272,7 @@ def run(movie_directories:list[str], metadata_directories:list[str]) -> None:
 			# get metadata from user-defined YAML file
 			if os.path.isfile(file := f"{metadata_file}.yml"):
 				logger.debug("get metadata from user-defined yaml file")
-				movie_metadata |= getUserDefMetadata(file)
+				movie_metadata |= user_defined_metadata
 
 			logger.info(f"add movie with {movieID=} and {movie_metadata=}")
 			metadata[movieID] = movie_metadata
