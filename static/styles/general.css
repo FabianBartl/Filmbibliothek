@@ -252,7 +252,7 @@ ul.row.badges li.badge:not(:last-child)::after {
 }
 .short-credits .credit-name {
 	font-weight: bold;
-	min-width: 5em;
+	min-width: 4em;
 }
 
 /* on page movie stream */
