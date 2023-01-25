@@ -169,6 +169,6 @@ if __name__ == "__main__":
 		logger.info("accessible in network")
 		print(Fore.YELLOW + f"accessible in your local network using the local network address of your host-computer")
 	# run app
-	app.run(debug=False, port=port, host=host)
+	app.run(debug=True, port=port, host=host)
 
 logger.debug(f"end of script: {__file__}")
