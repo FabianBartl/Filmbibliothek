@@ -9,7 +9,7 @@
 		$(document).ready(function(){
 			// search input field and data source
 			var search_input = $("#search-input");
-			const movies_data = {{ movies_array | safe }};
+			const movies_data = {{ movies_array | safe | replace('False','false') | replace('True','true') | replace('None','NaN') }};
 			
 			// call on typing in search field
 			search_input.keyup(function(event) {
@@ -18,7 +18,7 @@
 
 					// searchable values
 					function(movie) {
-						const keys = ["title", "description", "age-rating", "year", "resolution", "director", "writer", "genre", "main-cast", "duration"];
+						const keys = ["title", "description", "age-rating", "year", "resolution", "director", "writer", "genre", "main-cast", "duration", "camera"];
 						var result = [];
 						keys.forEach(function(key) {
 							var value = movie[key];
