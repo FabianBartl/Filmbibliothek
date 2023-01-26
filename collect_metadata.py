@@ -89,8 +89,8 @@ def getMetadataFromIMDB(moviename:str, *, imdb_id:str=None) -> dict:
 	html_bs4 = BeautifulSoup(response.content, features="html.parser")
 	html_scrap = Selector(text=response.content)
 
-	# for debugging only: store response 
-	if "Martha Liebermann" in moviename:
+	# for debugging only: store response
+	if False:
 		with open("tmp.html", "wb+") as file:
 			file.write(response.content)
 	
