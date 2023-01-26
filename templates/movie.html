@@ -22,8 +22,8 @@
 						</li>
 					{% endif %}
 					<li class="duration">
-						{{ movie.get('duration')[0] }} h
-						{{ movie.get('duration')[1] }} min
+						{{ movie.get('duration', {}).get('hours') }} h
+						{{ movie.get('duration', {}).get('minutes') }} min
 					</li>
 				</ul>
 				<ul class="row badges">
@@ -34,6 +34,25 @@
 					{% endfor %}
 				</ul>
 			</div>
+			{% if movie.get('rating') %}
+				<ul class="row ratings">
+					{% if movie.get('rating', {}).get('imdb') %}
+						<li class="rating" id="imdb" title="{{ movie.get('rating', {}).get('imdb', {}).get('votes') }} votes">
+							IMDB Rating: {{ movie.get('rating', {}).get('imdb', {}).get('points') }} / 10
+						</li>
+					{% endif %}
+					{% if movie.get('rating', {}).get('rotten-tomatoes') %}
+						<li class="rating" id="rotten-tomatoes">
+							<div title="{{ movie.get('rating', {}).get('rotten-tomatoes', {}).get('audience-score', {}).get('votes') }} votes">
+								Rotten Tomatoes Rating &minus; Audience Score: {{ movie.get('rating', {}).get('rotten-tomatoes', {}).get('audience-score', {}).get('percent', '--') }} %
+							</div>
+							<div>
+								Rotten Tomatoes Rating &minus; Tomatometer: {{ movie.get('rating', {}).get('rotten-tomatoes', {}).get('Tomatometer', {}).get('percent', '--') }} %
+							</div>
+						</li>
+					{% endif %}
+				</ul>
+			{% endif %}
 			<ul class="row actions">
 				<li>
 					<a class="button" onclick="playAsFullscreen('#movie-stream > video');">
@@ -47,7 +66,7 @@
 				</div>
 			{% endif %}
 			<div class="short-credits">
-				{% set credits = {'director':'REGIE', 'writer':'DREHBUCH', 'studio':'STUDIO', 'genre':'GENRE', 'main-cast':'HAUPTBESETZUNG'} %}
+				{% set credits = {'director':'REGIE', 'writer':'DREHBUCH', 'studio':'STUDIO', 'genre':'GENRE', 'main-cast':'HAUPTBESETZUNG', 'camera':'KAMERA'} %}
 				{% for credit in credits %}
 					{% if movie.get(credit) %}
 						<div class="row">
