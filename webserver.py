@@ -9,7 +9,7 @@ from colorama import Fore, Back, Style, init
 init(autoreset=True)
 
 from flask import Flask
-from flask import redirect, url_for, render_template, send_from_directory, abort, send_file, request
+from flask import redirect, url_for, render_template, send_from_directory, abort, send_file, request, jsonify
 
 # ---------- global used variables ----------
 
