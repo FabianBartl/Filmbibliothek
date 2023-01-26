@@ -1,6 +1,6 @@
 
 import custom_logger
-logger = custom_logger.init(__file__, log_to_console=False)
+logger = custom_logger.init(__file__, log_to_console=True)
 logger.debug(f"start of script: {__file__}")
 
 import requests, json, yaml, os, urllib.parse
@@ -233,7 +233,7 @@ def run(movie_directories:list[str], metadata_directories:list[str]) -> None:
 				if duration := track.get("duration"):
 					seconds = int(float(duration)) // 1_000
 					hours = int(seconds / 60 / 60)
-					movie_metadata["duration"] = [hours, int(seconds/60 - hours*60)]
+					movie_metadata["duration"] = { "hours": hours, "minutes": int(seconds/60 - hours*60) }
 					logger.debug(f"{duration=} {movie_metadata['duration']=}")
 				# extract resolution
 				logger.debug("extract resolution")
