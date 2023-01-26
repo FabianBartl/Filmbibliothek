@@ -47,31 +47,35 @@ def getMetadatFromMoviepilot(moviename:str) -> dict:
 
 
 # get metadata from imdb
-def getMetadataFromIMDB(moviename:str) -> dict:
+def getMetadataFromIMDB(moviename:str, *, imdb_id:str=None) -> dict:
+	header = {"user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36", "referer":"https://www.google.com/"}
+	
 	logger.debug(f"get metadata for '{moviename}' from imdb")
-
-	# request imdb search
-	header = {"user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36" ,"referer":"https://www.google.com/"}
-	requestURL = "https://www.imdb.com/find/?q=" + urllib.parse.quote_plus(moviename)
-	logger.debug(f"request url '{requestURL}'")
-	response = requests.get(requestURL, headers=header)
-	logger.debug(response)
-	if response.status_code != 200:
-		logger.error(f"http response code: {response.status_code}")
-		return None
-	logger.debug("parse html")
-	html_bs4 = BeautifulSoup(response.content, features="html.parser")
-	
-	# get first search result
-	page = html_bs4.find("a", attrs={"class": "ipc-metadata-list-summary-item__t"})
-	if page is None:
-		logger.error(f"no movie with title '{moviename}' found on imdb")
-		return None
-	
+	if not imdb_id:
+		# request imdb search
+		requestURL = "https://www.imdb.com/find/?q=" + urllib.parse.quote_plus(moviename)
+		logger.debug(f"request url '{requestURL}'")
+		response = requests.get(requestURL, headers=header)
+		logger.debug(response)
+		if response.status_code != 200:
+			logger.error(f"http response code: {response.status_code} for '{requestURL}'")
+			return None
+		logger.debug("parse html")
+		html_bs4 = BeautifulSoup(response.content, features="html.parser")
+		
+		# get first search result
+		page = html_bs4.find("a", attrs={"class": "ipc-metadata-list-summary-item__t"})
+		if page is None:
+			logger.error(f"no movie with title '{moviename}' found on imdb")
+			return None
+		
+		# imdb id found by search
+		imdb_id = page.get("href").split("/")[2]
+		
 	# collect metadata
 	logger.debug("get imdb movie page")
 	metadata = {}
-	metadata["imdb_id"] = page.get("href").split("/")[2]
+	metadata["imdb_id"] = imdb_id
 	logger.debug(f"imdb movie page: https://www.imdb.com/title/{metadata['imdb_id']}/")
 	
 	# request imdb movie page
@@ -79,11 +83,16 @@ def getMetadataFromIMDB(moviename:str) -> dict:
 	logger.debug(f"request url '{requestURL}'")
 	response = requests.get(requestURL, headers=header)
 	if response.status_code != 200:
-		logger.error(f"http response code: {response.status_code}")
+		logger.error(f"http response code: {response.status_code} for '{requestURL}'")
 		return None
 	logger.debug("parse html")
 	html_bs4 = BeautifulSoup(response.content, features="html.parser")
 	html_scrap = Selector(text=response.content)
+
+	# for debugging only: store response 
+	if "Martha Liebermann" in moviename:
+		with open("tmp.html", "wb+") as file:
+			file.write(response.content)
 	
 	# get poster
 	logger.debug("get url of poster")
@@ -92,7 +101,7 @@ def getMetadataFromIMDB(moviename:str) -> dict:
 		metadata["poster"] = poster
 		logger.debug(f"{poster=}")
 	else:
-		logger.warning("poster not found")
+		logger.warning(f"poster of '{moviename}' not found")
 
 	# get simple attributes
 	attribute_xpaths = {
@@ -110,7 +119,7 @@ def getMetadataFromIMDB(moviename:str) -> dict:
 			metadata[attribute] = value
 			logger.debug(f"{attribute}={value}")
 		else:
-			logger.warning(f"{attribute} not found")
+			logger.warning(f"{attribute} of '{moviename}' not found")
 
 	# get list attributes
 	attribute_xpaths = {
@@ -129,7 +138,7 @@ def getMetadataFromIMDB(moviename:str) -> dict:
 			metadata[attribute] = values
 			logger.debug(f"{attribute}={values}")
 		else:
-			logger.warning(f"{attribute} not found")
+			logger.warning(f"{attribute} of '{moviename}' not found")
 
 	# get imdb rating
 	logger.debug(f"get imdb rating")
@@ -140,7 +149,7 @@ def getMetadataFromIMDB(moviename:str) -> dict:
 		metadata["rating"] = imdb_rating
 		logger.debug(f"{imdb_rating=}")
 	else:
-		logger.warning(f"imdb rating not found")
+		logger.warning(f"imdb rating of '{moviename}' not found")
 
 	# TODO: get top cast with images
 
@@ -157,7 +166,7 @@ def getUserDefMetadata(filename:str) -> dict:
 		logger.debug(f"loaded {metadata=}")
 
 	# remove permitted datafields
-	permitted_datafields = ["filename", "extension", "filepath", "movie_directory", "metadata_directory", "movieID", "duration", "resolution", "imdb_id"]
+	permitted_datafields = ["filename", "extension", "filepath", "movie_directory", "metadata_directory", "movieID", "duration", "resolution"]
 	logger.debug("iterate over metadate and remove permitted datafields")
 	for key in metadata:
 		if key in permitted_datafields:
@@ -166,22 +175,6 @@ def getUserDefMetadata(filename:str) -> dict:
 
 	logger.info(f"return {metadata=}")
 	return metadata
-
-	# get absolute path of poster if no url
-	logger.debug("get absolute path of poster if no url")
-	if (poster := metadata.get("poster")) and not poster.startswith("http"):
-		metadata["poster"] = os.path.abspath(os.path.join(os.path.dirname(filename), poster))
-	logger.debug(f"poster: {metadata.get('poster')}")
-	
-	# get absolute path of subtitles if no url
-	logger.debug("get absolute path of subtitles if no url")
-	for language, subtitles in metadata.get("subtitles", {}).items():
-		if not subtitles.startswith("http"):
-			metadata["subtitles"][language] = os.path.abspath(os.path.join(os.path.dirname(filename), subtitles))
-		# warn if not supported format used
-		if not subtitles.endswith("vtt"):
-			logger.warning(f"used subtitle format (.{subtitles.rsplit('.', 1)[-1]}) not supported; only WebVTT format (.vtt) is supported")
-	logger.debug(f"subtitles: {metadata.get('subtitles')}")
 	
 
 # save collected metadata as json format
@@ -249,13 +242,14 @@ def run(movie_directories:list[str], metadata_directories:list[str]) -> None:
 			except:
 				logger.error(f"failed to collect metadata from file attributes")
 
+			# preload user-defined metadata, but apply them later
 			metadata_file = os.path.join(metadata_directory, movie_metadata["filename"])
 			user_defined_metadata = getUserDefMetadata(file) if os.path.isfile(file := f"{metadata_file}.yml") else {}
-
-			# get metadata and poster from imdb
+			
+			# get metadata from imdb
 			if user_defined_metadata.get("scrape_additional_data", True):
 				logger.debug("get metadata from imdb")
-				if imdb_metadata := getMetadataFromIMDB(movie_metadata["title"]):
+				if imdb_metadata := getMetadataFromIMDB(user_defined_metadata.get("title", movie_metadata["title"]), imdb_id=user_defined_metadata.get("imdb_id")):
 					movie_metadata |= imdb_metadata
 					logger.debug("metadata from imdb scraped")
 			else:

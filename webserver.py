@@ -85,14 +85,6 @@ def not_found(error):
 
 # ---------- url routes ----------
 
-# return ANY local file requested by url path
-# (Note from the documentation: Never pass file paths provided by a user to the send_file() function)
-@app.route("/localpath/<path:filepath>")
-def localpath(filepath):
-	if os.path.isfile(filepath):
-		return send_file(filepath)
-	return abort(404)
-
 # get favicon
 @app.route("/favicon.ico")
 def favicon():
