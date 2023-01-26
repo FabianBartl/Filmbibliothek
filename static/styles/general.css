@@ -154,7 +154,7 @@ ul.row.badges li.badge:not(:last-child)::after {
 
 /* ---------------------------------------- individual changes for other screen sizes ---------------------------------------- */
 
-/* style for smaller screens */
+/* style for 200% zoom on a 27" display */
 @media screen and (max-width: 1520px) {
 	.movie-overview {
 		--movie-width: 20em;
@@ -253,6 +253,8 @@ ul.row.badges li.badge:not(:last-child)::after {
 .short-credits .credit-name {
 	font-weight: bold;
 	min-width: 4em;
+	hyphens: none;
+	white-space: nowrap;
 }
 
 /* on page movie stream */
