@@ -5,10 +5,10 @@
 
 {% block main %}
 	<div class="row">
-		{% if movie.get('poster') %}
+		{% if movie.get('poster', '').startswith('http') %}
 			<img class="poster" src="{{ movie.get('poster') }}">
 		{% else %}
-			<img class="poster" src="{{ url_for('static', filename='images/blank-poster.jpg') }}">
+			<img class="poster" src="poster/">
 		{% endif %}
 		<div class="short-details">
 			<h2 class="title">

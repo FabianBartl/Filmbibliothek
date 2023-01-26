@@ -51,11 +51,11 @@
 {% block main %}
 	{% for movieID, data in movies.items() %}
 		<div id="movie-{{ movieID }}" class="movie-overview">
-			<a href="movie/{{ movieID }}/">
-				{% if data.get('poster') %}
+			<a href="/movie/{{ movieID }}/">
+				{% if data.get('poster', '').startswith('http') %}
 					<img class="poster" src="{{ data.get('poster') }}">
 				{% else %}
-					<img class="poster" src="{{ url_for('static', filename='images/blank-poster.jpg') }}">
+					<img class="poster" src="/movie/{{ movieID }}/poster/">
 				{% endif %}
 			</a>
 			<div class="title">

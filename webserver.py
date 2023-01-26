@@ -85,15 +85,6 @@ def not_found(error):
 
 # ---------- url routes ----------
 
-# movie overview
-@app.route("/")
-@app.route("/", methods=["GET"])
-def index():
-	global MOVIES, DEBUG
-	movies_array = str(list(MOVIES.values()))
-	search_query = request.args.get("query")
-	return render_template("index.html", movies=MOVIES, movies_array=movies_array, search_query=search_query)
-
 # return ANY local file requested by url path
 # (Note from the documentation: Never pass file paths provided by a user to the send_file() function)
 @app.route("/localpath/<path:filepath>")
@@ -102,7 +93,7 @@ def localpath(filepath):
 		return send_file(filepath)
 	return abort(404)
 
-# favicon image
+# get favicon
 @app.route("/favicon.ico")
 def favicon():
 	global CONFIG
@@ -111,7 +102,16 @@ def favicon():
 		return send_from_directory(images_dir, favicon, as_attachment=False)
 	abort(404)
 
-# detailed movie data
+# return movie overview page
+@app.route("/")
+@app.route("/", methods=["GET"])
+def index():
+	global MOVIES, DEBUG
+	movies_array = str(list(MOVIES.values()))
+	search_query = request.args.get("query")
+	return render_template("index.html", movies=MOVIES, movies_array=movies_array, search_query=search_query)
+
+# return detailed movie page
 @app.route("/movie/<movieID>/")
 def movie(movieID):
 	global MOVIES, DEBUG
@@ -119,27 +119,38 @@ def movie(movieID):
 		return render_template("movie.html", movie=movie)
 	return abort(404)
 
-# stream movie
+# get movie stream
 @app.route("/movie/<movieID>/stream/")
 def movie_stream(movieID):
 	global MOVIES
 	if movie := MOVIES.get(movieID):
-		return send_from_directory(movie["directory"], f'{movie["filename"]}.{movie["extension"]}', as_attachment=False)
+		return send_from_directory(movie["movie_directory"], f"{movie['filename']}.{movie['extension']}", as_attachment=False)
 	return abort(404)
 
-# get subtitles
+# get movie poster
+@app.route("/movie/<movieID>/poster/")
+def movie_poster(movieID):
+	global MOVIES
+	if movie := MOVIES.get(movieID):
+		if poster := movie.get("poster"):
+			if os.path.isfile(os.path.join(movie["metadata_directory"], poster)):
+				return send_from_directory(movie["metadata_directory"], poster, as_attachment=False)
+		return send_from_directory("static", os.path.join("images", "blank-poster.jpg"))
+	return abort(404)
+
+# get movie subtitles
 @app.route("/movie/<movieID>/subtitles/<language>/")
-def movie_subtitles_language(movieID, language):
+def movie_subtitles(movieID, language):
 	global MOVIES
 	if movie := MOVIES.get(movieID):
 		if subtitles := movie.get("subtitles", {}).get(language):
-			if os.path.isfile(subtitles):
-				return send_from_directory(os.path.dirname(subtitles), os.path.basename(subtitles), as_attachment=False)
+			if os.path.isfile(os.path.join(movie["metadata_directory"], subtitles)):
+				return send_from_directory(movie["metadata_directory"], subtitles, as_attachment=False)
 	return abort(404)
 
 # ---------- tests ----------
 
-@app.route("/get_my_ip", methods=["GET"])
+@app.route("/get_my_ip")
 def get_my_ip():
 	return str(request.headers.get("X-Forwarded-For")), 200
 

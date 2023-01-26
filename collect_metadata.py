@@ -157,34 +157,32 @@ def getUserDefMetadata(filename:str) -> dict:
 		logger.debug(f"loaded {metadata=}")
 
 	# remove permitted datafields
-	permitted_datafields = ["filename", "extension", "filepath", "directory", "movieID", "duration", "resolution", "imdb_id"]
+	permitted_datafields = ["filename", "extension", "filepath", "movie_directory", "metadata_directory", "movieID", "duration", "resolution", "imdb_id"]
 	logger.debug("iterate over metadate and remove permitted datafields")
 	for key in metadata:
 		if key in permitted_datafields:
 			logger.warning(f"remove datafield '{key}' with '{metadata[key]}'")
 			del metadata[key]
+
+	logger.info(f"return {metadata=}")
+	return metadata
+
+	# get absolute path of poster if no url
+	logger.debug("get absolute path of poster if no url")
+	if (poster := metadata.get("poster")) and not poster.startswith("http"):
+		metadata["poster"] = os.path.abspath(os.path.join(os.path.dirname(filename), poster))
+	logger.debug(f"poster: {metadata.get('poster')}")
 	
-	# get local path as url
-	logger.debug("check if poster path/url is local file path")
-	if (poster := metadata.get("poster")) and not poster.startswith(("http", "/localpath/")):
-		logger.debug(f"get local path as url")
-		metadata["poster"] = "/localpath/" + os.path.abspath(os.path.join(os.path.dirname(filename), poster))
-		logger.debug(metadata["poster"])
-	
-	# get absolute path from relative path
-	logger.debug("check if subtitle file paths/urls are abolute file paths or urls")
+	# get absolute path of subtitles if no url
+	logger.debug("get absolute path of subtitles if no url")
 	for language, subtitles in metadata.get("subtitles", {}).items():
-		if not subtitles.startswith(("http", "/localpath/")):
-			logger.debug(f"get absolute path")
+		if not subtitles.startswith("http"):
 			metadata["subtitles"][language] = os.path.abspath(os.path.join(os.path.dirname(filename), subtitles))
 		# warn if not supported format used
 		if not subtitles.endswith("vtt"):
 			logger.warning(f"used subtitle format (.{subtitles.rsplit('.', 1)[-1]}) not supported; only WebVTT format (.vtt) is supported")
 	logger.debug(f"subtitles: {metadata.get('subtitles')}")
 	
-	logger.info(f"return {metadata=}")
-	return metadata
-
 
 # save collected metadata as json format
 def saveMetadata(filename:str, metadata:dict) -> None:
@@ -216,8 +214,9 @@ def run(movie_directories:list[str], metadata_directories:list[str]) -> None:
 			movie_metadata = {}
 			movie_metadata["filename"] = filename.rsplit(".", 1)[0]
 			movie_metadata["extension"] = filename.rsplit(".", 1)[-1]
-			movie_metadata["filepath"] = os.path.join(movie_directory, filename)
-			movie_metadata["directory"] = movie_directory
+			movie_metadata["filepath"] = os.path.abspath(os.path.join(movie_directory, filename))
+			movie_metadata["movie_directory"] = movie_directory
+			movie_metadata["metadata_directory"] = metadata_directory
 			movie_metadata["title"] = movie_metadata["filename"]
 			movie_metadata["movieID"] = str(movieID)
 			logger.debug(f"{movie_metadata=}")
@@ -234,7 +233,7 @@ def run(movie_directories:list[str], metadata_directories:list[str]) -> None:
 					seconds = int(float(duration)) // 1_000
 					hours = int(seconds / 60 / 60)
 					movie_metadata["duration"] = { "hours": hours, "minutes": int(seconds/60 - hours*60) }
-					logger.debug(f"{duration=} {movie_metadata['duration']=}")
+					logger.debug(f"{duration=} {movie_metadata['duration']}")
 				# extract resolution
 				logger.debug("extract resolution")
 				if width := track.get("width"):
