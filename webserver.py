@@ -137,6 +137,12 @@ def movie_subtitles_language(movieID, language):
 				return send_from_directory(os.path.dirname(subtitles), os.path.basename(subtitles), as_attachment=False)
 	return abort(404)
 
+# ---------- tests ----------
+
+@app.route("/get_my_ip", methods=["GET"])
+def get_my_ip():
+	return str(request.headers.get("X-Forwarded-For")), 200
+
 # ---------- start routine ----------
 
 # load movies and config
