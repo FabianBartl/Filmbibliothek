@@ -130,9 +130,12 @@ scrape-additional-data: true
 # must be a string
 # should be an imdb movie id
 imdb-id: tt0126765
+
+# must be an url
+website: https://www.imdb.com/title/tt0126765/
 ```
 
-*All these attributes are optional. Some attributes are scraped by the [collect_metadata.py](collect_metadata.py) script, but the user-defined values override them.*
+*All these attributes are optional and allmost all attributes are scraped by the [collect_metadata.py](collect_metadata.py) script, but the user-defined values override them.*
 
 *The attribute `imdb-id` should only be set if the wrong movie is listed. If the `scrape-additional-data` attribute is set to `false`, only the user-defined attributes are displayed and no additional information is collected from imdb. The default value is `true`.*
 

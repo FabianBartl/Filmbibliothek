@@ -83,10 +83,11 @@ def getMetadataFromIMDB(moviename:str, *, imdb_id:str=None) -> dict:
 	logger.debug("get imdb movie page")
 	metadata = {}
 	metadata["imdb-id"] = imdb_id
-	logger.debug(f"imdb movie page: https://www.imdb.com/title/{metadata['imdb-id']}/")
+	metadata["website"] = f"https://www.imdb.com/title/{imdb_id}/"
+	logger.debug(f"imdb movie page: {metadata['website']}")
 	
 	# request imdb movie page
-	requestURL = f"https://www.imdb.com/title/{metadata['imdb-id']}/"
+	requestURL = metadata["website"]
 	logger.debug(f"request url '{requestURL}'")
 	response = requests.get(requestURL, headers=getUserAgent())
 	if response.status_code != 200:
