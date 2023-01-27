@@ -9,7 +9,7 @@
 		$(document).ready(function(){
 			// search input field and data source
 			var search_input = $("#search-input");
-			const movies_data = {{ movies_array | safe | replace('False','false') | replace('True','true') | replace('None','NaN') }};
+			const movies_data = {{ movies_array | safe }};
 			
 			// call on typing in search field
 			search_input.keyup(function(event) {
