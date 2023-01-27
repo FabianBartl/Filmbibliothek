@@ -34,10 +34,11 @@ def load_movies() -> dict:
 	try:
 		with open(filename, "r", encoding="utf-8") as file:
 			data = json.load(file)
-			logger.info("loaded json movie data")
+			logger.debug("loaded json movie data")
 			return data
 	# unexpected error
 	except Exception as error:
+		logger.error(f"Couldn't load movie data from '{filename}'")
 		logger.critical(error)
 		print(Fore.RED + f"Couldn't load movie data from '{filename}'")
 		exit(1)
@@ -49,10 +50,11 @@ def load_config() -> dict:
 	try:
 		with open(filename, "r", encoding="utf-8") as file:
 			data = yaml.safe_load(file)
-			logger.info("loaded yaml config data")
+			logger.debug("loaded yaml config data")
 			return data
 	# unexpected error
 	except Exception as error:
+		logger.error(f"Couldn't load config data from '{filename}'")
 		logger.critical(error)
 		print(Fore.RED + f"Couldn't load config data from '{filename}'")
 		exit(1)
@@ -160,12 +162,6 @@ def movie_subtitles(movieID, language):
 			if isfile(joinpath(movie["metadata_directory"], subtitles)):
 				return send_from_directory(movie["metadata_directory"], subtitles, as_attachment=False)
 	return abort(404)
-
-# ---------- temporary test functions ----------
-
-@app.route("/get_my_ip")
-def get_my_ip():
-	return str(request.headers.get("X-Forwarded-For")), 200
 
 # ---------- start routine ----------
 

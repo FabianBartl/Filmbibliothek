@@ -19,7 +19,13 @@
 
 ### Changes
 
-- 
+- Added `metadata-directories` configuration to specify the location of metadata and movie configuration files.
+- Added `accessible-in-network` configuration to be able to access the website within your local network using the IP address of your host device
+- Added `website`, `camera`, `studio`, `subtitles`, `scrape-additional-data` and `imdb-id` attributes as possible movie configuration
+- Renamed movie configuration attribute `author` to `writer`
+- Almost all possible movie data are now queried from IMDb
+- Subtitle support added
+- Allow only URLs or relative paths for attributes of movie configurations that require paths 
 
 ### Impressions
 
