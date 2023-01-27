@@ -153,15 +153,6 @@ ul.row.badges li.badge:not(:last-child)::after {
 .darkened { --brightness-value: 0.3; }
 .inverted { --invert-value: 1; }
 
-/* ---------------------------------------- individual changes for other screen sizes ---------------------------------------- */
-
-/* style for 200% zoom on a 27" display */
-@media screen and (max-width: 1520px) {
-	.movie-overview {
-		--movie-width: 20em;
-	}
-}
-
 /* ---------------------------------------- special elements ---------------------------------------- */
 
 /* search */
@@ -279,3 +270,15 @@ ul.row.badges li.badge:not(:last-child)::after {
 #movie-stream {
 	margin: 3em auto;
 }
+
+/* ---------------------------------------- individual changes for other screen sizes ---------------------------------------- */
+
+/* style for 200% zoom on a 27" display */
+@media screen and (max-width: 1520px) {
+	.movie-overview {
+		--movie-width: 20em;
+	}
+}
+
+/* style for smartphones */
+
