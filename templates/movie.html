@@ -37,17 +37,16 @@
 			{% if movie.get('rating') %}
 				<ul class="row ratings">
 					{% if movie.get('rating', {}).get('imdb') %}
-						<li class="rating" id="imdb" title="{{ movie.get('rating', {}).get('imdb', {}).get('votes') }} votes">
-							IMDB Rating: {{ movie.get('rating', {}).get('imdb', {}).get('points') }} / 10
-						</li>
-					{% endif %}
-					{% if movie.get('rating', {}).get('rotten-tomatoes') %}
-						<li class="rating" id="rotten-tomatoes">
-							<div title="{{ movie.get('rating', {}).get('rotten-tomatoes', {}).get('audience-score', {}).get('votes') }} votes">
-								Rotten Tomatoes Rating &minus; Audience Score: {{ movie.get('rating', {}).get('rotten-tomatoes', {}).get('audience-score', {}).get('percent', '--') }} %
-							</div>
+						<li class="row no-separator imdb rating" title="IMDb rating">
+							<img class="icon" src="{{ url_for("static", filename="images/imdb_star.svg") }}">
 							<div>
-								Rotten Tomatoes Rating &minus; Tomatometer: {{ movie.get('rating', {}).get('rotten-tomatoes', {}).get('Tomatometer', {}).get('percent', '--') }} %
+								<div class="points">
+									<span>
+										{{ movie.get('rating', {}).get('imdb', {}).get('points') }}
+									</span>
+									<span>/ 10</span>
+								</div>
+								<div class="votes">{{ movie.get('rating', {}).get('imdb', {}).get('votes') }}</div>
 							</div>
 						</li>
 					{% endif %}

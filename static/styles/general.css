@@ -64,7 +64,7 @@ ul.row {
 	margin-top: auto;
 	margin-bottom: auto;
 }
-ul.row li:not(:last-child)::after {
+ul.row:not(.no-separator) li:not(:last-child)::after {
 	content: "●";
 	margin-left: 0.4rem;
 }
@@ -161,7 +161,7 @@ ul.row.badges li.badge:not(:last-child)::after {
 	}
 }
 
-/* ---------------------------------------- special elements / pages ---------------------------------------- */
+/* ---------------------------------------- special elements ---------------------------------------- */
 
 /* search */
 #search-input {
@@ -179,6 +179,8 @@ ul.row.badges li.badge:not(:last-child)::after {
 	width: 100%;
 }
 
+/* ---------------------------------------- pages ---------------------------------------- */
+
 /* error page */
 #error-page {
 	padding: 10vh;
@@ -190,8 +192,6 @@ ul.row.badges li.badge:not(:last-child)::after {
 #error-page > .message {
 	font-size: 1.1em;
 }
-
-/* ---------------------------------------- main pages ---------------------------------------- */
 
 /* movie index page */
 #movie-index {
@@ -255,6 +255,23 @@ ul.row.badges li.badge:not(:last-child)::after {
 	min-width: 4em;
 	hyphens: none;
 	white-space: nowrap;
+}
+
+.ratings > .imdb.rating {
+	line-height: 1.2em;
+}
+.ratings > .imdb.rating .icon {
+	height: 2.3em;
+}
+.ratings > .imdb.rating .points > :first-child {
+	font-size: 1.3em;
+	letter-spacing: 0.8px;
+}
+.ratings > .imdb.rating .points > :last-child,
+.ratings > .imdb.rating .votes {
+	letter-spacing: 0.5px;
+	font-size: 0.9em;
+	filter: grayscale(0.9);
 }
 
 /* on page movie stream */

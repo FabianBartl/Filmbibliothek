@@ -149,7 +149,10 @@ def getMetadataFromIMDB(moviename:str, *, imdb_id:str=None) -> dict:
 	if html_scrap.xpath("//*[@id='__next']/main/div/section[1]/section/div[3]/section/section/div[2]/div[2]/div/div[1]/a/div/div/div[2]").get():
 		imdb_rating_points = html_scrap.xpath("//*[@id='__next']/main/div/section[1]/section/div[3]/section/section/div[2]/div[2]/div/div[1]/a/div/div/div[2]/div[1]/span[1]/text()").get()
 		imdb_rating_votes = html_scrap.xpath("//*[@id='__next']/main/div/section[1]/section/div[3]/section/section/div[2]/div[2]/div/div[1]/a/div/div/div[2]/div[3]/text()").get()
-		imdb_rating = { "imdb": {"points": imdb_rating_points, "votes": imdb_rating_votes} }
+		imdb_rating = {"imdb": {
+			"points": imdb_rating_points.replace(".", ","),
+			"votes": imdb_rating_votes.replace("K", "000").replace(".", "")
+		}}
 		metadata["rating"] = imdb_rating
 		logger.debug(f"{imdb_rating=}")
 	else:
