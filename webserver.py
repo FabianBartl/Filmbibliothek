@@ -127,7 +127,7 @@ def movie_poster(movieID):
 		if poster := movie.get("poster"):
 			if os.path.isfile(os.path.join(movie["metadata_directory"], poster)):
 				return send_from_directory(movie["metadata_directory"], poster, as_attachment=False)
-		return send_from_directory("static", os.path.join("images", "blank-poster.jpg"))
+		return send_from_directory(os.path.abspath(os.path.join("static", "images")), "blank-poster.jpg")
 	return abort(404)
 
 # get movie subtitles
