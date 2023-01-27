@@ -4,7 +4,7 @@
 {% set mainID = 'movie-index' %}
 
 {% block aside %}
-<input id="search-input" type="text" {% if search_query %}value="{{ search_query }}"{% endif %} placeholder="Filme durchsuchen ...">
+	<input id="search-input" type="text" {% if search_query %}value="{{ search_query }}"{% endif %} placeholder="Filme durchsuchen ...">
 	<script>
 		$(document).ready(function(){
 			// search input field and data source

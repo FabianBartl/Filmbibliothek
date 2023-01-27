@@ -47,12 +47,6 @@ def getMetadatFromMoviepilot(moviename:str) -> dict:
 	pass
 
 
-# get metadata from Rotten Tomatoes
-# https://www.rottentomatoes.com/m/23
-def getMetadatFromRottenTomatoes(moviename:str) -> dict:
-	pass
-
-
 # get metadata from imdb
 def getMetadataFromIMDB(moviename:str, *, imdb_id:str=None) -> dict:
 	logger.debug(f"get metadata for '{moviename}' from imdb")
@@ -67,7 +61,12 @@ def getMetadataFromIMDB(moviename:str, *, imdb_id:str=None) -> dict:
 			return None
 		logger.debug("parse html")
 		html_bs4 = BeautifulSoup(response.content, features="html.parser")
-		
+
+		# for debugging only: store response
+		if False:
+			with open(f"logs/{moviename}_search.html", "wb+") as file:
+				file.write(response.content)
+
 		# get first search result
 		page = html_bs4.find("a", attrs={"class": "ipc-metadata-list-summary-item__t"})
 		if page is None:
@@ -80,11 +79,11 @@ def getMetadataFromIMDB(moviename:str, *, imdb_id:str=None) -> dict:
 	# collect metadata
 	logger.debug("get imdb movie page")
 	metadata = {}
-	metadata["imdb_id"] = imdb_id
-	logger.debug(f"imdb movie page: https://www.imdb.com/title/{metadata['imdb_id']}/")
+	metadata["imdb-id"] = imdb_id
+	logger.debug(f"imdb movie page: https://www.imdb.com/title/{metadata['imdb-id']}/")
 	
 	# request imdb movie page
-	requestURL = f"https://www.imdb.com/title/{metadata['imdb_id']}/"
+	requestURL = f"https://www.imdb.com/title/{metadata['imdb-id']}/"
 	logger.debug(f"request url '{requestURL}'")
 	response = requests.get(requestURL, headers=getUserAgent())
 	if response.status_code != 200:
@@ -96,7 +95,7 @@ def getMetadataFromIMDB(moviename:str, *, imdb_id:str=None) -> dict:
 
 	# for debugging only: store response
 	if False:
-		with open("tmp.html", "wb+") as file:
+		with open(f"logs/{moviename}_page.html", "wb+") as file:
 			file.write(response.content)
 	
 	# get poster
@@ -259,10 +258,11 @@ def run(movie_directories:list[str], metadata_directories:list[str]) -> None:
 			metadata_file = os.path.join(metadata_directory, movie_metadata["filename"])
 			user_defined_metadata = getUserDefMetadata(file) if os.path.isfile(file := f"{metadata_file}.yml") else {}
 			
-			# get metadata from imdb
-			if user_defined_metadata.get("scrape_additional_data", True):
+			# get additional metadata
+			if user_defined_metadata.get("scrape-additional-data", True):
+				# scrape from imdb
 				logger.debug("get metadata from imdb")
-				if imdb_metadata := getMetadataFromIMDB(user_defined_metadata.get("title", movie_metadata["title"]), imdb_id=user_defined_metadata.get("imdb_id")):
+				if imdb_metadata := getMetadataFromIMDB(user_defined_metadata.get("title", movie_metadata["title"]), imdb_id=user_defined_metadata.get("imdb-id")):
 					movie_metadata |= imdb_metadata
 					logger.debug("metadata from imdb scraped")
 			else:
