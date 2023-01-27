@@ -61,7 +61,7 @@ Run [collect_metadata.py](collect_metadata.py) to update the listed movies and t
 #### Movie page
 
 ![](screenshot_movie-page.png)
-`http://filmbibliothek/movie/0/`
+`http://filmbibliothek/movie/1/`
 
 The movie will be streamed from the local directory and played on the same tab.
 
