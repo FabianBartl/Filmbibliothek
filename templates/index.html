@@ -4,7 +4,7 @@
 {% set mainID = 'movie-index' %}
 
 {% block aside %}
-<input id="search-input" type="text" {% if search_query %}value="{{ search_query }}"{% endif %} placeholder="Filme durchsuchen ...">
+	<input id="search-input" type="text" {% if search_query %}value="{{ search_query }}"{% endif %} placeholder="Filme durchsuchen ...">
 	<script>
 		$(document).ready(function(){
 			// search input field and data source
@@ -18,16 +18,27 @@
 
 					// searchable values
 					function(movie) {
-						const keys = ["title", "description", "age-rating", "year", "resolution", "director", "author", "genre", "main-cast"];
+						const keys = ["title", "description", "age-rating", "year", "resolution", "director", "writer", "genre", "main-cast", "duration", "camera", "studio", "ratings"];
 						var result = [];
+						// convert key objects into an array of strings
 						keys.forEach(function(key) {
-							var value = movie[key];
-							if (value !== null && value !== undefined) {
-								if (typeof(value) === Array) {
-									result.push(value.join(""));
+							var object = movie[key];
+							if (object !== null && object !== undefined) {
+								// handle arrays
+								if (typeof(object) === Array) {
+									value = object.join("");
+								// handle objects
+								} else if (typeof(object) === Object) {
+									var values = [];
+									for (let key in object) {
+										values.push(object[key]);
+									}
+									value = values.join("");
+								// handle integers, strings, etc.
 								} else {
-									result.push(value.toString());
+									value = object.toString();
 								}
+								result.push(value);
 							}
 						});
 						return result;
@@ -37,6 +48,8 @@
 						{% for filter in config.get("not-result-filters", []) %}
 							{% if filter in ["unclickable", "hidden", "blurred", "grayed", "darkened", "inverted", "faded", "cleared"] %}
 								"{{ filter }}",
+							{% else %}
+								// filter '{{ filter }}' not allowed
 							{% endif %}
 						{% endfor %}
 						"filter"
@@ -51,11 +64,11 @@
 {% block main %}
 	{% for movieID, data in movies.items() %}
 		<div id="movie-{{ movieID }}" class="movie-overview">
-			<a href="movie/{{ movieID }}/">
-				{% if data.get('poster') %}
+			<a href="/movie/{{ movieID }}/">
+				{% if data.get('poster', '').startswith('http') %}
 					<img class="poster" src="{{ data.get('poster') }}">
 				{% else %}
-					<img class="poster" src="{{ url_for('static', filename='images/blank-poster.jpg') }}">
+					<img class="poster" src="/movie/{{ movieID }}/poster/">
 				{% endif %}
 			</a>
 			<div class="title">

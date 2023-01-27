@@ -54,7 +54,7 @@ footer {
 	display: flex;
 }
 .row > :not(:last-child) {
-	margin-right: 0.5em;
+	margin-right: 0.6em;
 }
 /* as list */
 ul.row {
@@ -64,9 +64,11 @@ ul.row {
 	margin-top: auto;
 	margin-bottom: auto;
 }
-ul.row li:not(:last-child)::after {
+ul.row:not(.no-separator) li:not(:last-child)::after {
 	content: "●";
-	margin-left: 0.4rem;
+}
+ul.row li:not(:last-child)::after {
+	margin-left: 0.4em;
 }
 ul.row:not(:last-child) {
 	margin-right: 1.5em;
@@ -74,8 +76,7 @@ ul.row:not(:last-child) {
 
 /* links */
 a,
-a:active,
-a:focus {
+a:active {
 	text-decoration: none;
 	color: var(--color-link);
 	cursor: pointer;
@@ -154,14 +155,14 @@ ul.row.badges li.badge:not(:last-child)::after {
 
 /* ---------------------------------------- individual changes for other screen sizes ---------------------------------------- */
 
-/* style for smaller screens */
+/* style for 200% zoom on a 27" display */
 @media screen and (max-width: 1520px) {
 	.movie-overview {
 		--movie-width: 20em;
 	}
 }
 
-/* ---------------------------------------- special elements / pages ---------------------------------------- */
+/* ---------------------------------------- special elements ---------------------------------------- */
 
 /* search */
 #search-input {
@@ -179,6 +180,8 @@ ul.row.badges li.badge:not(:last-child)::after {
 	width: 100%;
 }
 
+/* ---------------------------------------- pages ---------------------------------------- */
+
 /* error page */
 #error-page {
 	padding: 10vh;
@@ -190,8 +193,6 @@ ul.row.badges li.badge:not(:last-child)::after {
 #error-page > .message {
 	font-size: 1.1em;
 }
-
-/* ---------------------------------------- main pages ---------------------------------------- */
 
 /* movie index page */
 #movie-index {
@@ -252,7 +253,26 @@ ul.row.badges li.badge:not(:last-child)::after {
 }
 .short-credits .credit-name {
 	font-weight: bold;
-	min-width: 5em;
+	min-width: 4em;
+	hyphens: none;
+	white-space: nowrap;
+}
+
+.ratings > .imdb.rating {
+	line-height: 1.2em;
+}
+.ratings > .imdb.rating .icon {
+	height: 2.3em;
+}
+.ratings > .imdb.rating .points > :first-child {
+	font-size: 1.3em;
+	letter-spacing: 0.8px;
+}
+.ratings > .imdb.rating .points > :last-child,
+.ratings > .imdb.rating .votes {
+	letter-spacing: 0.5px;
+	font-size: 0.9em;
+	filter: grayscale(0.9);
 }
 
 /* on page movie stream */

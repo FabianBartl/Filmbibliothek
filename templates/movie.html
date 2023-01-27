@@ -5,10 +5,10 @@
 
 {% block main %}
 	<div class="row">
-		{% if movie.get('poster') %}
+		{% if movie.get('poster', '').startswith('http') %}
 			<img class="poster" src="{{ movie.get('poster') }}">
 		{% else %}
-			<img class="poster" src="{{ url_for('static', filename='images/blank-poster.jpg') }}">
+			<img class="poster" src="poster/">
 		{% endif %}
 		<div class="short-details">
 			<h2 class="title">
@@ -22,8 +22,8 @@
 						</li>
 					{% endif %}
 					<li class="duration">
-						{{ movie.get('duration')[0] }} h
-						{{ movie.get('duration')[1] }} min
+						{{ movie.get('duration', {}).get('hours') }} h
+						{{ movie.get('duration', {}).get('minutes') }} min
 					</li>
 				</ul>
 				<ul class="row badges">
@@ -34,12 +34,37 @@
 					{% endfor %}
 				</ul>
 			</div>
-			<ul class="row actions">
+			{% if movie.get('rating') %}
+				<ul class="row ratings">
+					{% if movie.get('rating', {}).get('imdb') %}
+						<li class="row no-separator imdb rating" title="IMDb rating">
+							<img class="icon" src="{{ url_for("static", filename="images/imdb_star.svg") }}">
+							<div>
+								<div class="points">
+									<span>
+										{{ movie.get('rating', {}).get('imdb', {}).get('points') }}
+									</span>
+									<span>/ 10</span>
+								</div>
+								<div class="votes">{{ movie.get('rating', {}).get('imdb', {}).get('votes') }}</div>
+							</div>
+						</li>
+					{% endif %}
+				</ul>
+			{% endif %}
+			<ul class="row no-separator actions">
 				<li>
-					<a class="button" onclick="playAsFullscreen('#movie-stream > video');">
+					<a class="button" onclick="playAsFullscreen('#movie-stream > video');" href="#movie-stream">
 						<i class="fa fa-play"></i>&ensp;Abspielen
 					</a>
 				</li>
+				{% if movie.get('website') %}
+					<li>
+						<a class="button" href="{{ movie.get('website') }}" target="_blank">
+							<i class="fa fa-globe"></i>&ensp;Webseite
+						</a>
+					</li>
+				{% endif %}
 			</ul>
 			{% if movie.get('description') %}
 				<div class="description">
@@ -47,7 +72,7 @@
 				</div>
 			{% endif %}
 			<div class="short-credits">
-				{% set credits = {'director':'REGIE', 'author':'AUTOR', 'studio':'STUDIO', 'genre':'GENRE', 'main-cast':'HAUPTBESETZUNG'} %}
+				{% set credits = {'director':'REGIE', 'writer':'DREHBUCH', 'studio':'STUDIO', 'genre':'GENRE', 'main-cast':'HAUPTBESETZUNG', 'camera':'KAMERA'} %}
 				{% for credit in credits %}
 					{% if movie.get(credit) %}
 						<div class="row">
@@ -72,8 +97,13 @@
 	<div id="movie-stream">
 		<video controls>
 			<source src="stream/" type="video/mp4">
-			<!-- <track src="subtitles/de/" kind="subtitles" srclang="de" label="Deutsch"> -->
-			<!-- <track src="subtitles/en/" kind="subtitles" srclang="en" label="Englisch"> -->
+			{% for language, subtitles in movie.get('subtitles', {}).items() %}
+				{% if subtitles.startswith(('http', '/localpath/')) %}
+					<track src="{{ subtitles }}" kind="subtitles" srclang="{{ language }}" label="{{ language }}">
+				{% else %}
+					<track src="subtitles/{{ language }}/" kind="subtitles" srclang="{{ language }}" label="{{ language }}">
+				{% endif %}
+			{% endfor %}
 		</video>
 	</div>
 {% endblock %}

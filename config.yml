@@ -9,8 +9,8 @@ theme: dark
 # possible strings: [absolute path]
 # (multiple values allowed)
 movie-directories:
-  - N:\\Videos\\Filme-Sammlung_1
-  - N:\\Videos\\Filme-Sammlung_2
+  - N:\\Videos\\Filme-Sammlung-1
+  - N:\\Videos\\Filme-Sammlung-2
 
 # directories to search for associated metadata files of the movies
 # possible strings: [absolute path]
@@ -18,8 +18,8 @@ movie-directories:
 #       e.g. the first directory of the 'metadata-directories' contains the metadata yaml files for the movies in the first directory of the 'movie-directories'
 # (multiple values allowed)
 metadata-directories:
-  - N:\\Videos\\Filme-Sammlung_1\\data
-  - N:\\Videos\\Filme-Sammlung_2
+  - N:\\Videos\\Filme-Sammlung-1\\data
+  - N:\\Videos\\Filme-Sammlung-2
 
 # length of title displayed in movie overview
 # possible integers: >= 0
@@ -48,7 +48,7 @@ server-name: filmbibliothek
 # makes the local webserver accessible in your (local) network
 # to reach the website on a different device in the same network, use the local ip address of the host device
 # possible values: true, false
-accessible-in-network: true
+accessible-in-network: false
 
 # minimum level of logging messages
 # possible strings: DEBUG, INFO, WARNING, ERROR, CRITICAL

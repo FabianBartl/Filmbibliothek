@@ -3,18 +3,22 @@ import custom_logger
 logger = custom_logger.init(__file__, log_to_console=True)
 logger.debug(f"start of script: {__file__}")
 
-import json, yaml, os
+import json, yaml, os, minify_html, time
+from os import listdir
+from os.path import abspath, isfile, isdir
+from os.path import join as joinpath
 from urllib.parse import unquote_plus, quote_plus, unquote, quote
 from colorama import Fore, Back, Style, init
 init(autoreset=True)
 
 from flask import Flask
-from flask import redirect, url_for, render_template, send_from_directory, abort, send_file, request
+from flask import redirect, url_for, render_template, send_from_directory, abort, send_file, request, jsonify
 
 # ---------- global used variables ----------
 
 MOVIES = {}
 CONFIG = {}
+DEBUG = True
 
 # init flask app
 app = Flask(__name__)
@@ -25,33 +29,35 @@ logger.debug(f"global variables initialized")
 
 # load movies data file into global variable
 def load_movies() -> dict:
-	filename = os.path.abspath(os.path.join("static", "data", "movies.json"))
+	filename = abspath(joinpath("static", "data", "movies.json"))
 	logger.debug(f"try: open {filename=}")
 	try:
 		with open(filename, "r", encoding="utf-8") as file:
 			data = json.load(file)
-			logger.info("loaded json movie data")
+			logger.debug("loaded json movie data")
 			return data
 	# unexpected error
 	except Exception as error:
+		logger.error(f"Couldn't load movie data from '{filename}'")
 		logger.critical(error)
 		print(Fore.RED + f"Couldn't load movie data from '{filename}'")
-		exit()
+		exit(1)
 
 # load config from yaml file
 def load_config() -> dict:
-	filename = os.path.abspath("config.yml")
+	filename = abspath("config.yml")
 	logger.debug(f"try: open {filename=}")
 	try:
 		with open(filename, "r", encoding="utf-8") as file:
 			data = yaml.safe_load(file)
-			logger.info("loaded yaml config data")
+			logger.debug("loaded yaml config data")
 			return data
 	# unexpected error
 	except Exception as error:
+		logger.error(f"Couldn't load config data from '{filename}'")
 		logger.critical(error)
 		print(Fore.RED + f"Couldn't load config data from '{filename}'")
-		exit()
+		exit(1)
 
 # ---------- custom jinja filters ----------
 
@@ -83,57 +89,78 @@ logger.debug(f"added yaml config and app config to jinja context")
 def not_found(error):
 	return render_template("404.html"), 404
 
+# ---------- other flask decorater functions ----------
+
+@app.after_request
+def responde_minify(response):
+	global DEBUG
+	# minfy html, except in debug mode
+	if response.content_type == u"text/html; charset=utf-8" and not DEBUG:
+		response.set_data(minify_html.minify(
+			response.get_data(as_text=True),
+			minify_js = True,
+			do_not_minify_doctype = True,
+			keep_spaces_between_attributes = True,
+			ensure_spec_compliant_unquoted_attribute_values = True
+		))
+	return response
+
 # ---------- url routes ----------
 
-# movie overview
-@app.route("/")
-@app.route("/", methods=["GET"])
-def index():
-	global MOVIES, DEBUG
-	movies_array = str(list(MOVIES.values()))
-	search_query = request.args.get("query")
-	return render_template("index.html", movies=MOVIES, movies_array=movies_array, search_query=search_query)
-
-# return ANY local file requested by url path
-# (Note from the documentation: Never pass file paths provided by a user to the send_file() function)
-@app.route("/localpath/<path:filepath>")
-def localpath(filepath):
-	if os.path.isfile(filepath):
-		return send_file(filepath)
-	return abort(404)
-
-# favicon image
+# get favicon
 @app.route("/favicon.ico")
 def favicon():
 	global CONFIG
-	images_dir = os.path.abspath(os.path.join("static", "images"))
-	if os.path.isfile(os.path.join(images_dir, favicon := CONFIG.get("favicon"))):
+	images_dir = abspath(joinpath("static", "images"))
+	if isfile(joinpath(images_dir, favicon := CONFIG.get("favicon"))):
 		return send_from_directory(images_dir, favicon, as_attachment=False)
 	abort(404)
 
-# detailed movie data
+# return movie overview page
+@app.route("/")
+@app.route("/", methods=["GET"])
+def index():
+	global MOVIES
+	# convert nested objects to repr strings
+	movies_array = json.dumps([ dict({ key: str(value) for key, value in obj.items() }) for obj in MOVIES.values() ])
+	search_query = request.args.get("query")
+	return render_template("index.html", movies=MOVIES, movies_array=movies_array, search_query=search_query)
+
+# return detailed movie page
 @app.route("/movie/<movieID>/")
 def movie(movieID):
-	global MOVIES, DEBUG
+	global MOVIES
 	if movie := MOVIES.get(movieID):
 		return render_template("movie.html", movie=movie)
 	return abort(404)
 
-# stream movie
+# get movie stream
 @app.route("/movie/<movieID>/stream/")
 def movie_stream(movieID):
 	global MOVIES
 	if movie := MOVIES.get(movieID):
-		return send_from_directory(movie["directory"], f'{movie["filename"]}.{movie["extension"]}', as_attachment=False)
+		return send_from_directory(movie["movie_directory"], f"{movie['filename']}.{movie['extension']}", as_attachment=False)
 	return abort(404)
 
-# get subtitles
-@app.route("/movie/<movieID>/subtitles/<language>/")
-def movie_subtitles_language(movieID, language):
+# get movie poster
+@app.route("/movie/<movieID>/poster/")
+def movie_poster(movieID):
 	global MOVIES
 	if movie := MOVIES.get(movieID):
-		if os.path.isfile(os.path.join(movie["directory"], file := f'{movie["filename"]}.{language}.vtt')):
-			return send_from_directory(movie["directory"], file, as_attachment=False)
+		if poster := movie.get("poster"):
+			if isfile(joinpath(movie["metadata_directory"], poster)):
+				return send_from_directory(movie["metadata_directory"], poster, as_attachment=False)
+		return send_from_directory(abspath(joinpath("static", "images")), "blank-poster.jpg")
+	return abort(404)
+
+# get movie subtitles
+@app.route("/movie/<movieID>/subtitles/<language>/")
+def movie_subtitles(movieID, language):
+	global MOVIES
+	if movie := MOVIES.get(movieID):
+		if subtitles := movie.get("subtitles", {}).get(language):
+			if isfile(joinpath(movie["metadata_directory"], subtitles)):
+				return send_from_directory(movie["metadata_directory"], subtitles, as_attachment=False)
 	return abort(404)
 
 # ---------- start routine ----------
@@ -157,17 +184,17 @@ port = CONFIG.get("server-port", 80)
 if not (port == 80 or port >= 1025):
 	logger.critical(f"invalid server port {port}")
 	print(Fore.RED + f"Invalid server port: {port}")
-	exit()
+	exit(2)
 
 # run flask app
 if __name__ == "__main__":
-	print(Fore.WHITE + Back.RED + " DO NOT CLOSE THIS WINDOW ")
+	print(Fore.WHITE + Back.RED + "    DO NOT CLOSE THIS WINDOW    ")
 	logger.info(f"run flask app as {name=} and {port=} on {host=}")
 	print(Fore.GREEN + f"open in webbrowser as http://{name}:{port}/ or http://localhost:{port}/")
 	if host == "0.0.0.0":
 		logger.info("accessible in network")
-		print(Fore.YELLOW + f"accessible in your local network using the local network address of your computer")
+		print(Fore.YELLOW + f"accessible in your local network using the local network address of your host-computer")
 	# run app
-	app.run(debug=False, port=port, host=host)
+	app.run(debug=DEBUG, port=port, host=host)
 
 logger.debug(f"end of script: {__file__}")
