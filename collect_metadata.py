@@ -1,6 +1,6 @@
 
 import custom_logger
-logger = custom_logger.init(__file__, log_to_console=True)
+logger = custom_logger.init(__file__, log_to_console=False)
 logger.debug(f"start of script: {__file__}")
 
 import requests, json, yaml, os, urllib.parse, random

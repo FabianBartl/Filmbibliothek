@@ -19,7 +19,6 @@ DEBUG = True
 
 # init flask app
 app = Flask(__name__)
-app.jinja_env
 
 logger.debug(f"global variables initialized")
 
