@@ -11,7 +11,7 @@
 
 - Provides an installation script for Windows: [install-win.py](install-win.py)
 - Operates with *Flask* backend and can be reached in the browser at http://filmbibliothek/ or http://localhost/ or from another device in the same network
-- Scrapes movie information from IMDb and user-defined YAML files
+- Scrapes all movie information from IMDb and user-defined YAML files
 
 <!-- ### Known issues -->
 
