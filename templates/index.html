@@ -37,6 +37,8 @@
 						{% for filter in config.get("not-result-filters", []) %}
 							{% if filter in ["unclickable", "hidden", "blurred", "grayed", "darkened", "inverted", "faded", "cleared"] %}
 								"{{ filter }}",
+							{% else %}
+								// filter '{{ filter }}' not allowed
 							{% endif %}
 						{% endfor %}
 						"filter"

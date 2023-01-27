@@ -140,7 +140,7 @@ def movie_subtitles(movieID, language):
 				return send_from_directory(movie["metadata_directory"], subtitles, as_attachment=False)
 	return abort(404)
 
-# ---------- tests ----------
+# ---------- temporary test functions ----------
 
 @app.route("/get_my_ip")
 def get_my_ip():
@@ -171,7 +171,7 @@ if not (port == 80 or port >= 1025):
 
 # run flask app
 if __name__ == "__main__":
-	print(Fore.WHITE + Back.RED + " DO NOT CLOSE THIS WINDOW ")
+	print(Fore.WHITE + Back.RED + "    DO NOT CLOSE THIS WINDOW    ")
 	logger.info(f"run flask app as {name=} and {port=} on {host=}")
 	print(Fore.GREEN + f"open in webbrowser as http://{name}:{port}/ or http://localhost:{port}/")
 	if host == "0.0.0.0":
