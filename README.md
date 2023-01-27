@@ -7,27 +7,19 @@
 ![visitors](https://visitor-badge.laobi.icu/badge?page_id=fabianbartl/filmbibliothek)&nbsp;
 <!-- ![visitors](https://visitor-badge.laobi.icu/badge?page_id=fabianbartl/filmbibliothek&query_only)&nbsp; -->
 
-## [Release: v0.3.0](https://github.com/FabianBartl/Filmbibliothek/releases/tag/v0.3.0)
+## [Release: v0.4.0](https://github.com/FabianBartl/Filmbibliothek/releases/tag/v0.4.0)
 
-- Own modern designed webpage
 - Provides an installation script for Windows: [install-win.py](install-win.py)
 - Operates with *Flask* backend and can be reached in the browser at http://filmbibliothek/ or http://localhost/ or from another devive in the same network
-- Scrapes movie information from IMDB and user-defined YAML files
+- Scrapes movie information from IMDb and user-defined YAML files
 
-### Known issues
-
-- Sometimes wrong scraped movie posters
-- Scraped movie data incomplete (currently only movie posters are being scraped)
-- Only German UI available
+<!-- ### Known issues -->
 
 <!-- ### Patch notes -->
 
 ### Changes
 
-- New config option `metadata-directories` to specify separate location of metadata files
-- Allow relative paths inside user-defined YAML files
-- Config option `server-host` to `server-name` renamed
-- Added config options `accessible-in-network` and `log-level` 
+- 
 
 ### Impressions
 
@@ -91,18 +83,18 @@ Example for an user-defined YAML file:
 *Here: The movie file `23.mp4` is located at `N:\\Videos\\Filme-Sammlung-1` and the corresponding `23.yml` file is located at `N:\\Videos\\Filme-Sammlung-1\\data`*
 
 ```yml
-# can be url or relative path
+# must be an url or a relative path
 poster: https://m.media-amazon.com/images/M/MV5BN2Y3NmQ5NGQtMjYwYi00ZDA5LThhZDYtN2FkZGZlNTA5MmY1L2ltYWdlL2ltYWdlXkEyXkFqcGdeQXVyMzA3Njg4MzY@._V1_QL75_UY562_CR9
 
-# can by any string
+# must be a string
 age-rating: FSK 12
 title: 23 - Nichts ist so wie es scheint
 # should be an integer
 year: 1998
 
-# can be a list of strings or a single string
+# must be a list of strings or a single string
 director: Hans-Christian Schmid
-author:
+writer:
   - Michael Gutmann
   - Hans-Christian Schmid
   - Michael Dierking
@@ -113,14 +105,17 @@ main-cast:
   - August Diehl
   - Fabian Busch
   - Dieter Landuris
+studio: Studio XY
+camera: Max Mustermann
 
-# can be url or relative path
+# must be an url or a relative path
 # only WebVTT format is supported
 subtitles:
   de: 23_de.vtt
   en: 23_en.vtt
 
-# can be any string; here with multiline syntax
+# must be a string
+# here with multiline syntax
 description: |
   In den 1980er Jahren wurde eine Gruppe junger westdeutscher
   Computerhacker wegen Spionagetätigkeiten für den sowjetischen
@@ -128,9 +123,18 @@ description: |
   internationalen Computersicherheit' am 30.11.22 zeigt ONE die
   Verfilmung dieser Geschehnisse und über das Leben des
   Mitbegründers dieser Hackerbande aus Hannover, Karl Koch.
+
+# must be a boolean
+scrape-additional-data: true
+
+# must be a string
+# should be an imdb movie id
+imdb-id: tt0126765
 ```
 
 *All these attributes are optional. Some attributes are scraped by the [collect_metadata.py](collect_metadata.py) script, but the user-defined values override them.*
+
+*The attribute `imdb-id` should only be set if the wrong movie is listed. If the `scrape-additional-data` attribute is set to `false`, only the user-defined attributes are displayed and no additional information is collected from imdb. The default value is `true`.*
 
 The description can also be read from a metadata file created by the movie download tool [MediadiathekView](https://mediathekview.de/):
 

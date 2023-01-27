@@ -176,7 +176,7 @@ def getUserDefMetadata(filename:str) -> dict:
 		logger.debug(f"loaded {metadata=}")
 
 	# remove permitted datafields
-	permitted_datafields = ["filename", "extension", "filepath", "movie_directory", "metadata_directory", "movieID", "duration", "resolution"]
+	permitted_datafields = ["filename", "extension", "filepath", "movie_directory", "metadata_directory", "movieID", "duration", "resolution", "ratings"]
 	logger.debug("iterate over metadate and remove permitted datafields")
 	for key in metadata:
 		if key in permitted_datafields:
