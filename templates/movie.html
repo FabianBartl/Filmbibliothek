@@ -52,12 +52,19 @@
 					{% endif %}
 				</ul>
 			{% endif %}
-			<ul class="row actions">
+			<ul class="row no-separator actions">
 				<li>
-					<a class="button" onclick="playAsFullscreen('#movie-stream > video');">
+					<a class="button" onclick="playAsFullscreen('#movie-stream > video');" href="#movie-stream">
 						<i class="fa fa-play"></i>&ensp;Abspielen
 					</a>
 				</li>
+				{% if movie.get('website') %}
+					<li>
+						<a class="button" href="{{ movie.get('website') }}" target="_blank">
+							<i class="fa fa-globe"></i>&ensp;Webseite
+						</a>
+					</li>
+				{% endif %}
 			</ul>
 			{% if movie.get('description') %}
 				<div class="description">

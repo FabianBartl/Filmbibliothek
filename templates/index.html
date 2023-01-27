@@ -18,16 +18,27 @@
 
 					// searchable values
 					function(movie) {
-						const keys = ["title", "description", "age-rating", "year", "resolution", "director", "writer", "genre", "main-cast", "duration", "camera"];
+						const keys = ["title", "description", "age-rating", "year", "resolution", "director", "writer", "genre", "main-cast", "duration", "camera", "studio", "ratings"];
 						var result = [];
+						// convert key objects into an array of strings
 						keys.forEach(function(key) {
-							var value = movie[key];
-							if (value !== null && value !== undefined) {
-								if (typeof(value) === Array) {
-									result.push(value.join(""));
+							var object = movie[key];
+							if (object !== null && object !== undefined) {
+								// handle arrays
+								if (typeof(object) === Array) {
+									value = object.join("");
+								// handle objects
+								} else if (typeof(object) === Object) {
+									var values = [];
+									for (let key in object) {
+										values.push(object[key]);
+									}
+									value = values.join("");
+								// handle integers, strings, etc.
 								} else {
-									result.push(value.toString());
+									value = object.toString();
 								}
+								result.push(value);
 							}
 						});
 						return result;

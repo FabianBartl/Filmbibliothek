@@ -3,7 +3,8 @@ import custom_logger
 logger = custom_logger.init(__file__, log_to_console=True)
 logger.debug(f"start of script: {__file__}")
 
-import json, yaml, os, minify_html
+import json, yaml, os, minify_html, time
+from os.path import join, abspath
 from urllib.parse import unquote_plus, quote_plus, unquote, quote
 from colorama import Fore, Back, Style, init
 init(autoreset=True)
@@ -116,7 +117,8 @@ def favicon():
 @app.route("/", methods=["GET"])
 def index():
 	global MOVIES
-	movies_array = json.dumps(list(MOVIES.values()))
+	# convert nested objects to repr strings
+	movies_array = json.dumps([ dict({ key: str(value) for key, value in obj.items() }) for obj in MOVIES.values() ])
 	search_query = request.args.get("query")
 	return render_template("index.html", movies=MOVIES, movies_array=movies_array, search_query=search_query)
 

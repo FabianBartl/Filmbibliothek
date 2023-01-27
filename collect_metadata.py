@@ -3,8 +3,9 @@ import custom_logger
 logger = custom_logger.init(__file__, log_to_console=False)
 logger.debug(f"start of script: {__file__}")
 
-import requests, json, yaml, os, urllib.parse, random
+import requests, json, yaml, os, urllib.parse, random, time
 import user_agents
+from os.path import join, abspath
 from scrapy.selector import Selector
 from pymediainfo import MediaInfo
 from bs4 import BeautifulSoup
@@ -153,7 +154,7 @@ def getMetadataFromIMDB(moviename:str, *, imdb_id:str=None) -> dict:
 			"points": imdb_rating_points.replace(".", ","),
 			"votes": imdb_rating_votes.replace(".", "").replace("K", ".000")
 		}}
-		metadata["rating"] = imdb_rating
+		metadata["ratings"] = imdb_rating
 		logger.debug(f"{imdb_rating=}")
 	else:
 		logger.warning(f"imdb rating of '{moviename}' not found")
@@ -240,7 +241,8 @@ def run(movie_directories:list[str], metadata_directories:list[str]) -> None:
 				if duration := track.get("duration"):
 					seconds = int(float(duration)) // 1_000
 					hours = int(seconds / 60 / 60)
-					movie_metadata["duration"] = { "hours": hours, "minutes": int(seconds/60 - hours*60) }
+					minutes = int(seconds/60 - hours*60)
+					movie_metadata["duration"] = { "hours": hours, "minutes": 1 if minutes == hours == 0 else minutes }
 					logger.debug(f"{duration=} {movie_metadata['duration']}")
 				# extract resolution
 				logger.debug("extract resolution")
