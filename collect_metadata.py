@@ -3,7 +3,8 @@ import custom_logger
 logger = custom_logger.init(__file__, log_to_console=True)
 logger.debug(f"start of script: {__file__}")
 
-import requests, json, yaml, os, urllib.parse
+import requests, json, yaml, os, urllib.parse, random
+import user_agents
 from scrapy.selector import Selector
 from pymediainfo import MediaInfo
 from bs4 import BeautifulSoup
@@ -54,14 +55,12 @@ def getMetadatFromRottenTomatoes(moviename:str) -> dict:
 
 # get metadata from imdb
 def getMetadataFromIMDB(moviename:str, *, imdb_id:str=None) -> dict:
-	header = {"user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36", "referer":"https://www.google.com/"}
-	
 	logger.debug(f"get metadata for '{moviename}' from imdb")
 	if not imdb_id:
 		# request imdb search
 		requestURL = "https://www.imdb.com/find/?q=" + urllib.parse.quote_plus(moviename)
 		logger.debug(f"request url '{requestURL}'")
-		response = requests.get(requestURL, headers=header)
+		response = requests.get(requestURL, headers=getUserAgent())
 		logger.debug(response)
 		if response.status_code != 200:
 			logger.error(f"http response code: {response.status_code} for '{requestURL}'")
@@ -87,7 +86,7 @@ def getMetadataFromIMDB(moviename:str, *, imdb_id:str=None) -> dict:
 	# request imdb movie page
 	requestURL = f"https://www.imdb.com/title/{metadata['imdb_id']}/"
 	logger.debug(f"request url '{requestURL}'")
-	response = requests.get(requestURL, headers=header)
+	response = requests.get(requestURL, headers=getUserAgent())
 	if response.status_code != 200:
 		logger.error(f"http response code: {response.status_code} for '{requestURL}'")
 		return None
@@ -189,6 +188,14 @@ def saveMetadata(filename:str, metadata:dict) -> None:
 	with open(filename, "w+", encoding="utf-8") as file:
 		logger.debug("dump json data")
 		json.dump(metadata, file, indent=2)
+
+
+# get random user agent
+def getUserAgent(*, without_referer:bool=False) -> dict:
+	user_agent = random.choice(user_agents.user_agents)
+	referer = random.choice(user_agents.referers)
+	logger.debug(f"{user_agent=} {referer=}")
+	return {"user-agent": user_agent} | ({"referer": referer} if not without_referer else {})
 
 
 # run
