@@ -98,7 +98,7 @@ def favicon():
 @app.route("/")
 @app.route("/", methods=["GET"])
 def index():
-	global MOVIES, DEBUG
+	global MOVIES
 	movies_array = str(list(MOVIES.values()))
 	search_query = request.args.get("query")
 	return render_template("index.html", movies=MOVIES, movies_array=movies_array, search_query=search_query)
@@ -106,7 +106,7 @@ def index():
 # return detailed movie page
 @app.route("/movie/<movieID>/")
 def movie(movieID):
-	global MOVIES, DEBUG
+	global MOVIES
 	if movie := MOVIES.get(movieID):
 		return render_template("movie.html", movie=movie)
 	return abort(404)
