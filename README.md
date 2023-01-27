@@ -42,7 +42,7 @@ movie-directories:
 #### Search functionality
 
 ![](screenshot_index-page_search-results.png)
-`http://filmbibliothek/?query=der`
+`http://filmbibliothek/?query=Thriller`
 
 Configured filters are applied to movies that are not included in the search results. These filters can be set with the `not-result-filters` setting in the [config.yml](config.yml) file:
 
