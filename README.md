@@ -7,6 +7,8 @@
 ![visitors](https://visitor-badge.laobi.icu/badge?page_id=fabianbartl/filmbibliothek)&nbsp;
 <!-- ![visitors](https://visitor-badge.laobi.icu/badge?page_id=fabianbartl/filmbibliothek&query_only)&nbsp; -->
 
+A local hosted movie streaming service for your own movie collection.
+
 ## [Release: v0.4.0](https://github.com/FabianBartl/Filmbibliothek/releases/tag/v0.4.0)
 
 - Provides an installation script: [install.py](install.py)
