@@ -4,7 +4,9 @@ logger = custom_logger.init(__file__, log_to_console=True)
 logger.debug(f"start of script: {__file__}")
 
 import json, yaml, os, minify_html, time
-from os.path import join, abspath
+from os import listdir
+from os.path import abspath, isfile, isdir
+from os.path import join as joinpath
 from urllib.parse import unquote_plus, quote_plus, unquote, quote
 from colorama import Fore, Back, Style, init
 init(autoreset=True)
@@ -27,7 +29,7 @@ logger.debug(f"global variables initialized")
 
 # load movies data file into global variable
 def load_movies() -> dict:
-	filename = os.path.abspath(os.path.join("static", "data", "movies.json"))
+	filename = abspath(joinpath("static", "data", "movies.json"))
 	logger.debug(f"try: open {filename=}")
 	try:
 		with open(filename, "r", encoding="utf-8") as file:
@@ -42,7 +44,7 @@ def load_movies() -> dict:
 
 # load config from yaml file
 def load_config() -> dict:
-	filename = os.path.abspath("config.yml")
+	filename = abspath("config.yml")
 	logger.debug(f"try: open {filename=}")
 	try:
 		with open(filename, "r", encoding="utf-8") as file:
@@ -107,8 +109,8 @@ def responde_minify(response):
 @app.route("/favicon.ico")
 def favicon():
 	global CONFIG
-	images_dir = os.path.abspath(os.path.join("static", "images"))
-	if os.path.isfile(os.path.join(images_dir, favicon := CONFIG.get("favicon"))):
+	images_dir = abspath(joinpath("static", "images"))
+	if isfile(joinpath(images_dir, favicon := CONFIG.get("favicon"))):
 		return send_from_directory(images_dir, favicon, as_attachment=False)
 	abort(404)
 
@@ -144,9 +146,9 @@ def movie_poster(movieID):
 	global MOVIES
 	if movie := MOVIES.get(movieID):
 		if poster := movie.get("poster"):
-			if os.path.isfile(os.path.join(movie["metadata_directory"], poster)):
+			if isfile(joinpath(movie["metadata_directory"], poster)):
 				return send_from_directory(movie["metadata_directory"], poster, as_attachment=False)
-		return send_from_directory(os.path.abspath(os.path.join("static", "images")), "blank-poster.jpg")
+		return send_from_directory(abspath(joinpath("static", "images")), "blank-poster.jpg")
 	return abort(404)
 
 # get movie subtitles
@@ -155,7 +157,7 @@ def movie_subtitles(movieID, language):
 	global MOVIES
 	if movie := MOVIES.get(movieID):
 		if subtitles := movie.get("subtitles", {}).get(language):
-			if os.path.isfile(os.path.join(movie["metadata_directory"], subtitles)):
+			if isfile(joinpath(movie["metadata_directory"], subtitles)):
 				return send_from_directory(movie["metadata_directory"], subtitles, as_attachment=False)
 	return abort(404)
 

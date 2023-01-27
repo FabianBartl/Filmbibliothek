@@ -5,7 +5,9 @@ logger.debug(f"start of script: {__file__}")
 
 import requests, json, yaml, os, urllib.parse, random, time
 import user_agents
-from os.path import join, abspath
+from os import listdir
+from os.path import abspath, isfile, isdir
+from os.path import join as joinpath
 from scrapy.selector import Selector
 from pymediainfo import MediaInfo
 from bs4 import BeautifulSoup
@@ -209,8 +211,8 @@ def run(movie_directories:list[str], metadata_directories:list[str]) -> None:
 	for directoryNum, (movie_directory, metadata_directory) in enumerate(zip(movie_directories, metadata_directories)):
 
 		logger.debug(f"iterate over files in {movie_directory=}")
-		for filename in tqdm(os.listdir(movie_directory), unit="File", desc=f"Scan directory {directoryNum+1}/{len(movie_directories)} '{movie_directory}'"):
-			if not os.path.isfile(os.path.join(movie_directory, filename)):
+		for filename in tqdm(listdir(movie_directory), unit="File", desc=f"Scan directory {directoryNum+1}/{len(movie_directories)} '{movie_directory}'"):
+			if not isfile(joinpath(movie_directory, filename)):
 				logger.warning(f"'{filename}' is not a file")
 				continue
 			if not filename.lower().endswith((".mp4", ".mov", ".m4v", ".mkv")):
@@ -223,7 +225,7 @@ def run(movie_directories:list[str], metadata_directories:list[str]) -> None:
 			movie_metadata = {}
 			movie_metadata["filename"] = filename.rsplit(".", 1)[0]
 			movie_metadata["extension"] = filename.rsplit(".", 1)[-1]
-			movie_metadata["filepath"] = os.path.abspath(os.path.join(movie_directory, filename))
+			movie_metadata["filepath"] = abspath(joinpath(movie_directory, filename))
 			movie_metadata["movie_directory"] = movie_directory
 			movie_metadata["metadata_directory"] = metadata_directory
 			movie_metadata["title"] = movie_metadata["filename"]
@@ -260,8 +262,8 @@ def run(movie_directories:list[str], metadata_directories:list[str]) -> None:
 				logger.error(f"failed to collect metadata from file attributes")
 
 			# preload user-defined metadata, but apply them later
-			metadata_file = os.path.join(metadata_directory, movie_metadata["filename"])
-			user_defined_metadata = getUserDefMetadata(file) if os.path.isfile(file := f"{metadata_file}.yml") else {}
+			metadata_file = joinpath(metadata_directory, movie_metadata["filename"])
+			user_defined_metadata = getUserDefMetadata(file) if isfile(file := f"{metadata_file}.yml") else {}
 			
 			# get additional metadata
 			if user_defined_metadata.get("scrape-additional-data", True):
@@ -275,13 +277,13 @@ def run(movie_directories:list[str], metadata_directories:list[str]) -> None:
 
 			logger.debug(f"get metadata from local files: {metadata_file=}")
 			# get description from mediathek-view file
-			if os.path.isfile(file := f"{metadata_file}.txt"):
+			if isfile(file := f"{metadata_file}.txt"):
 				logger.debug("get description from mediathek-view file")
 				if description := getDescFromFile(file):
 					movie_metadata["description"] = getDescFromFile(file)
 					logger.debug(f"{description=}")
 			# get metadata from user-defined YAML file
-			if os.path.isfile(file := f"{metadata_file}.yml"):
+			if isfile(file := f"{metadata_file}.yml"):
 				logger.debug("get metadata from user-defined yaml file")
 				movie_metadata |= user_defined_metadata
 
@@ -290,7 +292,7 @@ def run(movie_directories:list[str], metadata_directories:list[str]) -> None:
 			movieID += 1
 	
 	# save metadata
-	movies_json_path = os.path.abspath(os.path.join("static", "data", "movies.json"))
+	movies_json_path = abspath(joinpath("static", "data", "movies.json"))
 	logger.debug(f"store metadata of all movies in '{movies_json_path}'")
 	saveMetadata(movies_json_path, metadata)
 	logger.info(f"metadata of all movies in '{movies_json_path}' stored")
@@ -329,13 +331,13 @@ if __name__ == "__main__":
 	
 	logger.debug("check validity of movie directories")
 	for i, movie_directory in enumerate(movie_directories):
-		if not os.path.isdir(movie_directory):
+		if not isdir(movie_directory):
 			logger.error(f"directory {movie_directory=} not found")
 			print(Fore.RED + f"Directory '{movie_directory}' not found")
 			print(Fore.YELLOW + "Please use valid absolute paths as movie directory.")
 			msg_closeAndRunAgain()
 			exit(1)
-		movie_directories[i] = os.path.abspath(movie_directory)
+		movie_directories[i] = abspath(movie_directory)
 		logger.debug(f"valid movie directory: {movie_directory=} {movie_directories[i]=}")
 
 	# metadata-directories:
@@ -355,13 +357,13 @@ if __name__ == "__main__":
 
 	logger.debug("check validity of metadata directories")
 	for i, metadata_directory in enumerate(metadata_directories):
-		if not os.path.isdir(metadata_directory):
+		if not isdir(metadata_directory):
 			logger.error(f"directory {metadata_directory=} not found")
 			print(Fore.RED + f"Directory '{metadata_directory}' not found")
 			print(Fore.YELLOW + "Please use valid absolute paths as movie directory.")
 			msg_closeAndRunAgain()
 			exit(1)
-		metadata_directories[i] = os.path.abspath(metadata_directory)
+		metadata_directories[i] = abspath(metadata_directory)
 		logger.debug(f"valid metadata directory: {metadata_directory=} {metadata_directories[i]=}")
 
 	if len(metadata_directories) != len(movie_directories):
