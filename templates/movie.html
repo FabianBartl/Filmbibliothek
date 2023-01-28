@@ -34,19 +34,19 @@
 					{% endfor %}
 				</ul>
 			</div>
-			{% if movie.get('rating') %}
+			{% if movie.get('ratings') %}
 				<ul class="row ratings">
-					{% if movie.get('rating', {}).get('imdb') %}
+					{% if movie.get('ratings', {}).get('imdb') %}
 						<li class="row no-separator imdb rating" title="IMDb rating">
 							<img class="icon" src="{{ url_for("static", filename="images/imdb_star.svg") }}">
 							<div>
 								<div class="points">
 									<span>
-										{{ movie.get('rating', {}).get('imdb', {}).get('points') }}
+										{{ movie.get('ratings', {}).get('imdb', {}).get('points') }}
 									</span>
 									<span>/ 10</span>
 								</div>
-								<div class="votes">{{ movie.get('rating', {}).get('imdb', {}).get('votes') }}</div>
+								<div class="votes">{{ movie.get('ratings', {}).get('imdb', {}).get('votes') }}</div>
 							</div>
 						</li>
 					{% endif %}

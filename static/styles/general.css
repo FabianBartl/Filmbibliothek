@@ -57,6 +57,13 @@ footer {
 .row > :not(:last-child) {
 	margin-right: 0.6em;
 }
+.row.allow-break {
+	justify-content: space-evenly;
+	flex-wrap: wrap;
+}
+.row.allow-break > :not(:last-child) {
+	margin-right: unset;
+}
 /* as list */
 ul.row {
 	list-style: none;
@@ -278,7 +285,7 @@ ul.row.badges li.badge:not(:last-child)::after {
 @media screen and (max-width: 590px) {
 	/* use more screen width */
 	body {
-		width: 95%;;
+		width: 95%;
 	}
 
 	/* two movies per row on the movie index page */
