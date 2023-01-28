@@ -2,11 +2,14 @@
 @import url("theme.css");
 @import url("fonts.css");
 
+@import url("https://fonts.googleapis.com/css?family=Source+Sans+Pro&display=swap");
+@import url("https://fonts.googleapis.com/css?family=Open+Sans&display=swap");
+
 /* ---------------------------------------- general styling and variable ---------------------------------------- */
 
 /* variables */
 :root {
-	--text-font: "Dubai", "Lato", sans-serif;
+	--text-font: "Dubai", "Source Sans Pro", "Open Sans", sans-serif;
 	--animate-all: all 0.2s ease-in-out;
 	--badge-border: 2px solid var(--color-text);
 	/* default filter values */
@@ -103,12 +106,9 @@ video {
 	color: var(--color-background);
 	border-radius: 5px;
 	background-color: var(--color-link);
-	padding: 2px 9px;
+	padding: 4px 9px;
 	cursor: pointer;
 	transition: var(--animate-all);
-}
-.button > i.fa {
-	vertical-align: middle;
 }
 .button:hover {
 	color: var(--color-background);
@@ -120,7 +120,7 @@ video {
 	font-weight: bold;
 	border: var(--badge-border);
 	border-radius: 5px;
-	padding: 2px 7px 1px;
+	padding: 4px 9px;
 	font-size: 0.8em;
 }
 .badges > .badge:not(:last-child) {
@@ -202,7 +202,7 @@ video {
 	--movie-overview-width: 15em;
 	width: var(--movie-overview-width);
 	margin: 10px;
-	line-height: 110%;
+	line-height: 1.1em;
 }
 .movie-overview .poster {
 	width: var(--movie-overview-width);
