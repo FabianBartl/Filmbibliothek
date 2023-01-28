@@ -30,8 +30,9 @@ body {
 	font-size: 12pt;
 	color: var(--color-text);
 	hyphens: auto;
-	overflow-x: hidden;
+
 	background-color: var(--color-background);
+	overflow-x: hidden;
 }
 
 /* spacings */
@@ -134,20 +135,19 @@ ul.row.badges li.badge:not(:last-child)::after {
 .hidden {
 	display: none;
 }
-
 .faded { opacity: 30%; }
 .cleared { opacity: 0%; }
 
 /* apply all filter values */
 /* https://stackoverflow.com/questions/27421135/use-multiple-css-filters-at-the-same-time */
-.filter {
+.combine-filters {
 	filter:
 		blur(var(--blur-value)) 
 		grayscale(var(--grayscale-value))
 		brightness(var(--brightness-value))
 		invert(var(--invert-value));
 }
-/* modify fliter values */
+/* modify filter values */
 .blurred { --blur-value: 7px; }
 .grayed { --grayscale-value: 1; }
 .darkened { --brightness-value: 0.3; }
@@ -163,7 +163,7 @@ ul.row.badges li.badge:not(:last-child)::after {
 	border: var(--badge-border);
 	border-radius: 5px;
 	text-overflow: ellipsis;
-	font-size: 1.1rem;
+	font-size: 1em;
 	width: 20rem;
 	transition: var(--animate-all);
 }
@@ -189,9 +189,10 @@ ul.row.badges li.badge:not(:last-child)::after {
 #movie-index {
 	width: 100%;
 	display: flex;
-	justify-content: flex-start;
+	justify-content: space-evenly;
 	flex-wrap: wrap;
 	flex-direction: row;
+	align-items: baseline;
 }
 #movie-index .movie-overview {
 	transition: var(--animate-all);
@@ -200,13 +201,13 @@ ul.row.badges li.badge:not(:last-child)::after {
 .movie-overview {
 	--movie-width: 15em;
 	width: var(--movie-width);
-	margin: 15px;
+	margin: 10px;
 	line-height: 110%;
 }
 .movie-overview .poster {
 	width: var(--movie-width);
 	border-radius: 10px;
-	margin-bottom: 5px;
+	margin-bottom: 2px;
 	transition: var(--animate-all);
 }
 .movie-overview .title {
@@ -273,12 +274,28 @@ ul.row.badges li.badge:not(:last-child)::after {
 
 /* ---------------------------------------- individual changes for other screen sizes ---------------------------------------- */
 
-/* style for 200% zoom on a 27" display */
-@media screen and (max-width: 1520px) {
-	.movie-overview {
-		--movie-width: 20em;
+/* style for smartphones / tablets */
+@media screen and (max-width: 590px) {
+	/* use more screen width */
+	body {
+		width: 95%;;
+	}
+
+	/* two movies per row on the movie index page */
+	#movie-index .movie-overview {
+		--movie-width: 45vw;
+		margin: 0 2px 10px 2px;
+	}
+	#movie-index .movie-overview .title {
+		width: var(--movie-width);
+		font-size: 1.1em;
+	}
+	#movie-index .movie-overview .poster {
+		border-radius: 5px;
+	}
+
+	/* ignore not-result-filters; only show results */
+	.not-search-result {
+		display: none;
 	}
 }
-
-/* style for smartphones */
-

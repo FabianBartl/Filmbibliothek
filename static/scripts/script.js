@@ -22,7 +22,7 @@ function playAsFullscreen(selector) {
 
 
 // search for query in array and add css classes to results
-function searchResults(event, objectArray, inputElement, toArray, notResultClasses=["hidden"], minLenght=3) {
+function searchResults(event, objectArray, inputElement, toArray, notResultClasses, minLenght=1) {
 	var invalidChars = /[^a-z0-9\-]/gi;
 	var query = inputElement.val().toLowerCase();
 	var validQuery = query.replace(invalidChars, "");
