@@ -62,7 +62,7 @@ function searchResults(event, objectArray, inputElement, toArray, notResultClass
 	if (event.keyCode === 13 || validQuery.length % ((minLenght+1)*2) === 0) {
 		window.history.pushState({},
 			document.title,
-			window.location.origin+window.location.pathname+"?query="+query.replace(/ /g,"+")
+			window.location.origin+window.location.pathname+"?query="+query.replace(/ +/g,"+")
 		);
 	}
 }
