@@ -6,13 +6,13 @@
 {% block main %}
 	<div class="row">
 		{% if movie.get('poster', '').startswith('http') %}
-			<img class="poster" src="{{ movie.get('poster') }}">
+			<img class="poster" src="{{ movie.get('poster') }}" alt="movie poster for '{{ movie.get('title') }}'">
 		{% else %}
-			<img class="poster" src="poster/">
+			<img class="poster" src="poster/" alt="movie poster for '{{ movie.get('title') }}'">
 		{% endif %}
 		<div class="short-details">
 			<h2 class="title">
-				{{ movie.title }}
+				{{ movie.get('title') }}
 			</h2>
 			<div class="row">
 				<ul class="row with-separator">
