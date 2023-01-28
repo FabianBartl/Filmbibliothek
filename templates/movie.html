@@ -4,7 +4,7 @@
 {% set mainID = 'movie-details' %}
 
 {% block main %}
-	<div class="row allow-wrap">
+	<div class="row">
 		{% if movie.get('poster', '').startswith('http') %}
 			<img class="poster" src="{{ movie.get('poster') }}">
 		{% else %}
@@ -15,7 +15,7 @@
 				{{ movie.title }}
 			</h2>
 			<div class="row">
-				<ul class="row">
+				<ul class="row with-separator">
 					{% if movie.get('year') %}
 						<li class="year">
 							{{ movie.get('year') }}
@@ -37,7 +37,7 @@
 			{% if movie.get('ratings') %}
 				<ul class="row ratings">
 					{% if movie.get('ratings', {}).get('imdb') %}
-						<li class="row no-separator imdb rating" title="IMDb rating">
+						<li class="row imdb rating" title="IMDb rating">
 							<img class="icon" src="{{ url_for("static", filename="images/imdb_star.svg") }}">
 							<div>
 								<div class="points">
@@ -52,7 +52,7 @@
 					{% endif %}
 				</ul>
 			{% endif %}
-			<ul class="row no-separator actions">
+			<ul class="row actions">
 				<li>
 					<a class="button" onclick="playAsFullscreen('#movie-stream > video');" href="#movie-stream">
 						<i class="fa fa-play"></i>&ensp;Abspielen
