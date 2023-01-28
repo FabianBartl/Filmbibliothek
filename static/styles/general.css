@@ -288,6 +288,11 @@ ul.row.badges li.badge:not(:last-child)::after {
 		width: 95%;
 	}
 
+	/* prevent x-overflow */
+	#search-input {
+		width: 70%;
+	}	
+
 	/* two movies per row on the movie index page */
 	#movie-index .movie-overview {
 		--movie-width: 45vw;
