@@ -75,7 +75,7 @@ def init(name, *, name_is_path:bool=True, log_to_file:bool=True, log_to_console:
 		console_handler.setLevel(level)
 		console_handler.setFormatter(CustomFormatter(fmt=format, datefmt=datefmt, colored=colored_console))
 		handlers.append(console_handler)
-
+	
 	# logging config
 	logging.basicConfig(level=level, encoding=encoding, format=format, datefmt=datefmt, handlers=handlers)
 
