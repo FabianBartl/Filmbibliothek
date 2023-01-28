@@ -4,7 +4,7 @@
 {% set mainID = 'movie-details' %}
 
 {% block main %}
-	<div class="row">
+	<div class="row allow-wrap">
 		{% if movie.get('poster', '').startswith('http') %}
 			<img class="poster" src="{{ movie.get('poster') }}">
 		{% else %}

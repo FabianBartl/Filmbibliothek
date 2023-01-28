@@ -57,12 +57,9 @@ footer {
 .row > :not(:last-child) {
 	margin-right: 0.6em;
 }
-.row.allow-break {
-	justify-content: space-evenly;
+.row.allow-wrap {
+	justify-content: flex-start;
 	flex-wrap: wrap;
-}
-.row.allow-break > :not(:last-child) {
-	margin-right: unset;
 }
 /* as list */
 ul.row {
@@ -233,18 +230,16 @@ ul.row.badges li.badge:not(:last-child)::after {
 
 /* movie details page */
 #movie-details .poster {
-	width: 30em;
+	max-width: 30em;
 	border-radius: 15px;
-}
-#movie-details .short-details {
-	margin-left: 2em;
+	margin-right: 2em;
 }
 
 .short-details > :not(.title) {
 	margin-bottom: 3em;
 }
 .short-details > .description {
-	max-width: 100em;
+	max-width: 50vw;
 }
 
 .short-credits > div {

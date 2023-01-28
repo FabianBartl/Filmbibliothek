@@ -3,7 +3,7 @@
 
 # color theme of the webpage
 # possible strings: dark, light, debug
-theme: dark
+theme: debug
 
 # directories of movies
 # possible strings: [absolute path]
