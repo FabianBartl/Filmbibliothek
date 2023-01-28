@@ -6,7 +6,7 @@
 
 /* variables */
 :root {
-	--text-font: "Dubai", sans-serif;
+	--text-font: "Dubai", "Lato", sans-serif;
 	--animate-all: all 0.2s ease-in-out;
 	--badge-border: 2px solid var(--color-text);
 	/* default filter values */
