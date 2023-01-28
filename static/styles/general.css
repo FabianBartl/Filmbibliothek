@@ -214,6 +214,7 @@ video {
 	width: calc(var(--movie-overview-width) - 2.5em);
 	font-size: 1.2em;
 	margin-bottom: 2px;
+	letter-spacing: 0.1px;
 }
 .movie-overview .year {
 	width: var(--movie-overview-width);
@@ -234,6 +235,9 @@ video {
 	max-width: 50vw;
 }
 
+.short-details > .title {
+	letter-spacing: 0.5px;
+}
 .short-details > :not(.title) {
 	margin-bottom: 3em;
 }
@@ -245,7 +249,8 @@ video {
 	font-weight: bold;
 	hyphens: none;
 	white-space: nowrap;
-	min-width: 9em;
+	min-width: 10em;
+	letter-spacing: 1px;
 }
 
 .ratings > .imdb.rating {
