@@ -53,13 +53,13 @@ footer {
 /* inline elements */
 .row {
 	display: flex;
+	flex-direction: row;
+}
+.row img {
+	align-self: center;
 }
 .row > :not(:last-child) {
 	margin-right: 0.6em;
-}
-.row.allow-wrap {
-	justify-content: flex-start;
-	flex-wrap: wrap;
 }
 /* as list */
 ul.row {
@@ -69,7 +69,7 @@ ul.row {
 	margin-top: auto;
 	margin-bottom: auto;
 }
-ul.row:not(.no-separator) li:not(:last-child)::after {
+ul.row.with-separator li:not(:last-child)::after {
 	content: "●";
 }
 ul.row li:not(:last-child)::after {
@@ -125,10 +125,6 @@ video {
 }
 .badges > .badge:not(:last-child) {
 	margin-right: 0.8em;
-}
-ul.row.badges li.badge:not(:last-child)::after {
-	content: "";
-	margin-left: 0;
 }
 
 /* effects  */
@@ -203,24 +199,24 @@ ul.row.badges li.badge:not(:last-child)::after {
 }
 
 .movie-overview {
-	--movie-width: 15em;
-	width: var(--movie-width);
+	--movie-overview-width: 15em;
+	width: var(--movie-overview-width);
 	margin: 10px;
 	line-height: 110%;
 }
 .movie-overview .poster {
-	width: var(--movie-width);
+	width: var(--movie-overview-width);
 	border-radius: 10px;
 	margin-bottom: 2px;
 	transition: var(--animate-all);
 }
 .movie-overview .title {
-	width: calc(var(--movie-width) - 2.5em);
+	width: calc(var(--movie-overview-width) - 2.5em);
 	font-size: 1.2em;
 	margin-bottom: 2px;
 }
 .movie-overview .year {
-	width: var(--movie-width);
+	width: var(--movie-overview-width);
 	font-size: 0.9em;
 	filter: grayscale(0.9);
 }
@@ -234,12 +230,12 @@ ul.row.badges li.badge:not(:last-child)::after {
 	border-radius: 15px;
 	margin-right: 2em;
 }
+#movie-details .short-details {
+	max-width: 50vw;
+}
 
 .short-details > :not(.title) {
 	margin-bottom: 3em;
-}
-.short-details > .description {
-	max-width: 50vw;
 }
 
 .short-credits > div {
@@ -247,9 +243,9 @@ ul.row.badges li.badge:not(:last-child)::after {
 }
 .short-credits .credit-name {
 	font-weight: bold;
-	min-width: 4em;
 	hyphens: none;
 	white-space: nowrap;
+	min-width: 9em;
 }
 
 .ratings > .imdb.rating {
@@ -276,13 +272,46 @@ ul.row.badges li.badge:not(:last-child)::after {
 
 /* ---------------------------------------- individual changes for other screen sizes ---------------------------------------- */
 
-/* style for smartphones / tablets */
-@media screen and (max-width: 590px) {
+/* style for tablets */
+@media screen and (max-width: 1300px) {
+	/* ignore not-result-filters; only show results */
+	.not-search-result {
+		display: none;
+	}
+
+	/* tighter details and credits */
+	#movie-details .poster {
+		max-width: 20em;
+		margin-right: 1em;
+	}
+	.short-details > :not(.title) {
+		margin-bottom: 1.5em;
+	}	
+	.short-credits > div {
+		margin-bottom: 0.8em;
+		display: block;
+	}
+	.short-credits .credit-name {
+		line-height: 1.3em;
+	}
+	.short-credits .credit-content {
+		line-height: 1em;
+	}
+}
+@media screen and (max-width: 900px) {
 	/* use more screen width */
 	body {
 		width: 95%;
 	}
 
+	/* slimmer poster */
+	#movie-details .poster {
+		
+	}
+}
+
+/* style for smartphones */
+@media screen and (max-width: 590px) {
 	/* prevent x-overflow */
 	#search-input {
 		width: 70%;
@@ -290,19 +319,14 @@ ul.row.badges li.badge:not(:last-child)::after {
 
 	/* two movies per row on the movie index page */
 	#movie-index .movie-overview {
-		--movie-width: 45vw;
+		--movie-overview-width: 45vw;
 		margin: 0 2px 10px 2px;
 	}
 	#movie-index .movie-overview .title {
-		width: var(--movie-width);
+		width: var(--movie-overview-width);
 		font-size: 1.1em;
 	}
 	#movie-index .movie-overview .poster {
 		border-radius: 5px;
-	}
-
-	/* ignore not-result-filters; only show results */
-	.not-search-result {
-		display: none;
 	}
 }
