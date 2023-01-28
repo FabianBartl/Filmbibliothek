@@ -56,7 +56,7 @@ footer {
 	flex-direction: row;
 }
 .row img {
-	align-self: center;
+	align-self: start;
 }
 .row > :not(:last-child) {
 	margin-right: 0.6em;
@@ -226,7 +226,7 @@ video {
 
 /* movie details page */
 #movie-details .poster {
-	max-width: 30em;
+	width: 30em;
 	border-radius: 15px;
 	margin-right: 2em;
 }
@@ -253,6 +253,7 @@ video {
 }
 .ratings > .imdb.rating .icon {
 	height: 2.3em;
+	align-self: center;
 }
 .ratings > .imdb.rating .points > :first-child {
 	font-size: 1.3em;
@@ -272,21 +273,32 @@ video {
 
 /* ---------------------------------------- individual changes for other screen sizes ---------------------------------------- */
 
-/* style for tablets */
+/* style for laptops */
 @media screen and (max-width: 1300px) {
+	/* use more screen width */
+	body {
+		width: 95%;
+	}
+
 	/* ignore not-result-filters; only show results */
 	.not-search-result {
 		display: none;
 	}
 
-	/* tighter details and credits */
+	/* slimmer poster */
 	#movie-details .poster {
-		max-width: 20em;
+		width: 25em;
 		margin-right: 1em;
 	}
+	/* tighter details and credits */
+	#movie-details .short-details {
+		max-width: unset;
+	}
+
 	.short-details > :not(.title) {
 		margin-bottom: 1.5em;
 	}	
+
 	.short-credits > div {
 		margin-bottom: 0.8em;
 		display: block;
@@ -298,15 +310,24 @@ video {
 		line-height: 1em;
 	}
 }
-@media screen and (max-width: 900px) {
-	/* use more screen width */
-	body {
-		width: 95%;
-	}
 
+/* style for tablets */
+@media screen and (max-width: 850px) {
 	/* slimmer poster */
 	#movie-details .poster {
-		
+		width: 20em;
+		margin-right: 0.5em;
+	}
+}
+@media screen and (max-width: 650px) {
+	/* coloumn design for details */
+	#movie-details .poster {
+		width: 95%;
+		margin-right: unset;
+		margin-left: 2.5%;
+	}
+	#movie-details > .row {
+		display: block;
 	}
 }
 
