@@ -115,6 +115,11 @@ def not_found(error):
 
 # ---------- other flask decorater functions ----------
 
+@app.before_first_request
+def get_client_ip():
+	if client_ip := request.headers.get("x-forwarded-for"):
+		logger.warning(f"{client_ip=}")
+
 @app.after_request
 def responde_minify(response):
 	global DEBUG
