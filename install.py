@@ -12,9 +12,21 @@ logger.debug("install requirements")
 subprocess.check_call([sys.executable, "-m", "pip", "install", "-r", "requirements.txt"])
 
 # these packages are first available after the requirements.txt installation
-import winshell, yaml
-from win32com.client import Dispatch
+import yaml
 from colorama import Fore, Back, Style, init
+# needs a script restart after the installation
+try:
+	import winshell
+	from win32com.client import Dispatch
+except ModuleNotFoundError:
+	logger.error("the packages 'winshell' or 'win32com' could not be imported")
+	logger.debug("re-call the installation script")
+	subprocess.check_call([sys.executable, "install.py"])
+	exit(1)
+except Exception as error:
+	logger.critical(error)
+	print(Fore.RED + error)
+	exit(2)
 
 init(autoreset=True)
 print(Fore.GREEN + "Packages installed")
@@ -51,8 +63,8 @@ if sys.platform == "win32":
 		print(Fore.YELLOW + f"Run the installation script as administrator to add '{name}' as host to local DNS resolver")
 	except Exception as error:
 		logger.critical(error)
-		print(error)
-		exit(-1)
+		print(Fore.RED + error)
+		exit(3)
 # unsupported systems
 else:
 	logger.warning(f"failed to add {name=} to local dns resolver; your '{sys.platform}' system is not supported")
@@ -84,7 +96,8 @@ try:
 	subprocess.check_call([sys.executable, "collect_metadata.py"])
 except Exception as error:
 	logger.error(error)
-	exit()
+	print(Fore.RED + error)
+	exit(4)
 
 # start webserver
 logger.debug("run webserver.py")
@@ -93,6 +106,7 @@ try:
 	subprocess.check_call([sys.executable, "webserver.py"])
 except Exception as error:
 	logger.error(error)
-	exit()
+	print(Fore.RED + error)
+	exit(5)
 
 logger.debug(f"end of script: {__file__}")

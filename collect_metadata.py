@@ -372,7 +372,7 @@ if __name__ == "__main__":
 			print(Fore.RED + f"Directory '{movie_directory}' not found")
 			print(Fore.YELLOW + "Please use valid absolute paths as movie directory.")
 			msg_closeAndRunAgain()
-			exit(1)
+			exit(2)
 		movie_directories[i] = abspath(movie_directory)
 		logger.debug(f"valid movie directory: {movie_directory=} {movie_directories[i]=}")
 
@@ -384,7 +384,7 @@ if __name__ == "__main__":
 		print(Fore.RED + f"No metadata directories configured")
 		print(Fore.YELLOW + "Please add your metadata directories to the config.yml file.")
 		msg_closeAndRunAgain()
-		exit(1)
+		exit(3)
 
 	if not type(metadata_directories) is list:
 		logger.debug(f"convert single movie directory string to list: {metadata_directories=}")
@@ -398,7 +398,7 @@ if __name__ == "__main__":
 			print(Fore.RED + f"Directory '{metadata_directory}' not found")
 			print(Fore.YELLOW + "Please use valid absolute paths as movie directory.")
 			msg_closeAndRunAgain()
-			exit(1)
+			exit(4)
 		metadata_directories[i] = abspath(metadata_directory)
 		logger.debug(f"valid metadata directory: {metadata_directory=} {metadata_directories[i]=}")
 
@@ -406,7 +406,7 @@ if __name__ == "__main__":
 		logger.error(f"the length of the metadata directories (={len(metadata_directories)}) does not match the length of the movie directories (={len(movie_directories)})")
 		print(Fore.RED + f"The length of the metadata directories (={len(metadata_directories)}) needs to match with the length of the movie directories (={len(movie_directories)})")
 		msg_closeAndRunAgain()
-		exit(1)
+		exit(5)
 
 	# run
 	logger.debug(f"collect metadata with {movie_directories=} {metadata_directories=}")
