@@ -114,6 +114,9 @@ video {
 	color: var(--color-background);
 	background-color: var(--color-highlight);
 }
+.button.not-allowed:hover {
+	background-color: var(--color-link);
+}
 
 /* badges */
 .badges > .badge {
@@ -142,7 +145,7 @@ video {
 /* https://stackoverflow.com/questions/27421135/use-multiple-css-filters-at-the-same-time */
 .combine-filters {
 	filter:
-		blur(var(--blur-value)) 
+		blur(var(--blur-value))
 		grayscale(var(--grayscale-value))
 		brightness(var(--brightness-value))
 		invert(var(--invert-value));
@@ -152,6 +155,14 @@ video {
 .grayed { --grayscale-value: 1; }
 .darkened { --brightness-value: 0.3; }
 .inverted { --invert-value: 1; }
+
+/* show that actions are not allowed */
+.not-allowed:hover,
+.not-allowed :hover,
+.not-allowed,
+.not-allowed * {
+	cursor: not-allowed;
+}
 
 /* ---------------------------------------- special elements ---------------------------------------- */
 
@@ -223,6 +234,10 @@ video {
 }
 .movie-overview a > .poster:hover {
 	box-shadow: 0 10px 30px 0 var(--color-shadow);
+}
+/* age restricted movies */
+.movie-overview.not-allowed a > .poster:hover {
+	box-shadow: unset;
 }
 
 /* movie details page */
