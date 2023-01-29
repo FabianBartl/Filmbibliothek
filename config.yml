@@ -53,3 +53,8 @@ accessible-in-network: true
 # minimum level of logging messages
 # possible strings: DEBUG, INFO, WARNING, ERROR, CRITICAL
 log-level: INFO
+
+# 
+age-restriction:
+  pin: 9745
+  limit: 12
