@@ -62,25 +62,30 @@
 {% endblock %}
 
 {% block main %}
-	{% for movieID, data in movies.items() %}
-		<div id="movie-{{ movieID }}" class="movie-overview">
-			<a href="/movie/{{ movieID }}/">
-				{% if data.get('poster', '').startswith('http') %}
-					<img class="poster" src="{{ data.get('poster') }}" alt="movie poster for '{{ data.get('title') }}'">
+	{% for movieID, movie in movies.items() %}
+		{% if (movie.get('age-rating') | str | first_integer(0)) >= config.get('age-restriction', {}).get('limit', 0) %}
+			{% set age_restricted = true %}
+		{% else %}	
+			{% set age_restricted = false %}
+		{% endif %}
+		<div id="movie-{{ movieID }}" class="movie-overview {% if age_restricted %}not-allowed{% endif %}">
+			<a {% if not age_restricted %}href="/movie/{{ movieID }}/"{% endif %}>
+				{% if movie.get('poster', '').startswith('http') %}
+					<img class="poster" src="{{ movie.get('poster') }}" alt="movie poster for '{{ movie.get('title') }}'">
 				{% else %}
-					<img class="poster" src="/movie/{{ movieID }}/poster/" alt="movie poster for '{{ data.get('title') }}'">
+					<img class="poster" src="/movie/{{ movieID }}/poster/" alt="movie poster for '{{ movie.get('title') }}'">
 				{% endif %}
 			</a>
 			<div class="title">
 				{% if config.get('title_length', 0) != 0 %}
-					{{ data.title | truncate(config.get('title-length')) }}
+					{{ movie.title | truncate(config.get('title-length')) }}
 				{% else %}
-					{{ data.title }}
+					{{ movie.title }}
 				{% endif %}
 			</div>
-			{% if data.get('year') %}
+			{% if movie.get('year') %}
 				<div class="year">
-					{{ data.get('year') }}
+					{{ movie.get('year') }}
 				</div>
 			{% endif %}
 		</div>
