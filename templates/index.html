@@ -63,10 +63,13 @@
 
 {% block main %}
 	{% for movieID, movie in movies.items() %}
-		{% if (movie.get('age-rating') | str | first_integer(0)) >= config.get('age-restriction', {}).get('limit', 0) and not age_restriction_unlocked %}
-			{% set age_restricted = true %}
-		{% else %}	
-			{% set age_restricted = false %}
+		{% set age_restricted = false %}
+		{% if cookies.get('age_restriction_unlocked') != 'true' %}
+			{% if config.get('age-restriction', {}).get('limit') %}
+				{% if movie.get('age-rating')|str|first_integer(0) >= config.get('age-restriction', {}).get('limit') %}
+					{% set age_restricted = true %}
+				{% endif %}
+			{% endif %}
 		{% endif %}
 		<div id="movie-{{ movieID }}" class="movie-overview {% if age_restricted %}not-allowed age-restricted{% endif %}">
 			<a {% if not age_restricted %}href="/movie/{{ movieID }}/"{% endif %}>
