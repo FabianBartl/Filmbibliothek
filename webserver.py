@@ -3,7 +3,7 @@ import custom_logger
 logger = custom_logger.init(__file__, log_to_console=True)
 logger.debug(f"start of script: {__file__}")
 
-import json, yaml, minify_html
+import json, yaml, minify_html, re
 from os.path import abspath, isfile
 from os.path import join as joinpath
 from urllib.parse import unquote_plus, quote_plus, unquote, quote
@@ -65,12 +65,24 @@ app.jinja_env.filters["urlEncodePlus"] = lambda url: quote(url)
 app.jinja_env.filters["urlDecode"] = lambda url: unquote_plus(url)
 app.jinja_env.filters["urlDecodePlus"] = lambda url: unquote(url)
 
+app.jinja_env.filters["str"] = str
+app.jinja_env.filters["int"] = int
+app.jinja_env.filters["float"] = float
+
 # truncate string and append ellipsis
-def truncate(value, length, ellipsis="..."):
-	if len(value+ellipsis) > length:
-		return value[:length-len(ellipsis)] + ellipsis
-	return value
+def truncate(this:str, length:int, ellipsis:str="...") -> str:
+	if len(this+ellipsis) > length:
+		return this[:length-len(ellipsis)] + ellipsis
+	return this
 app.jinja_env.filters["truncate"] = truncate
+
+# find first integer in string
+def first_integer(this:str, default:int) -> int:
+	matches = re.findall(r"\d+", this)
+	if len(matches) == 0:
+		return default
+	return int(matches[0])
+app.jinja_env.filters["first_integer"] = first_integer
 
 logger.debug(f"custom jinja filters defined")
 
