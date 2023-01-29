@@ -233,12 +233,15 @@ def run(movie_directories:list[str], metadata_directories:list[str]) -> None:
 			unit_divisor = subStepsNum,
 			desc = f"Directory {directoryNum+1}/{len(movie_directories)} '{movie_directory}'"
 		)
-		# shortcut functions to update the progress bar and set it's color
 		update = lambda n=1: progress_bar.update(n); progress_bar.refresh()
+
+		# add custom logging handler for the tqdm progress bar
+		logger.addHandler(custom_logger.getTqdmHanlder(progress_bar, logger.level))
+		logger.debug("custom logging handler for the tqdm progress bar added")
 		
 		# iterate over movie files
 		logger.debug(f"iterate over movie files in {movie_directory=}")
-		progress_bar.colour = "#7F7D7A"
+		progress_bar.colour = custom_logger.level_to_color(logging.DEBUG)
 		for filename in directory:
 
 			# collect metadata from filepath

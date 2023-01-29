@@ -52,4 +52,4 @@ accessible-in-network: true
 
 # minimum level of logging messages
 # possible strings: DEBUG, INFO, WARNING, ERROR, CRITICAL
-log-level: WARNING
+log-level: INFO

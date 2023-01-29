@@ -45,6 +45,43 @@ class CustomFormatter(logging.Formatter):
 		return formatter.format(record)
 
 
+# return a logging handler for a colored tqdm progress bar
+# def getTqdmHanlder( tqdm_progressBar: tqdm ) -> TqdmLoggingHandler
+def getTqdmHanlder(tqdm_progressBar, level):
+	try:
+		import tqdm
+
+		class TqdmLoggingHandler(logging.Handler):
+			def __init__(self, progress_bar:tqdm, level:int):
+				super().__init__(level)
+				self.progress_bar = progress_bar
+				self.counter = {
+					logging.DEBUG: 0,
+					logging.INFO: 0,
+					logging.WARNING: 0,
+					logging.ERROR: 0,
+					logging.CRITICAL: 0
+				}
+
+			def emit(self, record):
+				if record.levelno in self.counter:
+					# count logs
+					self.counter[record.levelno] += 1
+					# skip most debug and info colorings to show more important colors longer
+					if self.counter[record.levelno] % 20 != 0 and logging.DEBUG == record.levelno: return
+					if self.counter[record.levelno] % 5 != 0 and logging.INFO == record.levelno: return
+				# set color and refresh bar
+				self.progress_bar.colour = level_to_color(record.levelno)
+				self.progress_bar.refresh()
+		
+		return TqdmLoggingHandler(tqdm_progressBar, level)
+	
+	except Exception as error:
+		print("failed to create handler for colored tqdm progress bar")
+		print(error)
+		return None
+
+
 # returns configured logging handler object
 def init(name, *, name_is_path:bool=True, log_to_file:bool=True, log_to_console:bool=False, log_level:int=logging.DEBUG, colored_console:bool=True):
 	# extract filename from path
@@ -56,8 +93,8 @@ def init(name, *, name_is_path:bool=True, log_to_file:bool=True, log_to_console:
 	timestamp = datetime.today().strftime("%Y-%m-%d_%H-%M-%S")
 	path = os.path.abspath(os.path.join("logs", f"{name}_{timestamp}.log"))
 	encoding = "utf-8"
-	format = "%(asctime)s | %(levelname)8s | %(message)s"
-	datefmt = "%Y-%m-%d %H:%M:%S"
+	format = "[ %(levelname)8s ]  [ %(asctime)s ]  %(message)s"
+	datefmt = "%d/%m/%Y %H:%M:%S"
 
 	# logging handlers
 	handlers = []
@@ -92,3 +129,14 @@ def level_to_int(level:str) -> int:
 		"CRITICAL": logging.CRITICAL,
 	}
 	return levels.get(level, logging.DEBUG)
+
+# converts logging level integer to corresponding hex color of level
+def level_to_color(level:int, default:str=None) -> str:
+	levels = {
+		logging.DEBUG: "#7F7D7A",
+		logging.INFO: "#008DF8",
+		logging.WARNING: "#FFB900",
+		logging.ERROR: "#FF2740",
+		logging.CRITICAL: "#008DF8"
+	}
+	return levels.get(level, default)
