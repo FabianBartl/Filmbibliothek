@@ -61,10 +61,10 @@ $(document).ready(function(){
 		var pinInputHash = CryptoJS.MD5(pinInput).toString();
 		if (pinInputHash === window.ageRestriction_PinHash) {
 			setCookie("age_restriction_unlocked", "true", window.ageRestriction_SessionDuration, "h");
-			alert("Altersbeschränkung aufgehoben");
+			alert("Die Altersbeschränkung ist für " + window.ageRestriction_SessionDuration.toString() + " Stunden aufgehoben.");
 			window.history.go(0);
 		} else {
-			alert("Falsche PIN");
+			alert("Falsche PIN.");
 		}
 	});
 });

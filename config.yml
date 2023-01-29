@@ -62,5 +62,5 @@ log-level: INFO
 #        - the session duration must be a positive integer representing the hours after which the PIN must be re-entered
 age-restriction:
   pin: 9745
-  limit: 16
+  limit: false
   session-duration: 3
