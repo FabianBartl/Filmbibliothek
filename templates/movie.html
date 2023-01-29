@@ -3,7 +3,7 @@
 {% set title = 'Film: "' + movie.title + '"' %}
 {% set mainID = 'movie-details' %}
 
-{% if (movie.get('age-rating') | str | first_integer(0)) >= config.get('age-restriction', {}).get('limit', 0) %}
+{% if (movie.get('age-rating') | str | first_integer(0)) >= config.get('age-restriction', {}).get('limit', 0) and not age_restriction_unlocked %}
 	{% set age_restricted = true %}
 {% else %}
 	{% set age_restricted = false %}
@@ -61,7 +61,7 @@
 			<ul class="row actions">
 				<li>
 					{% if age_restricted %}
-						<a class="button not-allowed" href="#">
+						<a class="button not-allowed age-restricted" href="#">
 					{% else %}
 						<a class="button" onclick="playAsFullscreen('#movie-stream > video');" href="#movie-stream">
 					{% endif %}

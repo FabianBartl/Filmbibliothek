@@ -54,7 +54,10 @@ accessible-in-network: true
 # possible strings: DEBUG, INFO, WARNING, ERROR, CRITICAL
 log-level: INFO
 
-# 
+# restrict access to films with an age rating higher than or equal to the specified limit
+# to get access to age restricted movies you have to enter the configured PIN
+# note: - use limit 0 to disable the age restriction
+#       - the PIN can also be a string
 age-restriction:
   pin: 9745
-  limit: 12
+  limit: 16
