@@ -10,7 +10,7 @@ theme: dark
 # (multiple values allowed)
 movie-directories:
   - N:\\Videos\\Filme
-  - N:\\Videos\\Kinderfilme
+  # - N:\\Videos\\Kinderfilme
 
 # directories to search for associated metadata files of the movies
 # possible strings: [absolute path]
@@ -19,7 +19,7 @@ movie-directories:
 # (multiple values allowed)
 metadata-directories:
   - N:\\Videos\\Filme\\data
-  - N:\\Videos\\Kinderfilme
+  # - N:\\Videos\\Kinderfilme
 
 # length of title displayed in movie overview
 # possible integers: >= 0
