@@ -3,7 +3,7 @@ import custom_logger, logging
 logger = custom_logger.init(__file__, log_to_console=False)
 logger.debug(f"start of script: {__file__}")
 
-import requests, json, yaml, os, urllib.parse, random, time
+import requests, json, yaml, urllib.parse, random
 import user_agents
 from os import listdir
 from os.path import abspath, isfile, isdir
@@ -12,7 +12,7 @@ from scrapy.selector import Selector
 from pymediainfo import MediaInfo
 from bs4 import BeautifulSoup
 from tqdm import tqdm
-from colorama import Fore, Back, Style, init
+from colorama import Fore, Style, init
 logger.debug("init colorama")
 init(autoreset=True)
 
@@ -210,23 +210,10 @@ def run(movie_directories:list[str], metadata_directories:list[str]) -> None:
 	movieID = 0
 	logger.debug(f"iterate over {movie_directories=}")
 	for directoryNum, (movie_directory, metadata_directory) in enumerate(zip(movie_directories, metadata_directories)):
+		directory = listdir(movie_directory)
 
-		# filter for movie files in directory
-		logger.debug(f"filter for movie files in {movie_directory=}")
-		listdirRaw = listdir(movie_directory)
-		directory = []
-		for filename in listdirRaw:
-			if not isfile(joinpath(movie_directory, filename)):
-				logger.warning(f"'{filename}' is not a file")
-				continue
-			if not filename.lower().endswith((".mp4", ".mov", ".m4v", ".mkv")):
-				logger.warning(f"'{filename}' is not a movie")
-				continue
-			directory.append(filename)
-			logger.info(f"movie '{filename}' found")
-		
 		# just the progress bar for the user
-		subStepsNum = 5
+		subStepsNum = 6
 		progress_bar = tqdm(
 			total = len(directory) * subStepsNum,
 			unit = "Movie",
@@ -236,13 +223,26 @@ def run(movie_directories:list[str], metadata_directories:list[str]) -> None:
 		update = lambda n=1: progress_bar.update(n); progress_bar.refresh()
 
 		# add custom logging handler for the tqdm progress bar
-		logger.addHandler(custom_logger.getTqdmHanlder(progress_bar, logger.level))
+		tqdm_handler = custom_logger.getTqdmHandler(progress_bar, logging.DEBUG)
+		logger.addHandler(tqdm_handler)
 		logger.debug("custom logging handler for the tqdm progress bar added")
 		
 		# iterate over movie files
 		logger.debug(f"iterate over movie files in {movie_directory=}")
 		progress_bar.colour = custom_logger.level_to_color(logging.DEBUG)
 		for filename in directory:
+			# filter for movie files in directory
+			logger.debug(f"filter for movie files")
+			if not isfile(joinpath(movie_directory, filename)):
+				logger.warning(f"'{filename}' is not a file")
+				update(subStepsNum)
+				continue
+			if not filename.lower().endswith((".mp4", ".mov", ".m4v", ".mkv")):
+				logger.warning(f"'{filename}' is not a movie")
+				update(subStepsNum)
+				continue
+			logger.info(f"movie '{filename}' found")
+			update(1)
 
 			# collect metadata from filepath
 			logger.debug("collect metadata from filepath")
@@ -321,8 +321,11 @@ def run(movie_directories:list[str], metadata_directories:list[str]) -> None:
 			metadata[movieID] = movie_metadata
 			movieID += 1
 		
+		# set color to green, close the progress bar and remove it's logging handler 
 		progress_bar.colour = "#8CE10B"
 		progress_bar.close()
+		logger.removeHandler(tqdm_handler)
+		logger.debug("custom logging handler of the tqdm progress bar removed")
 	
 	# save metadata
 	movies_json_path = abspath(joinpath("static", "data", "movies.json"))

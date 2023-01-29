@@ -3,9 +3,8 @@ import custom_logger
 logger = custom_logger.init(__file__, log_to_console=True)
 logger.debug(f"start of script: {__file__}")
 
-import os, sys, subprocess, time
-from os import listdir
-from os.path import abspath, isfile, isdir
+import os, sys, subprocess
+from os.path import abspath
 from os.path import join as joinpath
 
 # install python packages

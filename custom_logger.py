@@ -1,7 +1,9 @@
 
-import logging, os
+import logging, time
 from datetime import datetime
 
+from os.path import abspath, basename
+from os.path import join as joinpath
 
 # https://alexandra-zaharia.github.io/posts/make-your-own-custom-color-formatter-with-python-logging/
 # https://stackoverflow.com/a/56944256/3638629
@@ -46,8 +48,8 @@ class CustomFormatter(logging.Formatter):
 
 
 # return a logging handler for a colored tqdm progress bar
-# def getTqdmHanlder( tqdm_progressBar: tqdm ) -> TqdmLoggingHandler
-def getTqdmHanlder(tqdm_progressBar, level):
+# def getTqdmHandler( tqdm_progressBar: tqdm ) -> TqdmLoggingHandler
+def getTqdmHandler(tqdm_progressBar, level):
 	try:
 		import tqdm
 
@@ -86,12 +88,12 @@ def getTqdmHanlder(tqdm_progressBar, level):
 def init(name, *, name_is_path:bool=True, log_to_file:bool=True, log_to_console:bool=False, log_level:int=logging.DEBUG, colored_console:bool=True):
 	# extract filename from path
 	if name_is_path:
-		name = os.path.basename(name)
+		name = basename(name)
 
 	# logging parameter
 	level = log_level
-	timestamp = datetime.today().strftime("%Y-%m-%d_%H-%M-%S")
-	path = os.path.abspath(os.path.join("logs", f"{name}_{timestamp}.log"))
+	timestamp = datetime.today().strftime("%d-%m-%Y_%H-%M-%S")
+	path = abspath(joinpath("logs", f"{name}_{timestamp}.log"))
 	encoding = "utf-8"
 	format = "[ %(levelname)8s ]  [ %(asctime)s ]  %(message)s"
 	datefmt = "%d/%m/%Y %H:%M:%S"
