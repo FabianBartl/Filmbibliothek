@@ -10,3 +10,4 @@ pyyaml
 pymediainfo
 scrapy
 minify-html
+waitress

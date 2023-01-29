@@ -4,6 +4,7 @@ logger = custom_logger.init(__file__, log_to_console=True)
 logger.debug(f"start of script: {__file__}")
 
 import json, yaml, minify_html, re, hashlib, time
+from waitress import serve
 from os.path import abspath, isfile
 from os.path import join as joinpath
 from urllib.parse import unquote_plus, quote_plus, unquote, quote
@@ -224,6 +225,9 @@ if __name__ == "__main__":
 		logger.info("accessible in network")
 		print(Fore.YELLOW + f"accessible in your local network using the local network address of your host-computer")
 	# run app
-	app.run(debug=DEBUG, port=port, host=host)
+	if DEBUG:
+		app.run(debug=DEBUG, port=port, host=host)
+	else:
+		serve(app, port=port, host=host)
 
 logger.debug(f"end of script: {__file__}")
