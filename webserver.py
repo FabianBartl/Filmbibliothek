@@ -19,6 +19,7 @@ from flask import render_template, send_from_directory, abort, request
 MOVIES = {}
 CONFIG = {}
 DEBUG = False
+SERVE = False
 
 # init flask app
 app = Flask(__name__)
@@ -225,9 +226,9 @@ if __name__ == "__main__":
 		logger.info("accessible in network")
 		print(Fore.YELLOW + f"accessible in your local network using the local network address of your host-computer")
 	# run app
-	if DEBUG:
-		app.run(debug=DEBUG, port=port, host=host)
-	else:
+	if SERVE:
 		serve(app, port=port, host=host)
+	else:
+		app.run(debug=DEBUG, port=port, host=host)
 
 logger.debug(f"end of script: {__file__}")
