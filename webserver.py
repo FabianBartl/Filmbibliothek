@@ -3,7 +3,7 @@ import custom_logger
 logger = custom_logger.init(__file__, log_to_console=True)
 logger.debug(f"start of script: {__file__}")
 
-import json, yaml, minify_html, re
+import json, yaml, minify_html, re, hashlib, time
 from os.path import abspath, isfile
 from os.path import join as joinpath
 from urllib.parse import unquote_plus, quote_plus, unquote, quote
@@ -60,14 +60,17 @@ def load_config() -> dict:
 
 # ---------- custom jinja filters ----------
 
-app.jinja_env.filters["urlEncode"] = lambda url: quote_plus(url)
-app.jinja_env.filters["urlEncodePlus"] = lambda url: quote(url)
-app.jinja_env.filters["urlDecode"] = lambda url: unquote_plus(url)
-app.jinja_env.filters["urlDecodePlus"] = lambda url: unquote(url)
+app.jinja_env.filters["urlEncode"] = lambda this: quote_plus(this)
+app.jinja_env.filters["urlEncodePlus"] = lambda this: quote(this)
+app.jinja_env.filters["urlDecode"] = lambda this: unquote_plus(this)
+app.jinja_env.filters["urlDecodePlus"] = lambda this: unquote(this)
 
 app.jinja_env.filters["str"] = str
 app.jinja_env.filters["int"] = int
+app.jinja_env.filters["abs"] = abs
 app.jinja_env.filters["float"] = float
+
+app.jinja_env.filters["md5"] = lambda this: hashlib.md5(this.encode("utf-8")).hexdigest()
 
 # truncate string and append ellipsis
 def truncate(this:str, length:int, ellipsis:str="...") -> str:
@@ -75,6 +78,14 @@ def truncate(this:str, length:int, ellipsis:str="...") -> str:
 		return this[:length-len(ellipsis)] + ellipsis
 	return this
 app.jinja_env.filters["truncate"] = truncate
+
+# return the time difference between 'this' timestamp and now or given timestamp
+def time_difference(this:int, timestamp:int=None) -> int:
+	if timestamp is None:
+		return this - time.time()
+	else:
+		return this - timestamp
+app.jinja_env.filters["time_difference"] = time_difference
 
 # find first integer in string
 def first_integer(this:str, default:int) -> int:
@@ -92,7 +103,7 @@ logger.debug(f"custom jinja filters defined")
 @app.context_processor
 def inject_variables():
 	global CONFIG
-	return {"config": CONFIG, "app_config": app.config}
+	return {"config": CONFIG, "app_config": app.config, "cookies": request.cookies}
 
 logger.debug(f"added yaml config and app config to jinja context")
 
