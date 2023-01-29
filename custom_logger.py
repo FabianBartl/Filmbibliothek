@@ -79,8 +79,8 @@ def getTqdmHandler(tqdm_progressBar, level):
 		return TqdmLoggingHandler(tqdm_progressBar, level)
 	
 	except Exception as error:
-		print("failed to create handler for colored tqdm progress bar")
-		print(error)
+		logging.error("failed to create handler for colored tqdm progress bar")
+		logging.error(error)
 		return None
 
 
