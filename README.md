@@ -4,8 +4,8 @@
 ![Latest GitHub release](https://img.shields.io/github/v/release/fabianbartl/filmbibliothek)&nbsp;
 ![MIT license](https://img.shields.io/badge/license-MIT-green)&nbsp;
 ![Python 3](https://img.shields.io/badge/python-3-blue)&nbsp;
-<!-- ![visitors](https://visitor-badge.laobi.icu/badge?page_id=fabianbartl/filmbibliothek)&nbsp; -->
-![visitors](https://visitor-badge.laobi.icu/badge?page_id=fabianbartl/filmbibliothek&query_only)&nbsp;
+![visitors](https://visitor-badge.laobi.icu/badge?page_id=fabianbartl/filmbibliothek)&nbsp;
+<!-- ![visitors](https://visitor-badge.laobi.icu/badge?page_id=fabianbartl/filmbibliothek&query_only)&nbsp; -->
 
 ## [Release: v0.4.0](https://github.com/FabianBartl/Filmbibliothek/releases/tag/v0.4.0)
 
@@ -14,8 +14,6 @@
 - Scrapes all movie information from IMDb and user-defined YAML files
 
 <!-- ### Known issues -->
-
-<!-- ### Patch notes -->
 
 ### Changes
 
@@ -26,6 +24,15 @@
 - Almost all possible movie data are now queried from IMDb
 - Subtitle support added
 - Allow only URLs or relative paths for attributes of movie configurations that require paths 
+
+### Patch notes
+
+- Responsive CSS style for smartphones and tablets added
+- Added fallback (google) fonts
+- Ignore the `non-result filters` configuration on smaller screens and show only the search results instead
+- Fix `ModuleNotFoundError` error when running the [install.py](install.py) script for the first time
+- Show the IMDb rating on the movie details page
+- The [collect_metadata.py](collect_metadata.py) script now has a colored progress bar representing the level of the last logging message  
 
 ### Impressions
 
