@@ -123,11 +123,12 @@ def getMetadataFromIMDB(moviename:str, *, imdb_id:str=None) -> dict:
 		logger.debug(f"get {attribute}")
 		if value := html_scrap.xpath(xpath).get():
 			if attribute == "age-rating":
-				value = f"ab {value}"
-			metadata[attribute] = value
-			logger.debug(f"{attribute}={value}")
-		else:
-			logger.warning(f"{attribute} of '{moviename}' not found")
+				value = f"ab {value}" if len(value) <= 3 else None
+			if value:
+				metadata[attribute] = value
+				logger.debug(f"{attribute}={value}")
+				continue
+		logger.warning(f"{attribute} of '{moviename}' not found")
 
 	# get list attributes
 	attribute_xpaths = {
