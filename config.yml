@@ -52,7 +52,7 @@ accessible-in-network: true
 
 # minimum level of logging messages
 # possible strings: DEBUG, INFO, WARNING, ERROR, CRITICAL
-log-level: INFO
+log-level: WARNING
 
 # restrict access to films with an age rating higher than or equal to the specified limit
 # to get access to age restricted movies you have to enter the configured PIN
