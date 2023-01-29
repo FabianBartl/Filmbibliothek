@@ -4,9 +4,9 @@
 ![Latest GitHub release](https://img.shields.io/github/v/release/fabianbartl/filmbibliothek)&nbsp;
 ![MIT license](https://img.shields.io/badge/license-MIT-green)&nbsp;
 ![Python 3](https://img.shields.io/badge/python-3-blue)&nbsp;
-![visitors](https://visitor-badge.laobi.icu/badge?page_id=fabianbartl/filmbibliothek)&nbsp;
+<!-- ![visitors](https://visitor-badge.laobi.icu/badge?page_id=fabianbartl/filmbibliothek)&nbsp; -->
 ![wakatime](https://wakatime.com/badge/user/de63f4ec-0b0d-40c1-8ed3-36b881955881/project/46c670ca-6548-477b-bee3-399550e4b3e5.svg)&nbsp;
-<!-- ![visitors](https://visitor-badge.laobi.icu/badge?page_id=fabianbartl/filmbibliothek&query_only)&nbsp; -->
+![visitors](https://visitor-badge.laobi.icu/badge?page_id=fabianbartl/filmbibliothek&query_only)&nbsp;
 
 A local hosted movie streaming service for your own movie collection.
 
