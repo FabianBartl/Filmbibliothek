@@ -273,7 +273,7 @@ video {
 }
 .ratings > .imdb.rating .icon {
 	height: 2.3em;
-	align-self: center;
+	align-self: normal;
 }
 .ratings > .imdb.rating .points > :first-child {
 	font-size: 1.3em;
