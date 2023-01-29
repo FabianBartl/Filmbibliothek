@@ -2,11 +2,14 @@
 @import url("theme.css");
 @import url("fonts.css");
 
+@import url("https://fonts.googleapis.com/css?family=Source+Sans+Pro&display=swap");
+@import url("https://fonts.googleapis.com/css?family=Open+Sans&display=swap");
+
 /* ---------------------------------------- general styling and variable ---------------------------------------- */
 
 /* variables */
 :root {
-	--text-font: "Dubai", sans-serif;
+	--text-font: "Dubai", "Source Sans Pro", "Open Sans", sans-serif;
 	--animate-all: all 0.2s ease-in-out;
 	--badge-border: 2px solid var(--color-text);
 	/* default filter values */
@@ -30,8 +33,9 @@ body {
 	font-size: 12pt;
 	color: var(--color-text);
 	hyphens: auto;
-	overflow-x: hidden;
+
 	background-color: var(--color-background);
+	overflow-x: hidden;
 }
 
 /* spacings */
@@ -52,6 +56,10 @@ footer {
 /* inline elements */
 .row {
 	display: flex;
+	flex-direction: row;
+}
+.row img {
+	align-self: start;
 }
 .row > :not(:last-child) {
 	margin-right: 0.6em;
@@ -64,7 +72,7 @@ ul.row {
 	margin-top: auto;
 	margin-bottom: auto;
 }
-ul.row:not(.no-separator) li:not(:last-child)::after {
+ul.row.with-separator li:not(:last-child)::after {
 	content: "●";
 }
 ul.row li:not(:last-child)::after {
@@ -98,12 +106,9 @@ video {
 	color: var(--color-background);
 	border-radius: 5px;
 	background-color: var(--color-link);
-	padding: 2px 9px;
+	padding: 4px 9px;
 	cursor: pointer;
 	transition: var(--animate-all);
-}
-.button > i.fa {
-	vertical-align: middle;
 }
 .button:hover {
 	color: var(--color-background);
@@ -115,15 +120,11 @@ video {
 	font-weight: bold;
 	border: var(--badge-border);
 	border-radius: 5px;
-	padding: 2px 7px 1px;
+	padding: 4px 9px;
 	font-size: 0.8em;
 }
 .badges > .badge:not(:last-child) {
 	margin-right: 0.8em;
-}
-ul.row.badges li.badge:not(:last-child)::after {
-	content: "";
-	margin-left: 0;
 }
 
 /* effects  */
@@ -134,33 +135,23 @@ ul.row.badges li.badge:not(:last-child)::after {
 .hidden {
 	display: none;
 }
-
 .faded { opacity: 30%; }
 .cleared { opacity: 0%; }
 
 /* apply all filter values */
 /* https://stackoverflow.com/questions/27421135/use-multiple-css-filters-at-the-same-time */
-.filter {
+.combine-filters {
 	filter:
 		blur(var(--blur-value)) 
 		grayscale(var(--grayscale-value))
 		brightness(var(--brightness-value))
 		invert(var(--invert-value));
 }
-/* modify fliter values */
+/* modify filter values */
 .blurred { --blur-value: 7px; }
 .grayed { --grayscale-value: 1; }
 .darkened { --brightness-value: 0.3; }
 .inverted { --invert-value: 1; }
-
-/* ---------------------------------------- individual changes for other screen sizes ---------------------------------------- */
-
-/* style for 200% zoom on a 27" display */
-@media screen and (max-width: 1520px) {
-	.movie-overview {
-		--movie-width: 20em;
-	}
-}
 
 /* ---------------------------------------- special elements ---------------------------------------- */
 
@@ -172,7 +163,7 @@ ul.row.badges li.badge:not(:last-child)::after {
 	border: var(--badge-border);
 	border-radius: 5px;
 	text-overflow: ellipsis;
-	font-size: 1.1rem;
+	font-size: 1em;
 	width: 20rem;
 	transition: var(--animate-all);
 }
@@ -198,33 +189,35 @@ ul.row.badges li.badge:not(:last-child)::after {
 #movie-index {
 	width: 100%;
 	display: flex;
-	justify-content: flex-start;
+	justify-content: space-evenly;
 	flex-wrap: wrap;
 	flex-direction: row;
+	align-items: baseline;
 }
 #movie-index .movie-overview {
 	transition: var(--animate-all);
 }
 
 .movie-overview {
-	--movie-width: 15em;
-	width: var(--movie-width);
-	margin: 15px;
-	line-height: 110%;
+	--movie-overview-width: 15em;
+	width: var(--movie-overview-width);
+	margin: 10px;
+	line-height: 1.1em;
 }
 .movie-overview .poster {
-	width: var(--movie-width);
+	width: var(--movie-overview-width);
 	border-radius: 10px;
-	margin-bottom: 5px;
+	margin-bottom: 2px;
 	transition: var(--animate-all);
 }
 .movie-overview .title {
-	width: calc(var(--movie-width) - 2.5em);
+	width: calc(var(--movie-overview-width) - 2.5em);
 	font-size: 1.2em;
 	margin-bottom: 2px;
+	letter-spacing: 0.1px;
 }
 .movie-overview .year {
-	width: var(--movie-width);
+	width: var(--movie-overview-width);
 	font-size: 0.9em;
 	filter: grayscale(0.9);
 }
@@ -236,16 +229,17 @@ ul.row.badges li.badge:not(:last-child)::after {
 #movie-details .poster {
 	width: 30em;
 	border-radius: 15px;
+	margin-right: 2em;
 }
 #movie-details .short-details {
-	margin-left: 2em;
+	max-width: 50vw;
 }
 
+.short-details > .title {
+	letter-spacing: 0.5px;
+}
 .short-details > :not(.title) {
 	margin-bottom: 3em;
-}
-.short-details > .description {
-	max-width: 100em;
 }
 
 .short-credits > div {
@@ -253,9 +247,10 @@ ul.row.badges li.badge:not(:last-child)::after {
 }
 .short-credits .credit-name {
 	font-weight: bold;
-	min-width: 4em;
 	hyphens: none;
 	white-space: nowrap;
+	min-width: 10em;
+	letter-spacing: 1px;
 }
 
 .ratings > .imdb.rating {
@@ -263,6 +258,7 @@ ul.row.badges li.badge:not(:last-child)::after {
 }
 .ratings > .imdb.rating .icon {
 	height: 2.3em;
+	align-self: center;
 }
 .ratings > .imdb.rating .points > :first-child {
 	font-size: 1.3em;
@@ -278,4 +274,85 @@ ul.row.badges li.badge:not(:last-child)::after {
 /* on page movie stream */
 #movie-stream {
 	margin: 3em auto;
+}
+
+/* ---------------------------------------- individual changes for other screen sizes ---------------------------------------- */
+
+/* style for laptops */
+@media screen and (max-width: 1300px) {
+	/* use more screen width */
+	body {
+		width: 95%;
+	}
+
+	/* ignore not-result-filters; only show results */
+	.not-search-result {
+		display: none;
+	}
+
+	/* slimmer poster */
+	#movie-details .poster {
+		width: 25em;
+		margin-right: 1em;
+	}
+	/* tighter details and credits */
+	#movie-details .short-details {
+		max-width: unset;
+	}
+
+	.short-details > :not(.title) {
+		margin-bottom: 1.5em;
+	}	
+
+	.short-credits > div {
+		margin-bottom: 0.8em;
+		display: block;
+	}
+	.short-credits .credit-name {
+		line-height: 1.3em;
+	}
+	.short-credits .credit-content {
+		line-height: 1em;
+	}
+}
+
+/* style for tablets */
+@media screen and (max-width: 850px) {
+	/* slimmer poster */
+	#movie-details .poster {
+		width: 20em;
+		margin-right: 0.5em;
+	}
+}
+@media screen and (max-width: 650px) {
+	/* coloumn design for details */
+	#movie-details .poster {
+		width: 95%;
+		margin-right: unset;
+		margin-left: 2.5%;
+	}
+	#movie-details > .row {
+		display: block;
+	}
+}
+
+/* style for smartphones */
+@media screen and (max-width: 590px) {
+	/* prevent x-overflow */
+	#search-input {
+		width: 70%;
+	}	
+
+	/* two movies per row on the movie index page */
+	#movie-index .movie-overview {
+		--movie-overview-width: 45vw;
+		margin: 0 2px 10px 2px;
+	}
+	#movie-index .movie-overview .title {
+		width: var(--movie-overview-width);
+		font-size: 1.1em;
+	}
+	#movie-index .movie-overview .poster {
+		border-radius: 5px;
+	}
 }

@@ -6,16 +6,16 @@
 {% block main %}
 	<div class="row">
 		{% if movie.get('poster', '').startswith('http') %}
-			<img class="poster" src="{{ movie.get('poster') }}">
+			<img class="poster" src="{{ movie.get('poster') }}" alt="movie poster for '{{ movie.get('title') }}'">
 		{% else %}
-			<img class="poster" src="poster/">
+			<img class="poster" src="poster/" alt="movie poster for '{{ movie.get('title') }}'">
 		{% endif %}
 		<div class="short-details">
 			<h2 class="title">
-				{{ movie.title }}
+				{{ movie.get('title') }}
 			</h2>
 			<div class="row">
-				<ul class="row">
+				<ul class="row with-separator">
 					{% if movie.get('year') %}
 						<li class="year">
 							{{ movie.get('year') }}
@@ -34,25 +34,25 @@
 					{% endfor %}
 				</ul>
 			</div>
-			{% if movie.get('rating') %}
+			{% if movie.get('ratings') %}
 				<ul class="row ratings">
-					{% if movie.get('rating', {}).get('imdb') %}
-						<li class="row no-separator imdb rating" title="IMDb rating">
+					{% if movie.get('ratings', {}).get('imdb') %}
+						<li class="row imdb rating" title="IMDb rating">
 							<img class="icon" src="{{ url_for("static", filename="images/imdb_star.svg") }}">
 							<div>
 								<div class="points">
 									<span>
-										{{ movie.get('rating', {}).get('imdb', {}).get('points') }}
+										{{ movie.get('ratings', {}).get('imdb', {}).get('points') }}
 									</span>
 									<span>/ 10</span>
 								</div>
-								<div class="votes">{{ movie.get('rating', {}).get('imdb', {}).get('votes') }}</div>
+								<div class="votes">{{ movie.get('ratings', {}).get('imdb', {}).get('votes') }}</div>
 							</div>
 						</li>
 					{% endif %}
 				</ul>
 			{% endif %}
-			<ul class="row no-separator actions">
+			<ul class="row actions">
 				<li>
 					<a class="button" onclick="playAsFullscreen('#movie-stream > video');" href="#movie-stream">
 						<i class="fa fa-play"></i>&ensp;Abspielen

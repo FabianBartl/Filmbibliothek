@@ -52,8 +52,8 @@
 								// filter '{{ filter }}' not allowed
 							{% endif %}
 						{% endfor %}
-						"filter"
-					], 1
+						"combine-filters", "not-search-result"
+					]
 				);
 			});
 			search_input.keyup();
@@ -66,9 +66,9 @@
 		<div id="movie-{{ movieID }}" class="movie-overview">
 			<a href="/movie/{{ movieID }}/">
 				{% if data.get('poster', '').startswith('http') %}
-					<img class="poster" src="{{ data.get('poster') }}">
+					<img class="poster" src="{{ data.get('poster') }}" alt="movie poster for '{{ data.get('title') }}'">
 				{% else %}
-					<img class="poster" src="/movie/{{ movieID }}/poster/">
+					<img class="poster" src="/movie/{{ movieID }}/poster/" alt="movie poster for '{{ data.get('title') }}'">
 				{% endif %}
 			</a>
 			<div class="title">

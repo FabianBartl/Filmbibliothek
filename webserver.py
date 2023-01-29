@@ -3,16 +3,15 @@ import custom_logger
 logger = custom_logger.init(__file__, log_to_console=True)
 logger.debug(f"start of script: {__file__}")
 
-import json, yaml, os, minify_html, time
-from os import listdir
-from os.path import abspath, isfile, isdir
+import json, yaml, minify_html
+from os.path import abspath, isfile
 from os.path import join as joinpath
 from urllib.parse import unquote_plus, quote_plus, unquote, quote
-from colorama import Fore, Back, Style, init
+from colorama import Fore, Back, init
 init(autoreset=True)
 
 from flask import Flask
-from flask import redirect, url_for, render_template, send_from_directory, abort, send_file, request, jsonify
+from flask import render_template, send_from_directory, abort, request
 
 # ---------- global used variables ----------
 
@@ -63,6 +62,8 @@ def load_config() -> dict:
 
 app.jinja_env.filters["urlEncode"] = lambda url: quote_plus(url)
 app.jinja_env.filters["urlEncodePlus"] = lambda url: quote(url)
+app.jinja_env.filters["urlDecode"] = lambda url: unquote_plus(url)
+app.jinja_env.filters["urlDecodePlus"] = lambda url: unquote(url)
 
 # truncate string and append ellipsis
 def truncate(value, length, ellipsis="..."):

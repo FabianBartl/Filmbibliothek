@@ -1,15 +1,7 @@
 
 $(document).ready(function(){
-	// justify lenghts to length of widest element 
-	creditsName_maxWidth = 0;
-	$('.credit-name').each(function(){
-		creditsName_maxWidth = max($(this).width(), creditsName_maxWidth);
-	});
-	$('.credit-name').each(function(){
-		$(this).width(creditsName_maxWidth + 8);
-	});
+	
 });
-
 
 // scroll-to video, make fullscreen, play it
 function playAsFullscreen(selector) {
@@ -22,7 +14,7 @@ function playAsFullscreen(selector) {
 
 
 // search for query in array and add css classes to results
-function searchResults(event, objectArray, inputElement, toArray, notResultClasses=["hidden"], minLenght=3) {
+function searchResults(event, objectArray, inputElement, toArray, notResultClasses, minLenght=1) {
 	var invalidChars = /[^a-z0-9\-]/gi;
 	var query = inputElement.val().toLowerCase();
 	var validQuery = query.replace(invalidChars, "");
@@ -62,7 +54,7 @@ function searchResults(event, objectArray, inputElement, toArray, notResultClass
 	if (event.keyCode === 13 || validQuery.length % ((minLenght+1)*2) === 0) {
 		window.history.pushState({},
 			document.title,
-			window.location.origin+window.location.pathname+"?query="+query.replace(/ /g,"+")
+			window.location.origin+window.location.pathname+"?query="+query.replace(/ +/g,"+")
 		);
 	}
 }

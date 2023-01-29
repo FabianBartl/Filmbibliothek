@@ -1,9 +1,9 @@
 
-import custom_logger
+import custom_logger, logging
 logger = custom_logger.init(__file__, log_to_console=False)
 logger.debug(f"start of script: {__file__}")
 
-import requests, json, yaml, os, urllib.parse, random, time
+import requests, json, yaml, urllib.parse, random
 import user_agents
 from os import listdir
 from os.path import abspath, isfile, isdir
@@ -12,7 +12,7 @@ from scrapy.selector import Selector
 from pymediainfo import MediaInfo
 from bs4 import BeautifulSoup
 from tqdm import tqdm
-from colorama import Fore, Back, Style, init
+from colorama import Fore, Style, init
 logger.debug("init colorama")
 init(autoreset=True)
 
@@ -210,16 +210,39 @@ def run(movie_directories:list[str], metadata_directories:list[str]) -> None:
 	movieID = 0
 	logger.debug(f"iterate over {movie_directories=}")
 	for directoryNum, (movie_directory, metadata_directory) in enumerate(zip(movie_directories, metadata_directories)):
+		directory = listdir(movie_directory)
 
-		logger.debug(f"iterate over files in {movie_directory=}")
-		for filename in tqdm(listdir(movie_directory), unit="File", desc=f"Scan directory {directoryNum+1}/{len(movie_directories)} '{movie_directory}'"):
+		# just the progress bar for the user
+		subStepsNum = 6
+		progress_bar = tqdm(
+			total = len(directory) * subStepsNum,
+			unit = "Movie",
+			unit_divisor = subStepsNum,
+			desc = f"Directory {directoryNum+1}/{len(movie_directories)} '{movie_directory}'"
+		)
+		update = lambda n=1: progress_bar.update(n); progress_bar.refresh()
+
+		# add custom logging handler for the tqdm progress bar
+		tqdm_handler = custom_logger.getTqdmHandler(progress_bar, logging.DEBUG)
+		logger.addHandler(tqdm_handler)
+		logger.debug("custom logging handler for the tqdm progress bar added")
+		
+		# iterate over movie files
+		logger.debug(f"iterate over movie files in {movie_directory=}")
+		progress_bar.colour = custom_logger.level_to_color(logging.DEBUG)
+		for filename in directory:
+			# filter for movie files in directory
+			logger.debug(f"filter for movie files")
 			if not isfile(joinpath(movie_directory, filename)):
 				logger.warning(f"'{filename}' is not a file")
+				update(subStepsNum)
 				continue
 			if not filename.lower().endswith((".mp4", ".mov", ".m4v", ".mkv")):
 				logger.warning(f"'{filename}' is not a movie")
+				update(subStepsNum)
 				continue
-			logger.info(f"'{filename}' is a movie file")
+			logger.info(f"movie '{filename}' found")
+			update(1)
 
 			# collect metadata from filepath
 			logger.debug("collect metadata from filepath")
@@ -232,6 +255,7 @@ def run(movie_directories:list[str], metadata_directories:list[str]) -> None:
 			movie_metadata["title"] = movie_metadata["filename"]
 			movie_metadata["movieID"] = str(movieID)
 			logger.debug(f"{movie_metadata=}")
+			update(1)
 
 			# collect metadata from file attributes
 			logger.debug("try: collect metadata from file attributes")
@@ -261,6 +285,7 @@ def run(movie_directories:list[str], metadata_directories:list[str]) -> None:
 					logger.debug(f"{width=} {movie_metadata['resolution']=}")
 			except:
 				logger.error(f"failed to collect metadata from file attributes")
+			update(1)
 
 			# preload user-defined metadata, but apply them later
 			metadata_file = joinpath(metadata_directory, movie_metadata["filename"])
@@ -275,6 +300,7 @@ def run(movie_directories:list[str], metadata_directories:list[str]) -> None:
 					logger.debug("metadata from imdb scraped")
 			else:
 				logger.debug("scraping of additional data is not wanted")
+			update(1)
 
 			logger.debug(f"get metadata from local files: {metadata_file=}")
 			# get description from mediathek-view file
@@ -283,14 +309,23 @@ def run(movie_directories:list[str], metadata_directories:list[str]) -> None:
 				if description := getDescFromFile(file):
 					movie_metadata["description"] = getDescFromFile(file)
 					logger.debug(f"{description=}")
+			update(1)
+
 			# get metadata from user-defined YAML file
 			if isfile(file := f"{metadata_file}.yml"):
 				logger.debug("get metadata from user-defined yaml file")
 				movie_metadata |= user_defined_metadata
+			update(1)
 
 			logger.info(f"add movie with {movieID=} and {movie_metadata=}")
 			metadata[movieID] = movie_metadata
 			movieID += 1
+		
+		# set color to green, close the progress bar and remove it's logging handler 
+		progress_bar.colour = "#8CE10B"
+		progress_bar.close()
+		logger.removeHandler(tqdm_handler)
+		logger.debug("custom logging handler of the tqdm progress bar removed")
 	
 	# save metadata
 	movies_json_path = abspath(joinpath("static", "data", "movies.json"))
@@ -337,7 +372,7 @@ if __name__ == "__main__":
 			print(Fore.RED + f"Directory '{movie_directory}' not found")
 			print(Fore.YELLOW + "Please use valid absolute paths as movie directory.")
 			msg_closeAndRunAgain()
-			exit(1)
+			exit(2)
 		movie_directories[i] = abspath(movie_directory)
 		logger.debug(f"valid movie directory: {movie_directory=} {movie_directories[i]=}")
 
@@ -349,7 +384,7 @@ if __name__ == "__main__":
 		print(Fore.RED + f"No metadata directories configured")
 		print(Fore.YELLOW + "Please add your metadata directories to the config.yml file.")
 		msg_closeAndRunAgain()
-		exit(1)
+		exit(3)
 
 	if not type(metadata_directories) is list:
 		logger.debug(f"convert single movie directory string to list: {metadata_directories=}")
@@ -363,7 +398,7 @@ if __name__ == "__main__":
 			print(Fore.RED + f"Directory '{metadata_directory}' not found")
 			print(Fore.YELLOW + "Please use valid absolute paths as movie directory.")
 			msg_closeAndRunAgain()
-			exit(1)
+			exit(4)
 		metadata_directories[i] = abspath(metadata_directory)
 		logger.debug(f"valid metadata directory: {metadata_directory=} {metadata_directories[i]=}")
 
@@ -371,7 +406,7 @@ if __name__ == "__main__":
 		logger.error(f"the length of the metadata directories (={len(metadata_directories)}) does not match the length of the movie directories (={len(movie_directories)})")
 		print(Fore.RED + f"The length of the metadata directories (={len(metadata_directories)}) needs to match with the length of the movie directories (={len(movie_directories)})")
 		msg_closeAndRunAgain()
-		exit(1)
+		exit(5)
 
 	# run
 	logger.debug(f"collect metadata with {movie_directories=} {metadata_directories=}")

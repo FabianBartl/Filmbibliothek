@@ -1,8 +1,13 @@
 @font-face {
 	font-family: "Dubai";
-	font-weight: 400;
+	font-weight: normal;
+	font-style: normal;
 	font-display: swap;
-	src: local("Dubai")
-		,url("../fonts/dubai-regular.woff2") format("woff2")
-		,url("../fonts/dubai-regular.ttf") format("ttf");
+	src: url("fonts/Dubai-Regular.eot");
+	src: local("Dubai"), local("Dubai Regular"), local("Dubai-Regular"),
+		url("fonts/Dubai-Regular.eot?#iefix") format("embedded-opentype"),
+		url("fonts/Dubai-Regular.woff2") format("woff2"),
+		url("fonts/Dubai-Regular.woff") format("woff"),
+		url("fonts/Dubai-Regular.ttf") format("truetype"),
+		url("fonts/Dubai-Regular.svg#Dubai-Regular") format("svg");
 }
