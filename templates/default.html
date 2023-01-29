@@ -11,9 +11,15 @@
 
 		<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/general.css') }}">
 		
-		<script src="{{ url_for('static', filename='scripts/jquery-3.6.3.min.js') }}"></script>
-		<script src="{{ url_for('static', filename='scripts/script.js') }}"></script>
 		<script src="https://kit.fontawesome.com/9f5b8e5c93.js" crossorigin="anonymous"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/crypto-js.min.js"></script>
+		<script src="https://code.jquery.com/jquery-3.6.3.min.js"></script>
+		
+		<script>
+			window.ageRestriction_PinHash = "{{ config.get('age-restriction', {}).get('pin', '') | str | md5 }}";
+			window.ageRestriction_SessionDuration = {{ config.get('age-restriction', {}).get('session-duration', 3) | int | abs }};
+		</script>
+		<script src="{{ url_for('static', filename='scripts/script.js') }}"></script>
 	</head>
 	<body>
 		<header>

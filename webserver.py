@@ -3,7 +3,7 @@ import custom_logger
 logger = custom_logger.init(__file__, log_to_console=True)
 logger.debug(f"start of script: {__file__}")
 
-import json, yaml, minify_html
+import json, yaml, minify_html, re, hashlib, time
 from os.path import abspath, isfile
 from os.path import join as joinpath
 from urllib.parse import unquote_plus, quote_plus, unquote, quote
@@ -17,7 +17,7 @@ from flask import render_template, send_from_directory, abort, request
 
 MOVIES = {}
 CONFIG = {}
-DEBUG = True
+DEBUG = False
 
 # init flask app
 app = Flask(__name__)
@@ -60,17 +60,40 @@ def load_config() -> dict:
 
 # ---------- custom jinja filters ----------
 
-app.jinja_env.filters["urlEncode"] = lambda url: quote_plus(url)
-app.jinja_env.filters["urlEncodePlus"] = lambda url: quote(url)
-app.jinja_env.filters["urlDecode"] = lambda url: unquote_plus(url)
-app.jinja_env.filters["urlDecodePlus"] = lambda url: unquote(url)
+app.jinja_env.filters["urlEncode"] = lambda this: quote_plus(this)
+app.jinja_env.filters["urlEncodePlus"] = lambda this: quote(this)
+app.jinja_env.filters["urlDecode"] = lambda this: unquote_plus(this)
+app.jinja_env.filters["urlDecodePlus"] = lambda this: unquote(this)
+
+app.jinja_env.filters["str"] = str
+app.jinja_env.filters["int"] = int
+app.jinja_env.filters["abs"] = abs
+app.jinja_env.filters["float"] = float
+
+app.jinja_env.filters["md5"] = lambda this: hashlib.md5(this.encode("utf-8")).hexdigest()
 
 # truncate string and append ellipsis
-def truncate(value, length, ellipsis="..."):
-	if len(value+ellipsis) > length:
-		return value[:length-len(ellipsis)] + ellipsis
-	return value
+def truncate(this:str, length:int, ellipsis:str="...") -> str:
+	if len(this+ellipsis) > length:
+		return this[:length-len(ellipsis)] + ellipsis
+	return this
 app.jinja_env.filters["truncate"] = truncate
+
+# return the time difference between 'this' timestamp and now or given timestamp
+def time_difference(this:int, timestamp:int=None) -> int:
+	if timestamp is None:
+		return this - time.time()
+	else:
+		return this - timestamp
+app.jinja_env.filters["time_difference"] = time_difference
+
+# find first integer in string
+def first_integer(this:str, default:int) -> int:
+	matches = re.findall(r"\d+", this)
+	if len(matches) == 0:
+		return default
+	return int(matches[0])
+app.jinja_env.filters["first_integer"] = first_integer
 
 logger.debug(f"custom jinja filters defined")
 
@@ -80,7 +103,7 @@ logger.debug(f"custom jinja filters defined")
 @app.context_processor
 def inject_variables():
 	global CONFIG
-	return {"config": CONFIG, "app_config": app.config}
+	return {"config": CONFIG, "app_config": app.config, "cookies": request.cookies}
 
 logger.debug(f"added yaml config and app config to jinja context")
 
@@ -91,6 +114,11 @@ def not_found(error):
 	return render_template("404.html"), 404
 
 # ---------- other flask decorater functions ----------
+
+@app.before_first_request
+def get_client_ip():
+	if client_ip := request.headers.get("x-forwarded-for"):
+		logger.warning(f"{client_ip=}")
 
 @app.after_request
 def responde_minify(response):

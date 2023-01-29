@@ -10,7 +10,7 @@
 
 A local hosted movie streaming service for your own movie collection.
 
-## [Release: v0.4.1](https://github.com/FabianBartl/Filmbibliothek/releases/tag/v0.4.1)
+## [Release: v0.4.2](https://github.com/FabianBartl/Filmbibliothek/releases/tag/v0.4.2)
 
 - Provides an installation script: [install.py](install.py)
 - Operates with *Flask* backend and can be reached in the browser at http://filmbibliothek/ or http://localhost/ or from another device in the same network
@@ -27,15 +27,14 @@ A local hosted movie streaming service for your own movie collection.
 - Almost all possible movie data are now queried from IMDb
 - Subtitle support added
 - Allow only URLs or relative paths for attributes of movie configurations that require paths 
+- Responsive design for smartphones and tablets added
 
 ### Patch notes
 
-- Responsive CSS style for smartphones and tablets added
-- Added fallback (google) fonts
-- Ignore the `non-result filters` configuration on smaller screens and show only the search results instead
-- Fix `ModuleNotFoundError` error when running the [install.py](install.py) script for the first time
-- Show the IMDb rating on the movie details page
-- The [collect_metadata.py](collect_metadata.py) script now has a colored progress bar representing the level of the last logging message  
+- Added `age-restriction` configuration to restrict access to movies with an age rating higher than or equal to the specified limit
+- Fix CSS font-face not found error
+- Import jQuery and CryptoJS from CDN
+- Fix shifted design of the last row on the movie overview page
 
 ### Impressions
 

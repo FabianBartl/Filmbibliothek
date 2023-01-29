@@ -3,6 +3,15 @@
 {% set title = 'Film: "' + movie.title + '"' %}
 {% set mainID = 'movie-details' %}
 
+{% set age_restricted = false %}
+{% if cookies.get('age_restriction_unlocked') != 'true' %}
+	{% if config.get('age-restriction', {}).get('limit') %}
+		{% if movie.get('age-rating')|str|first_integer(0) >= config.get('age-restriction', {}).get('limit') %}
+			{% set age_restricted = true %}
+		{% endif %}
+	{% endif %}
+{% endif %}
+
 {% block main %}
 	<div class="row">
 		{% if movie.get('poster', '').startswith('http') %}
@@ -54,7 +63,11 @@
 			{% endif %}
 			<ul class="row actions">
 				<li>
-					<a class="button" onclick="playAsFullscreen('#movie-stream > video');" href="#movie-stream">
+					{% if age_restricted %}
+						<a class="button not-allowed age-restricted" href="#">
+					{% else %}
+						<a class="button" onclick="playAsFullscreen('#movie-stream > video');" href="#movie-stream">
+					{% endif %}
 						<i class="fa fa-play"></i>&ensp;Abspielen
 					</a>
 				</li>
@@ -93,10 +106,12 @@
 			</div>
 		</div>
 	</div>
-
+	
 	<div id="movie-stream">
 		<video controls>
-			<source src="stream/" type="video/mp4">
+			{% if not age_restricted %}
+				<source src="stream/" type="video/mp4">
+			{% endif %}
 			{% for language, subtitles in movie.get('subtitles', {}).items() %}
 				{% if subtitles.startswith(('http', '/localpath/')) %}
 					<track src="{{ subtitles }}" kind="subtitles" srclang="{{ language }}" label="{{ language }}">

@@ -53,3 +53,14 @@ accessible-in-network: false
 # minimum level of logging messages
 # possible strings: DEBUG, INFO, WARNING, ERROR, CRITICAL
 log-level: WARNING
+
+# restrict access to movies with an age rating higher than or equal to the specified limit
+# to get access to age restricted movies you have to enter the configured PIN
+# notes: - the PIN can also be a string
+#        - the limit must be a positive integer
+#        - use limit 'false' to disable the age restriction
+#        - the session duration must be a positive integer representing the hours after which the PIN must be re-entered
+age-restriction:
+  pin: 9745
+  limit: 16
+  session-duration: 3
