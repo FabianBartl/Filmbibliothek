@@ -44,6 +44,14 @@ function getCookie(cookieName) {
 }
 
 
+// https://stackoverflow.com/questions/6877403/how-to-tell-if-a-video-element-is-currently-playing
+Object.defineProperty(HTMLMediaElement.prototype, 'playing', {
+	get: function(){
+		return !!(this.currentTime > 0 && !this.paused && !this.ended && this.readyState > 2);
+	}
+})
+
+
 // on page ready
 $(document).ready(function(){
 	// remove age restriction classes if age restriction disabled
@@ -67,7 +75,72 @@ $(document).ready(function(){
 			alert("Falsche PIN.");
 		}
 	});
+
+	// events for custom video controls
+	$(".video-wrapper").each(function(){
+		var jQ_video_wrapper = $(this);
+		var video = jQ_video_wrapper.children("video").get(0);
+		// left
+		$(this).find(".controls .fullscreen").click(() => { video_fullscreen(jQ_video_wrapper, video); });
+		// center
+		$(this).find(".controls .backward").click(() => { video_backward(jQ_video_wrapper, video); });
+		$(this).find(".controls .play-pause").click(() => { video_play_pause(jQ_video_wrapper, video); });
+		$(this).find(".controls .forward").click(() => { video_forward(jQ_video_wrapper, video); });
+		// right
+		$(this).find(".controls .volume").click(() => { video_volume(jQ_video_wrapper, video); });
+		$(this).find(".controls .subtitle").click(() => { video_subtitle(jQ_video_wrapper, video); });
+
+		// update UI and progress bar
+		video_update_UI(jQ_video_wrapper);
+	});
 });
+
+
+// functions for custom video controls
+function video_update_progress(jQ_video_wrapper) {
+	var video = jQ_video_wrapper.children("video").get(0);
+	var timeline = jQ_video_wrapper.find(".controls .timeline input[type='range']");
+	var elapsed_time = jQ_video_wrapper.find(".controls .elapsed-time");
+	var remaining_time = jQ_video_wrapper.find(".controls .remaining-time");
+	// update video progress bar and timers
+	timeline.attr("value", video.currentTime);
+	timeline.attr("max", video.duration);
+	elapsed_time.text(video.currentTime);
+	remaining_time.text(video.duration - video.currentTime);
+}
+function video_update_UI(jQ_video_wrapper) {
+	var video_wrapper = jQ_video_wrapper.get(0);
+	var video = jQ_video_wrapper.children("video").get(0);
+	// update video wrapper classes
+	video.playing ? video_wrapper.classList.remove("paused") : video_wrapper.classList.add("pause");
+	video.fullscreen ? video_wrapper.classList.add("fullscreen") : video_wrapper.classList.remove("fullscreen");
+	video_update_progress(jQ_video_wrapper);
+}
+
+function video_fullscreen(jQ_video_wrapper, video) {
+	video.fullscreen ? video.exitFullscreen() : video.requestFullscreen();
+	video_update_UI(jQ_video_wrapper);
+}
+function video_backward(jQ_video_wrapper, video, seconds=10) {
+	video.currentTime -= seconds;
+	video_update_UI(jQ_video_wrapper);
+}
+function video_play_pause(jQ_video_wrapper, video) {
+	video.playing ? video.pause() : video.play();
+	video_update_UI(jQ_video_wrapper);
+}
+function video_forward(jQ_video_wrapper, video, seconds=10) {
+	video.currentTime += seconds;
+	video_update_UI(jQ_video_wrapper);
+}
+function video_volume(jQ_video_wrapper, video, seconds=10) {
+	// 
+	video_update_UI(jQ_video_wrapper);
+}
+function video_subtitle(jQ_video_wrapper, video, seconds=10) {
+	// 
+	video_update_UI(jQ_video_wrapper);
+}
 
 
 // show and play the video in full screen mode
