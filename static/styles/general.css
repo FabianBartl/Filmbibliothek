@@ -11,6 +11,7 @@
 :root {
 	--text-font: "Dubai", "Source Sans Pro", "Open Sans", sans-serif;
 	--animate-all: all 0.2s ease-in-out;
+	--animate-all-fast: all 0.1s ease-in-out;
 	--badge-border: 2px solid var(--color-text);
 	/* default filter values */
 	--blur-value: 0;
@@ -173,6 +174,7 @@ video {
 	background-color: var(--color-background);
 	border: var(--badge-border);
 	border-radius: 5px;
+	outline: 0;
 	text-overflow: ellipsis;
 	font-size: 1em;
 	width: 20rem;
@@ -180,6 +182,74 @@ video {
 }
 #search-input:focus {
 	width: 100%;
+}
+
+/* custom video controls */
+.video-wrapper {
+	position: relative;
+	overflow: hidden;
+	padding-left: 1em;
+}
+.video-wrapper > video {
+	width: 100%;
+}
+.video-wrapper > video[controls]::-webkit-media-controls-enclosure {
+	display: none !important;
+}
+.video-wrapper > .controls {
+	z-index: 2147483647;
+	position: absolute;
+	background: rgba(30, 30, 30, 0.7);
+	width: calc(100% - 1em);
+	bottom: 0.5em;
+	opacity: 0.2;
+	transition: var(--animate-all);
+}
+.video-wrapper:hover > .controls {
+/* .video-wrapper > .controls { */
+	opacity: 1;
+}
+.video-wrapper > .controls > .row {
+	justify-content: space-between;
+	padding: 0.3em;
+	padding-bottom: 0;
+	font-size: 1em;
+	line-height: 1em;
+}
+.video-wrapper[data-state*="fullscreen"] > .controls > .row {
+/* .video-wrapper > .controls > .row { */
+	font-size: 1.2em;
+	line-height: 1.2em;
+}
+.video-wrapper > .controls > .row > .timeline,
+.video-wrapper > .controls > .row > .timeline > input[type="range"] {
+	width: 100%;
+}
+.video-wrapper > .controls > .row > .row > div {
+	color: var(--color-text);
+	transition: var(--animate-all-fast);
+}
+.video-wrapper > .controls > .row > .row > div:hover {
+	color: var(--color-highlight);
+}
+/* webkit slider style */
+.video-wrapper .controls .timeline input[type="range"] {
+	-webkit-appearance: none;
+	overflow: hidden;
+	cursor: pointer;
+	outline: 0;
+	height: 0.4em;
+	border-radius: 10px;
+	transform: translateY(-0.2em);
+	background-color: var(--color-background);
+}
+.video-wrapper .controls .timeline input[type="range"]::-webkit-slider-thumb {
+	-webkit-appearance: none;
+	height: 0.7em;
+	width: 0.7em;
+	border-radius: 10px;
+	background-color: var(--color-text);
+	box-shadow: -100vw 0 0 100vw var(--color-link);
 }
 
 /* ---------------------------------------- pages and their elements ---------------------------------------- */

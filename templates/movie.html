@@ -119,7 +119,7 @@
 		</div>
 	</div>
 	
-	<div id="movie-stream">
+	<div id="movie-stream" class="video-wrapper">
 		<video {% if age_restricted %}poster="{{ url_for('static', filename='images/age-restricted-movie.jpg') }}"{% endif %}>
 			{% if not age_restricted %}
 				<source src="stream/" type="video/mp4">
