@@ -247,14 +247,15 @@ def run(movie_directories:list[str], metadata_directories:list[str]) -> None:
 
 			# collect metadata from filepath
 			logger.debug("collect metadata from filepath")
-			movie_metadata = {}
-			movie_metadata["filename"] = filename.rsplit(".", 1)[0]
-			movie_metadata["extension"] = filename.rsplit(".", 1)[-1]
-			movie_metadata["filepath"] = abspath(joinpath(movie_directory, filename))
-			movie_metadata["movie_directory"] = movie_directory
-			movie_metadata["metadata_directory"] = metadata_directory
-			movie_metadata["title"] = movie_metadata["filename"]
-			movie_metadata["movieID"] = str(movieID)
+			movie_metadata = {
+				"filename": filename.rsplit(".", 1)[0],
+				"extension": filename.rsplit(".", 1)[-1],
+				"filepath": abspath(joinpath(movie_directory, filename)),
+				"movie_directory": movie_directory,
+				"metadata_directory": metadata_directory,
+				"title": movie_metadata["filename"],
+				"movieID": str(movieID)
+			}
 			logger.debug(f"{movie_metadata=}")
 			update(1)
 
@@ -277,13 +278,14 @@ def run(movie_directories:list[str], metadata_directories:list[str]) -> None:
 				if width := track.get("width"):
 					width = float(width)
 					# https://upload.wikimedia.org/wikipedia/commons/6/63/Vector_Video_Standards.svg
-					if width <= 1200: movie_metadata["resolution"] = "VGA"
-					elif width <= 1900: movie_metadata["resolution"] = "HD"
-					elif width <= 3400: movie_metadata["resolution"] = "FullHD"
-					elif width <= 5100: movie_metadata["resolution"] = "4K"
-					elif width <= 7600: movie_metadata["resolution"] = "5K"
-					else: movie_metadata["resolution"] = "8K"
-					logger.debug(f"{width=} {movie_metadata['resolution']=}")
+					key = "resolution"
+					if width <= 1200: movie_metadata[key] = "VGA"
+					elif width <= 1900: movie_metadata[key] = "HD"
+					elif width <= 3400: movie_metadata[key] = "FullHD"
+					elif width <= 5100: movie_metadata[key] = "4K"
+					elif width <= 7600: movie_metadata[key] = "5K"
+					else: movie_metadata[key] = "8K"
+					logger.debug(f"{width=} movie_metadata['{key}']={movie_metadata[key]}")
 			except:
 				logger.error(f"failed to collect metadata from file attributes")
 			update(1)
@@ -380,7 +382,7 @@ if __name__ == "__main__":
 	# metadata-directories:
 	logger.debug(f"load metadata directories from config.yml")
 	metadata_directories = config_yaml.get("metadata-directories", [])
-	if metadata_directories == [] or metadata_directories == "" or metadata_directories == None:
+	if metadata_directories in {[], "", None}:
 		logger.error("no metadata directories configured")
 		print(Fore.RED + f"No metadata directories configured")
 		print(Fore.YELLOW + "Please add your metadata directories to the config.yml file.")

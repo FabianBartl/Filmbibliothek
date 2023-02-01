@@ -19,12 +19,12 @@ try:
 	import winshell
 	from win32com.client import Dispatch
 except ModuleNotFoundError:
-	logger.error("the packages 'winshell' or 'win32com' could not be imported")
+	logger.error("the package 'winshell' or 'win32com' could not be imported", exc_info=True)
 	logger.debug("re-call the installation script")
 	subprocess.check_call([sys.executable, "install.py"])
 	exit(1)
 except Exception as error:
-	logger.critical(error)
+	logger.critical("UnexpectedError: the package 'winshell' or 'win32com' could not be imported", exc_info=True)
 	print(Fore.RED + error)
 	exit(2)
 

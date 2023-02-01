@@ -39,7 +39,7 @@ def load_movies() -> dict:
 			return data
 	# unexpected error
 	except Exception as error:
-		logger.error(f"Couldn't load movie data from '{filename}'")
+		logger.error(f"Couldn't load movie data from '{filename}'", exc_info=True)
 		logger.critical(error)
 		print(Fore.RED + f"Couldn't load movie data from '{filename}'")
 		exit(1)
@@ -55,7 +55,7 @@ def load_config() -> dict:
 			return data
 	# unexpected error
 	except Exception as error:
-		logger.error(f"Couldn't load config data from '{filename}'")
+		logger.error(f"Couldn't load config data from '{filename}'", exc_info=True)
 		logger.critical(error)
 		print(Fore.RED + f"Couldn't load config data from '{filename}'")
 		exit(1)
