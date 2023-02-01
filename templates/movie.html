@@ -19,7 +19,7 @@
 		{% else %}
 			<img class="poster" src="poster/" alt="movie poster for '{{ movie.get('title') }}'">
 		{% endif %}
-		<div class="short-details">
+		<div class="details">
 			<h2 class="title">
 				{{ movie.get('title') }}
 			</h2>
@@ -46,7 +46,7 @@
 			{% if movie.get('ratings') %}
 				<ul class="row ratings">
 					{% if movie.get('ratings', {}).get('imdb') %}
-						<li class="row imdb rating" title="IMDb rating">
+						<li class="row imdb rating" title="IMDb Bewertung">
 							<img class="icon" src="{{ url_for('static', filename='images/imdb_star.svg') }}">
 							<div>
 								<div class="points">
@@ -59,6 +59,18 @@
 							</div>
 						</li>
 					{% endif %}
+					<li class="row user rating" title="Deine Bewertung">
+						{% set user_rating = movie.get('ratings', {}).get('user', 0) %}
+						{% for i in range(user_rating | int) %}
+							<i class="icon fa fa-star"></i>
+						{% endfor %}
+						{% if user_rating % 1 >= 0.5 %}
+							<i class="icon fa fa-star-half"></i>
+						{% endif %}
+						{% for i in range(5 - (user_rating | int)) %}
+							<i class="icon fa fa-star-o"></i>
+						{% endfor %}
+					</li>
 				</ul>
 			{% endif %}
 			<ul class="row actions">
@@ -108,7 +120,7 @@
 	</div>
 	
 	<div id="movie-stream">
-		<video controls {% if age_restricted %}poster="{{ url_for('static', filename='images/age-restricted-movie.jpg') }}"{% endif %}>
+		<video {% if age_restricted %}poster="{{ url_for('static', filename='images/age-restricted-movie.jpg') }}"{% endif %}>
 			{% if not age_restricted %}
 				<source src="stream/" type="video/mp4">
 			{% endif %}
@@ -120,5 +132,6 @@
 				{% endif %}
 			{% endfor %}
 		</video>
+		{% include 'controls.html' %}
 	</div>
 {% endblock %}

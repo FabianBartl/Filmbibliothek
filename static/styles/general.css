@@ -182,7 +182,7 @@ video {
 	width: 100%;
 }
 
-/* ---------------------------------------- pages ---------------------------------------- */
+/* ---------------------------------------- pages and their elements ---------------------------------------- */
 
 /* error page */
 #error-page {
@@ -214,6 +214,7 @@ video {
 	transition: var(--animate-all);
 }
 
+/* overview with poster, title and year */
 .movie-overview {
 	--movie-overview-width: 15em;
 	width: var(--movie-overview-width);
@@ -251,17 +252,18 @@ video {
 	border-radius: 15px;
 	margin-right: 2em;
 }
-#movie-details .short-details {
+#movie-details .details {
 	max-width: 50vw;
 }
 
-.short-details > .title {
+/* details with title \ year, duration and badges \ ratings \ actions \ description \ and short credits */
+.details > .title {
 	letter-spacing: 0.5px;
 }
-.short-details > :not(.title) {
+.details > :not(.title) {
 	margin-bottom: 3em;
 }
-
+/* short credits */
 .short-credits > div {
 	margin-bottom: 0.3em;
 }
@@ -272,7 +274,11 @@ video {
 	min-width: 10em;
 	letter-spacing: 1px;
 }
-
+/* ratings */
+.ratings > .rating:not(:last-child) {
+	margin-right: 2.5em;
+}
+/* imdb rating */
 .ratings > .imdb.rating {
 	line-height: 1.2em;
 }
@@ -289,6 +295,14 @@ video {
 	letter-spacing: 0.5px;
 	font-size: 0.9em;
 	filter: grayscale(0.9);
+}
+/* user rating */
+.ratings > .user.rating .icon {
+	align-self: center;
+	color: rgb(245, 197, 24);
+}
+.ratings > .user.rating .icon:not(:last-child) {
+	margin-right: 0.3em;
 }
 
 /* on page movie stream */
@@ -316,11 +330,11 @@ video {
 		margin-right: 1em;
 	}
 	/* tighter details and credits */
-	#movie-details .short-details {
+	#movie-details .details {
 		max-width: unset;
 	}
 
-	.short-details > :not(.title) {
+	.details > :not(.title) {
 		margin-bottom: 1.5em;
 	}	
 
