@@ -206,7 +206,6 @@ video {
 	transition: var(--animate-all);
 }
 .video-wrapper:hover > .controls {
-/* .video-wrapper > .controls { */
 	opacity: 1;
 }
 .video-wrapper > .controls > .row {
@@ -217,7 +216,6 @@ video {
 	line-height: 1em;
 }
 .video-wrapper[data-state*="fullscreen"] > .controls > .row {
-/* .video-wrapper > .controls > .row { */
 	font-size: 1.2em;
 	line-height: 1.2em;
 }
