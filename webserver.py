@@ -18,7 +18,7 @@ from flask import render_template, send_from_directory, abort, request
 
 MOVIES = {}
 CONFIG = {}
-DEBUG = False
+DEBUG = True
 SERVE = False
 
 # init flask app
@@ -109,9 +109,13 @@ logger.debug(f"added yaml config and app config to jinja context")
 
 # ---------- error pages ----------
 
+@app.errorhandler(403)
+def forbidden(error_msg):
+	return render_template("403.html", details=error_msg), 403
+
 @app.errorhandler(404)
-def not_found(error):
-	return render_template("404.html"), 404
+def not_found(error_msg):
+	return render_template("404.html", details=error_msg), 404
 
 # ---------- other flask decorater functions ----------
 
@@ -137,6 +141,7 @@ def responde_minify(response):
 # ---------- url routes ----------
 
 # get favicon
+# error: 404 if icon not found
 @app.route("/favicon.ico")
 def favicon():
 	global CONFIG
@@ -156,6 +161,7 @@ def index():
 	return render_template("index.html", movies=MOVIES, movies_array=movies_array, search_query=search_query)
 
 # return detailed movie page
+# error: 404 if movie not found
 @app.route("/movie/<movieID>/")
 def movie(movieID):
 	global MOVIES
@@ -164,6 +170,7 @@ def movie(movieID):
 	return abort(404)
 
 # get movie stream
+# error: 404 if movie not found
 @app.route("/movie/<movieID>/stream/")
 def movie_stream(movieID):
 	global MOVIES
@@ -172,6 +179,7 @@ def movie_stream(movieID):
 	return abort(404)
 
 # get movie poster
+# error: 404 if movie not found
 @app.route("/movie/<movieID>/poster/")
 def movie_poster(movieID):
 	global MOVIES
@@ -183,6 +191,7 @@ def movie_poster(movieID):
 	return abort(404)
 
 # get movie subtitles
+# error: 404 if movie or subtitle file not found
 @app.route("/movie/<movieID>/subtitles/<language>/")
 def movie_subtitles(movieID, language):
 	global MOVIES

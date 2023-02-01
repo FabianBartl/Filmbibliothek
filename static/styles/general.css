@@ -191,9 +191,14 @@ video {
 }
 #error-page > .code {
 	font-size: 1.3em;
+	padding-bottom: 0.5em;
 }
 #error-page > .message {
+	padding-bottom: 2em;
 	font-size: 1.1em;
+}
+#error-page > .details {
+	font-size: 1em;
 }
 
 /* movie index page */

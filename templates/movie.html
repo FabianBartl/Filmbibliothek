@@ -47,7 +47,7 @@
 				<ul class="row ratings">
 					{% if movie.get('ratings', {}).get('imdb') %}
 						<li class="row imdb rating" title="IMDb rating">
-							<img class="icon" src="{{ url_for("static", filename="images/imdb_star.svg") }}">
+							<img class="icon" src="{{ url_for('static', filename='images/imdb_star.svg') }}">
 							<div>
 								<div class="points">
 									<span>
@@ -108,7 +108,7 @@
 	</div>
 	
 	<div id="movie-stream">
-		<video controls>
+		<video controls {% if age_restricted %}poster="{{ url_for('static', filename='images/age-restricted-movie.jpg') }}"{% endif %}>
 			{% if not age_restricted %}
 				<source src="stream/" type="video/mp4">
 			{% endif %}
