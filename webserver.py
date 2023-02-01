@@ -4,6 +4,7 @@ logger = custom_logger.init(__file__, log_to_console=True)
 logger.debug(f"start of script: {__file__}")
 
 import json, yaml, minify_html, re, hashlib, time
+from math import floor, ceil
 from waitress import serve
 from os.path import abspath, isfile
 from os.path import join as joinpath
@@ -67,8 +68,11 @@ app.jinja_env.filters["urlDecodePlus"] = lambda this: unquote(this)
 
 app.jinja_env.filters["str"] = str
 app.jinja_env.filters["int"] = int
-app.jinja_env.filters["abs"] = abs
 app.jinja_env.filters["float"] = float
+
+app.jinja_env.filters["abs"] = abs
+app.jinja_env.filters["floor"] = floor
+app.jinja_env.filters["ceil"] = ceil
 
 app.jinja_env.filters["md5"] = lambda this: hashlib.md5(this.encode("utf-8")).hexdigest()
 

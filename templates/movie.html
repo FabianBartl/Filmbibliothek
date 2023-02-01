@@ -65,9 +65,12 @@
 							<i class="icon fa fa-star"></i>
 						{% endfor %}
 						{% if user_rating % 1 >= 0.5 %}
+							{% set half_star = 1 %}
 							<i class="icon fa fa-star-half"></i>
+						{% else %}
+							{% set half_star = 0 %}
 						{% endif %}
-						{% for i in range(5 - (user_rating | int)) %}
+						{% for i in range((5 - half_star) - (user_rating | int)) %}
 							<i class="icon fa fa-star-o"></i>
 						{% endfor %}
 					</li>
