@@ -1,5 +1,5 @@
 
-import logging, time
+import logging
 from datetime import datetime
 
 from os.path import abspath, basename
@@ -48,8 +48,8 @@ class CustomFormatter(logging.Formatter):
 
 
 # return a logging handler for a colored tqdm progress bar
-# def getTqdmHandler( tqdm_progressBar: tqdm ) -> TqdmLoggingHandler
-def getTqdmHandler(tqdm_progressBar, level):
+# def getTqdmHandler( tqdm_progressBar: tqdm, level: int ) -> TqdmLoggingHandler
+def getTqdmHandler(tqdm_progressBar, level:int):
 	try:
 		import tqdm
 
@@ -70,8 +70,9 @@ def getTqdmHandler(tqdm_progressBar, level):
 					# count logs
 					self.counter[record.levelno] += 1
 					# skip most debug and info colorings to show more important colors longer
-					if self.counter[record.levelno] % 20 != 0 and logging.DEBUG == record.levelno: return
-					if self.counter[record.levelno] % 5 != 0 and logging.INFO == record.levelno: return
+					if (self.counter[record.levelno] % 20 != 0 and logging.DEBUG == record.levelno) or \
+						(self.counter[record.levelno] % 5 != 0 and logging.INFO == record.levelno):
+						return
 				# set color and refresh bar
 				self.progress_bar.colour = level_to_color(record.levelno)
 				self.progress_bar.refresh()
@@ -85,7 +86,7 @@ def getTqdmHandler(tqdm_progressBar, level):
 
 
 # returns configured logging handler object
-def init(name, *, name_is_path:bool=True, log_to_file:bool=True, log_to_console:bool=False, log_level:int=logging.DEBUG, colored_console:bool=True):
+def init(name, *, name_is_path:bool=True, log_to_file:bool=True, log_to_console:bool=False, log_level:int=logging.DEBUG, colored_console:bool=True) -> logging.Logger:
 	# extract filename from path
 	if name_is_path:
 		name = basename(name)
