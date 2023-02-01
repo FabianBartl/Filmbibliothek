@@ -39,8 +39,7 @@ def getDescFromFile(filename:str) -> dict:
 		
 		# unexpected error
 		except Exception as error:
-			logger.error("failed to read description")
-			logger.error(error)
+			logger.error("UnexpectedError: failed to read description", exc_info=True)
 			return None
 
 
@@ -287,7 +286,7 @@ def run(movie_directories:list[str], metadata_directories:list[str]) -> None:
 					else: movie_metadata[key] = "8K"
 					logger.debug(f"{width=} movie_metadata['{key}']={movie_metadata[key]}")
 			except:
-				logger.error(f"failed to collect metadata from file attributes")
+				logger.error(f"failed to collect metadata from file attributes", exc_info=True)
 			update(1)
 
 			# preload user-defined metadata, but apply them later
@@ -356,7 +355,7 @@ if __name__ == "__main__":
 	# movie-directories:
 	logger.debug(f"load movie directories from config.yml")
 	movie_directories = config_yaml.get("movie-directories", [])
-	if movie_directories == [] or movie_directories == "" or movie_directories == None:
+	if movie_directories == None or movie_directories == [None]:
 		logger.error("no movie directories configured")
 		print(Fore.RED + f"No movie directories configured")
 		print(Fore.YELLOW + "Please add your movie directories to the config.yml file.")
@@ -382,7 +381,7 @@ if __name__ == "__main__":
 	# metadata-directories:
 	logger.debug(f"load metadata directories from config.yml")
 	metadata_directories = config_yaml.get("metadata-directories", [])
-	if metadata_directories in {[], "", None}:
+	if metadata_directories == None or metadata_directories == [None]:
 		logger.error("no metadata directories configured")
 		print(Fore.RED + f"No metadata directories configured")
 		print(Fore.YELLOW + "Please add your metadata directories to the config.yml file.")

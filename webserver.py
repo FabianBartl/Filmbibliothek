@@ -38,9 +38,8 @@ def load_movies() -> dict:
 			logger.debug("loaded json movie data")
 			return data
 	# unexpected error
-	except Exception as error:
-		logger.error(f"Couldn't load movie data from '{filename}'", exc_info=True)
-		logger.critical(error)
+	except Exception:
+		logger.critical(f"UnexpectedError: Couldn't load movie data from '{filename}'", exc_info=True)
 		print(Fore.RED + f"Couldn't load movie data from '{filename}'")
 		exit(1)
 
@@ -54,9 +53,8 @@ def load_config() -> dict:
 			logger.debug("loaded yaml config data")
 			return data
 	# unexpected error
-	except Exception as error:
-		logger.error(f"Couldn't load config data from '{filename}'", exc_info=True)
-		logger.critical(error)
+	except Exception:
+		logger.error(f"UnexpectedError: Couldn't load config data from '{filename}'", exc_info=True)
 		print(Fore.RED + f"Couldn't load config data from '{filename}'")
 		exit(1)
 
