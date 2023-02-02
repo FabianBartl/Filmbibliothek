@@ -143,18 +143,53 @@ function video_update_progress(video_wrapper) {
 	remaining_time.text(video.duration !== undefined && video.currentTime !== undefined ? secondsToTime(video.duration - video.currentTime) : "00:00:00");
 }
 function video_update_UI(video_wrapper) {
-	var video = $(video_wrapper).children("video").get(0);
-	var video_wrapper = $(video_wrapper).get(0);
+	var jQ_video_wrapper = $(video_wrapper);
+	var video_wrapper = jQ_video_wrapper.get(0);
+	var video = jQ_video_wrapper.children("video").get(0);
+	// controls
+	var controls_fullscreen = jQ_video_wrapper.find(".controls .fullscreen i.fa").get(0);
+	var controls_play_pause = jQ_video_wrapper.find(".controls .play-pause i.fa").get(0);
+	var controls_volume = jQ_video_wrapper.find(".controls .volume i.fa").get(0);
 	// update video wrapper classes
 	// wait a short time to be sure that all changes have been applied
 	setTimeout(()=>{
-		document.webkitIsFullScreen ? video_wrapper.classList.add("fullscreen") : video_wrapper.classList.remove("fullscreen");
-		video.playing ? video_wrapper.classList.remove("paused") : video_wrapper.classList.add("paused");
-		video.muted ? video_wrapper.classList.add("muted") : video_wrapper.classList.remove("muted");
+		// note: fullscreen and play-pause button indicates applied action
+		// fullscreen
+		if (document.webkitIsFullScreen) {
+			video_wrapper.classList.add("fullscreen");
+			controls_fullscreen.classList.add("fa-compress");
+			controls_fullscreen.classList.remove("fa-expand");
+		} else {
+			video_wrapper.classList.remove("fullscreen");
+			controls_fullscreen.classList.remove("fa-compress");
+			controls_fullscreen.classList.add("fa-expand");
+		}
+		// play-pause
+		if (video.playing) {
+			video_wrapper.classList.remove("paused");
+			controls_play_pause.classList.add("fa-pause");
+			controls_play_pause.classList.remove("fa-play");
+		} else {
+			video_wrapper.classList.add("paused");
+			controls_play_pause.classList.remove("fa-pause");
+			controls_play_pause.classList.add("fa-play");
+		}
+		// note: volume button indicates current state
+		// volume
+		if (video.muted) {
+			video_wrapper.classList.add("muted");
+			controls_volume.classList.add("fa-volume-xmark");
+			controls_volume.classList.remove("fa-volume-high");
+		} else {
+			video_wrapper.classList.remove("muted");
+			controls_volume.classList.remove("fa-volume-xmark");
+			controls_volume.classList.add("fa-volume-high");
+		}
 	}, 100);
 	// update video controls progress
 	video_update_progress(video_wrapper);
 }
+
 // video actions
 function video_fullscreen(video_wrapper) {
 	video_wrapper = $(video_wrapper).get(0);
@@ -229,18 +264,32 @@ $(document).ready(()=>{
 		var click_bindings = "click touch";
 
 		// play video if clicked on video element
-		$(video).bind(`${click_bindings}`, ()=>{ video_play_pause(jQ_video_wrapper); });
+		$(video).bind(`${click_bindings}`, (evt)=>{
+			video_play_pause(jQ_video_wrapper);
+		});
 
 		// left
-		jQ_video_wrapper.find(".controls .fullscreen").bind(`${click_bindings}`, ()=>{ video_fullscreen(jQ_video_wrapper); });
+		jQ_video_wrapper.find(".controls .fullscreen").bind(`${click_bindings}`, (evt)=>{
+			video_fullscreen(jQ_video_wrapper);
+		});
 		// center
-		jQ_video_wrapper.find(".controls .backward").bind(`${click_bindings}`, ()=>{ video_backward(jQ_video_wrapper); });
-		jQ_video_wrapper.find(".controls .play-pause").bind(`${click_bindings}`, ()=>{ video_play_pause(jQ_video_wrapper); });
-		jQ_video_wrapper.find(".controls .forward").bind(`${click_bindings}`, ()=>{ video_forward(jQ_video_wrapper); });
+		jQ_video_wrapper.find(".controls .backward").bind(`${click_bindings}`, (evt)=>{
+			video_backward(jQ_video_wrapper);
+		});
+		jQ_video_wrapper.find(".controls .play-pause").bind(`${click_bindings}`, (evt)=>{
+			video_play_pause(jQ_video_wrapper);
+		});
+		jQ_video_wrapper.find(".controls .forward").bind(`${click_bindings}`, (evt)=>{
+			video_forward(jQ_video_wrapper);
+		});
 		// right
-		jQ_video_wrapper.find(".controls .volume").bind(`${click_bindings}`, ()=>{ video_volume(jQ_video_wrapper); });
+		jQ_video_wrapper.find(".controls .volume").bind(`${click_bindings}`, (evt)=>{
+			video_volume(jQ_video_wrapper);
+		});
 		// progress 
-		jQ_video_wrapper.find(".controls .timeline input[type='range']").bind(`change ${click_bindings}`, (evt)=>{ video_timeline(jQ_video_wrapper, evt.target); });
+		jQ_video_wrapper.find(".controls .timeline input[type='range']").bind(`change ${click_bindings}`, (evt)=>{
+			video_timeline(jQ_video_wrapper, evt.target);
+		});
 
 		// init video controls
 		video.addEventListener("loadedmetadata", ()=>{
