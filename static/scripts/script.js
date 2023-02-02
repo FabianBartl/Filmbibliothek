@@ -40,182 +40,36 @@ function getCookie(cookieName) {
 }
 
 
-// extend HTML Media Element by the new attribute "playing"
-// https://stackoverflow.com/questions/6877403/how-to-tell-if-a-video-element-is-currently-playing
-Object.defineProperty(HTMLMediaElement.prototype, "playing", {
-	get: function(){
-		return !!(this.currentTime > 0 && !this.paused && !this.ended && this.readyState > 2);
-	}
-})
-
-
-// on page ready
-$(document).ready(()=>{
-	// remove age restriction classes if age restriction disabled
-	if (getCookie("age_restriction_unlocked") === "true") {
-		$(".age-restricted").each(()=>{
-			$(this).removeClass("age-restricted");
-			$(this).removeClass("not-allowed");
-		});
-	}
-
-	// add click events to age restricted elements
-	// query the configured pin and (if correct) disable the age restriction
-	$(".age-restricted").click(()=>{
-		var pinInput = prompt("PIN eingeben, um die Altersbeschränkung aufzuheben:");
-		var pinInputHash = CryptoJS.MD5(pinInput).toString();
-		if (pinInputHash === window.ageRestriction_PinHash) {
-			setCookie("age_restriction_unlocked", "true", window.ageRestriction_SessionDuration, "h");
-			alert(`Die Altersbeschränkung ist für ${window.ageRestriction_SessionDuration.toString()} Stunden aufgehoben.`);
-			window.history.go(0);
-		} else {
-			alert("Falsche PIN.");
-		}
-	});
-
-	// add events and hotkeys for custom video controls
-	// init video controls and add UI updater
-	$(".video-wrapper").each(function(index){
-		var jQ_video_wrapper = $(this);
-		var video = jQ_video_wrapper.children("video").get(0);
-
-		// play video if clicked on video it-self
-		$(video).click(()=>{ video_play_pause(jQ_video_wrapper); });
-
-		// left
-		jQ_video_wrapper.find(".controls .fullscreen").click(()=>{ video_fullscreen(jQ_video_wrapper); });
-		// center
-		jQ_video_wrapper.find(".controls .backward").click(()=>{ video_backward(jQ_video_wrapper); });
-		jQ_video_wrapper.find(".controls .play-pause").click(()=>{ video_play_pause(jQ_video_wrapper); });
-		jQ_video_wrapper.find(".controls .forward").click(()=>{ video_forward(jQ_video_wrapper); });
-		// right
-		jQ_video_wrapper.find(".controls .volume").click(()=>{ video_volume(jQ_video_wrapper); });
-		jQ_video_wrapper.find(".controls .subtitle").click(()=>{ video_subtitle(jQ_video_wrapper); });
-		// progress 
-		jQ_video_wrapper.find(".controls .timeline input[type='range']").change((evt)=>{ video_timeline(jQ_video_wrapper, evt.target); });
-
-		// init video controls
-		video.addEventListener("loadedmetadata", ()=>{
-			video_update_UI(jQ_video_wrapper);
-			$(jQ_video_wrapper).find(".controls .timeline input[type='range']").attr("max", Math.floor(video.duration));
-		});
-		// update progress continuously if video is playing
-		video.addEventListener("playing", function listener_update_progress(evt) {
-			video_update_progress(jQ_video_wrapper);
-			setInterval(() => {
-				if (!evt.target.paused) video_update_progress(jQ_video_wrapper);
-			}, 500);
-			video.removeEventListener("playing", listener_update_progress);
-		});
-
-		// bind hotkeys to video controls
-		// apply only to first video wrapper
-		if (index === 0) {
-			$(document).bind("keydown", (evt)=>{
-				switch (evt.originalEvent.key) {
-					case "f":
-						video_fullscreen(jQ_video_wrapper);
-						break;
-					case "ArrowLeft":
-					case "j":
-						video_backward(jQ_video_wrapper);
-						break;
-					case " ":
-					case "k":
-						video_play_pause(jQ_video_wrapper);
-						break;
-					case "ArrowRight":
-					case "l":
-						video_forward(jQ_video_wrapper);
-						break;
-					case "m":
-						video_volume(jQ_video_wrapper);
-						break;
-					case "c":
-						video_subtitle(jQ_video_wrapper);
-						break;
-				}
-			});
-		}
-	});
-});
-
-
-// functions for custom video controls
-function video_update_progress(video_wrapper) {
-	var jQ_video_wrapper = $(video_wrapper);
-	var video = jQ_video_wrapper.children("video").get(0);
-	var timeline = jQ_video_wrapper.find(".controls .timeline input[type='range']");
-	var elapsed_time = jQ_video_wrapper.find(".controls .elapsed-time");
-	var remaining_time = jQ_video_wrapper.find(".controls .remaining-time");
-	// update video progress bar and timers
-	timeline.attr("value", Math.floor(video.currentTime));
-	elapsed_time.text(video.currentTime ? seconds_to_time(video.currentTime) : "00:00:00");
-	remaining_time.text(!!video.duration && !!video.currentTime ? seconds_to_time(video.duration - video.currentTime) : "00:00:00");
-}
-function video_update_UI(video_wrapper) {
-	var video = $(video_wrapper).children("video").get(0);
-	var video_wrapper = $(video_wrapper).get(0);
-	// update video wrapper classes
-	document.webkitIsFullScreen ? video_wrapper.classList.add("fullscreen") : video_wrapper.classList.remove("fullscreen");
-	video.playing ? video_wrapper.classList.remove("paused") : video_wrapper.classList.add("paused");
-	video.muted ? video_wrapper.classList.add("muted") : video_wrapper.classList.remove("muted");
-	// update video controls progress
-	video_update_progress(video_wrapper);
-}
-
-function video_fullscreen(video_wrapper) {
-	video_wrapper = $(video_wrapper).get(0);
-	document.webkitIsFullScreen ? document.webkitExitFullscreen() : video_wrapper.webkitRequestFullscreen();
-	video_update_UI(video_wrapper);
-}
-function video_backward(video_wrapper, seconds=10) {
-	var video = video_wrapper.children("video").get(0);
-	video.currentTime -= seconds;
-	video_update_UI(video_wrapper);
-}
-function video_play_pause(video_wrapper) {
-	var video = video_wrapper.children("video").get(0);
-	if (video.ended) video.load();
-	video.playing ? video.pause() : video.play();
-	video_update_UI(video_wrapper);
-}
-function video_forward(video_wrapper, seconds=10) {
-	var video = video_wrapper.children("video").get(0);
-	video.currentTime += seconds;
-	video_update_UI(video_wrapper);
-}
-function video_volume(video_wrapper) {
-	var video = video_wrapper.children("video").get(0);
-	video.muted ? $(video).prop("muted", false) : $(video).prop("muted", true);
-	video_update_UI(video_wrapper);
-}
-function video_subtitle(video_wrapper) {
-	// TODO
-	video_update_UI(video_wrapper);
-}
-function video_timeline(video_wrapper, timeline) {
-	var video = video_wrapper.children("video").get(0);
-	video.currentTime = parseInt(timeline.value);
-	video_update_UI(video_wrapper);
-}
-
-
-// show and play the video in full screen mode
-function playInFullscreen(video_wrapper) {
-	setTimeout(()=>{
-		video_fullscreen(video_wrapper);
-		video_play_pause(video_wrapper);
-	}, 600);
-}
-
-
 // convert seconds to time format of HH:MM:SS
-function seconds_to_time(seconds) {
+function secondsToTime(seconds) {
 	const hours = Math.floor(seconds / 3600);
 	const minutes = Math.floor((seconds % 3600) / 60);
 	const remainingSeconds = Math.floor(seconds % 60);
 	return `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${remainingSeconds.toString().padStart(2, "0")}`;
+}
+
+// check if element is in viewport (by ChatGPT)
+function isCompleteInViewport(element) {
+	const bounding = element.getBoundingClientRect();
+	const windowHeight = (window.innerHeight || document.documentElement.clientHeight);
+	const windowWidth = (window.innerWidth || document.documentElement.clientWidth);
+	return (
+		bounding.top >= 0 &&
+		bounding.left >= 0 &&
+		bounding.bottom <= windowHeight &&
+		bounding.right <= windowWidth
+	);
+};
+function isPartiallyInViewport(element) {
+	const bounding = element.getBoundingClientRect();
+	const windowHeight = (window.innerHeight || document.documentElement.clientHeight);
+	const windowWidth = (window.innerWidth || document.documentElement.clientWidth);
+	return (
+		bounding.top < windowHeight &&
+		bounding.bottom >= 0 &&
+		bounding.left < windowWidth &&
+		bounding.right >= 0
+	);
 }
 
 
@@ -264,3 +118,196 @@ function searchResults(event, objectArray, inputElement, toArray, notResultClass
 		);
 	}
 }
+
+
+// extend HTML Media Element by the new attribute "playing"
+// https://stackoverflow.com/questions/6877403/how-to-tell-if-a-video-element-is-currently-playing
+Object.defineProperty(HTMLMediaElement.prototype, "playing", {
+	get: function(){
+		return !!(this.currentTime > 0 && !this.paused && !this.ended && this.readyState > 2);
+	}
+})
+
+
+// functions for custom video controls
+// UI updater
+function video_update_progress(video_wrapper) {
+	var jQ_video_wrapper = $(video_wrapper);
+	var video = jQ_video_wrapper.children("video").get(0);
+	var timeline = jQ_video_wrapper.find(".controls .timeline input[type='range']");
+	var elapsed_time = jQ_video_wrapper.find(".controls .elapsed-time");
+	var remaining_time = jQ_video_wrapper.find(".controls .remaining-time");
+	// update video progress bar and timers
+	timeline.attr("value", Math.floor(video.currentTime));
+	elapsed_time.text(!!video.currentTime ? secondsToTime(video.currentTime) : "00:00:00");
+	remaining_time.text(!!video.duration && !!video.currentTime ? secondsToTime(video.duration - video.currentTime) : "00:00:00");
+}
+function video_update_UI(video_wrapper) {
+	var video = $(video_wrapper).children("video").get(0);
+	var video_wrapper = $(video_wrapper).get(0);
+	// update video wrapper classes
+	document.webkitIsFullScreen ? video_wrapper.classList.add("fullscreen") : video_wrapper.classList.remove("fullscreen");
+	video.playing ? video_wrapper.classList.remove("paused") : video_wrapper.classList.add("paused");
+	video.muted ? video_wrapper.classList.add("muted") : video_wrapper.classList.remove("muted");
+	// update video controls progress
+	video_update_progress(video_wrapper);
+}
+// video actions
+function video_fullscreen(video_wrapper) {
+	video_wrapper = $(video_wrapper).get(0);
+	document.webkitIsFullScreen ? document.webkitExitFullscreen() : video_wrapper.webkitRequestFullscreen();
+	video_update_UI(video_wrapper);
+}
+function video_backward(video_wrapper, seconds=10) {
+	var video = video_wrapper.children("video").get(0);
+	video.currentTime -= seconds;
+	video_update_UI(video_wrapper);
+}
+function video_play_pause(video_wrapper) {
+	var video = video_wrapper.children("video").get(0);
+	if (video.ended) video.load();
+	video.playing ? video.pause() : video.play();
+	video_update_UI(video_wrapper);
+}
+function video_forward(video_wrapper, seconds=10) {
+	var video = video_wrapper.children("video").get(0);
+	video.currentTime += seconds;
+	video_update_UI(video_wrapper);
+}
+function video_volume(video_wrapper) {
+	var video = video_wrapper.children("video").get(0);
+	video.muted ? $(video).prop("muted", false) : $(video).prop("muted", true);
+	video_update_UI(video_wrapper);
+}
+function video_subtitle(video_wrapper) {
+	// TODO
+	video_update_UI(video_wrapper);
+}
+function video_timeline(video_wrapper, timeline) {
+	var video = video_wrapper.children("video").get(0);
+	video.currentTime = parseInt(timeline.value);
+	video_update_UI(video_wrapper);
+}
+
+// play specific video in fullscreen
+function playInFullscreen(video_wrapper, delay_ms=0) {
+	setTimeout(()=>{
+		video_fullscreen(video_wrapper);
+		video_play_pause(video_wrapper);
+	}, delay_ms);
+}
+
+
+// on page ready
+$(document).ready(()=>{
+	// remove age restriction classes if age restriction disabled
+	if (getCookie("age_restriction_unlocked") === "true") {
+		$(".age-restricted").each(()=>{
+			$(this).removeClass("age-restricted");
+			$(this).removeClass("not-allowed");
+		});
+	}
+
+	// add click events to age restricted elements
+	// query the configured pin and (if correct) disable the age restriction
+	$(".age-restricted").click(()=>{
+		var pinInput = prompt("PIN eingeben, um die Altersbeschränkung aufzuheben:");
+		var pinInputHash = CryptoJS.MD5(pinInput).toString();
+		if (pinInputHash === window.ageRestriction_PinHash) {
+			setCookie("age_restriction_unlocked", "true", window.ageRestriction_SessionDuration, "h");
+			alert(`Die Altersbeschränkung ist für ${window.ageRestriction_SessionDuration.toString()} Stunden aufgehoben.`);
+			window.history.go(0);
+		} else {
+			alert("Falsche PIN.");
+		}
+	});
+
+	// add events and hotkeys for custom video controls
+	// init video controls and add UI updater
+	$(".video-wrapper").each(function(index){
+		var jQ_video_wrapper = $(this);
+		var video = jQ_video_wrapper.children("video").get(0);
+		var click_bindings = "click touch";
+
+		// play video if clicked on video element
+		$(video).bind(`${click_bindings}`, ()=>{ video_play_pause(jQ_video_wrapper); });
+
+		// left
+		jQ_video_wrapper.find(".controls .fullscreen").bind(`${click_bindings}`, ()=>{ video_fullscreen(jQ_video_wrapper); });
+		// center
+		jQ_video_wrapper.find(".controls .backward").bind(`${click_bindings}`, ()=>{ video_backward(jQ_video_wrapper); });
+		jQ_video_wrapper.find(".controls .play-pause").bind(`${click_bindings}`, ()=>{ video_play_pause(jQ_video_wrapper); });
+		jQ_video_wrapper.find(".controls .forward").bind(`${click_bindings}`, ()=>{ video_forward(jQ_video_wrapper); });
+		// right
+		jQ_video_wrapper.find(".controls .volume").bind(`${click_bindings}`, ()=>{ video_volume(jQ_video_wrapper); });
+		jQ_video_wrapper.find(".controls .subtitle").bind(`${click_bindings}`, ()=>{ video_subtitle(jQ_video_wrapper); });
+		// progress 
+		jQ_video_wrapper.find(".controls .timeline input[type='range']").bind(`change ${click_bindings}`, (evt)=>{ video_timeline(jQ_video_wrapper, evt.target); });
+
+		// init video controls
+		video.addEventListener("loadedmetadata", ()=>{
+			video_update_UI(jQ_video_wrapper);
+			$(jQ_video_wrapper).find(".controls .timeline input[type='range']").attr("max", Math.floor(video.duration));
+		});
+		// update progress continuously if video is playing
+		video.addEventListener("playing", function listener_update_progress(evt) {
+			video_update_progress(jQ_video_wrapper);
+			setInterval(() => {
+				if (!evt.target.paused) video_update_progress(jQ_video_wrapper);
+			}, 500);
+			video.removeEventListener("playing", listener_update_progress);
+		});
+
+		// bind hotkeys to video controls
+		// apply only to first video wrapper
+		if (index === 0) {
+			$(document).bind("keydown", (evt)=>{
+				if (isPartiallyInViewport(video)) {
+					console.log(evt.keyCode);
+					switch (evt.originalEvent.key || evt.keyCode) {
+						case 70:
+						case "f":
+							video_fullscreen(jQ_video_wrapper);
+							break;
+						case 37:
+						case "ArrowLeft":
+						case 74:
+						case "j":
+							video_backward(jQ_video_wrapper);
+							break;
+						case 32:
+						case " ":
+						case 75:
+						case "k":
+							video_play_pause(jQ_video_wrapper);
+							break;
+						case 39:
+						case "ArrowRight":
+						case 76:
+						case "l":
+							video_forward(jQ_video_wrapper);
+							break;
+						case 77:
+						case "m":
+							video_volume(jQ_video_wrapper);
+							break;
+						case 67:
+						case "c":
+							video_subtitle(jQ_video_wrapper);
+							break;
+					}
+				}
+			});
+			// add title with keybind hint 
+			// left
+			jQ_video_wrapper.find(".controls .fullscreen").attr("title", "Vollbild (F)");
+			// center
+			jQ_video_wrapper.find(".controls .backward").attr("title", "Zurückspulen (J / Pfeilteste Links)");
+			jQ_video_wrapper.find(".controls .play-pause").attr("title", "Abspielen (K / Leertaste)");
+			jQ_video_wrapper.find(".controls .forward").attr("title", "Vorspulen (L / Pfeiltaste Rechts)");
+			// right
+			jQ_video_wrapper.find(".controls .volume").attr("title", "Stummschalten (M)");
+			jQ_video_wrapper.find(".controls .subtitle").attr("title", "Untertitel (C)");
+		}
+	});
+});
