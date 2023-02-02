@@ -204,7 +204,7 @@ video {
 .video-wrapper > .controls {
 	z-index: 2147483647;
 	position: absolute;
-	background: rgba(30, 30, 30, 0.7);
+	background: rgba(20, 20, 20, 0.7);
 	width: calc(100% - 1em);
 	bottom: 0.5em;
 	opacity: 0.2;

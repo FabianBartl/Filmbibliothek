@@ -112,8 +112,7 @@ $(document).ready(()=>{
 		// apply only to first video wrapper
 		if (index === 0) {
 			$(document).bind("keydown", (evt)=>{
-				var key = evt.originalEvent.key;
-				switch (key) {
+				switch (evt.originalEvent.key) {
 					case "f":
 						video_fullscreen(jQ_video_wrapper);
 						break;
@@ -158,7 +157,7 @@ function video_update_UI(video_wrapper) {
 	var video = $(video_wrapper).children("video").get(0);
 	var video_wrapper = $(video_wrapper).get(0);
 	// update video wrapper classes
-	video.fullscreen ? video_wrapper.classList.add("fullscreen") : video_wrapper.classList.remove("fullscreen");
+	document.webkitIsFullScreen ? video_wrapper.classList.add("fullscreen") : video_wrapper.classList.remove("fullscreen");
 	video.playing ? video_wrapper.classList.remove("paused") : video_wrapper.classList.add("paused");
 	video.muted ? video_wrapper.classList.add("muted") : video_wrapper.classList.remove("muted");
 	// update video controls progress
