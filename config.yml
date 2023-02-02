@@ -64,3 +64,10 @@ age-restriction:
   pin: 9745
   limit: 16
   session-duration: 3
+
+# experimental: replace the default video controls with custom controls
+#  - advantage: backward and forward rewind is supported, shortcuts available 
+#  - disadvantage: works poorly on mobile devices
+# possible values: true, false
+custom-video-controls: true
+
