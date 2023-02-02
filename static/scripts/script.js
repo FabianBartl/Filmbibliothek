@@ -79,6 +79,9 @@ $(document).ready(()=>{
 		var jQ_video_wrapper = $(this);
 		var video = jQ_video_wrapper.children("video").get(0);
 
+		// play video if clicked on video it-self
+		$(video).click(()=>{ video_play_pause(jQ_video_wrapper, video); });
+
 		// left
 		jQ_video_wrapper.find(".controls .fullscreen").click(()=>{ video_fullscreen(jQ_video_wrapper, video); });
 		// center
