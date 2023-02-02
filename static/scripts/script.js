@@ -182,10 +182,6 @@ function video_volume(video_wrapper) {
 	video.muted ? $(video).prop("muted", false) : $(video).prop("muted", true);
 	video_update_UI(video_wrapper);
 }
-function video_subtitle(video_wrapper) {
-	// TODO
-	video_update_UI(video_wrapper);
-}
 function video_timeline(video_wrapper, timeline) {
 	var video = video_wrapper.children("video").get(0);
 	video.currentTime = parseInt(timeline.value);
@@ -243,7 +239,6 @@ $(document).ready(()=>{
 		jQ_video_wrapper.find(".controls .forward").bind(`${click_bindings}`, ()=>{ video_forward(jQ_video_wrapper); });
 		// right
 		jQ_video_wrapper.find(".controls .volume").bind(`${click_bindings}`, ()=>{ video_volume(jQ_video_wrapper); });
-		jQ_video_wrapper.find(".controls .subtitle").bind(`${click_bindings}`, ()=>{ video_subtitle(jQ_video_wrapper); });
 		// progress 
 		jQ_video_wrapper.find(".controls .timeline input[type='range']").bind(`change ${click_bindings}`, (evt)=>{ video_timeline(jQ_video_wrapper, evt.target); });
 
@@ -294,10 +289,6 @@ $(document).ready(()=>{
 						case "m":
 							video_volume(jQ_video_wrapper);
 							break;
-						case 67:
-						case "c":
-							video_subtitle(jQ_video_wrapper);
-							break;
 					}
 				}
 			});
@@ -310,7 +301,6 @@ $(document).ready(()=>{
 			jQ_video_wrapper.find(".controls .forward").attr("title", "Vorspulen (L / Pfeiltaste Rechts)");
 			// right
 			jQ_video_wrapper.find(".controls .volume").attr("title", "Stummschalten (M)");
-			jQ_video_wrapper.find(".controls .subtitle").attr("title", "Untertitel (C)");
 		}
 	});
 });
