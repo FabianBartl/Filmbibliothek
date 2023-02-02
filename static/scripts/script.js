@@ -146,6 +146,7 @@ function video_update_UI(video_wrapper) {
 	var video = $(video_wrapper).children("video").get(0);
 	var video_wrapper = $(video_wrapper).get(0);
 	// update video wrapper classes
+	// wait a short time to be sure that all changes have been applied
 	setTimeout(()=>{
 		document.webkitIsFullScreen ? video_wrapper.classList.add("fullscreen") : video_wrapper.classList.remove("fullscreen");
 		video.playing ? video_wrapper.classList.remove("paused") : video_wrapper.classList.add("paused");
