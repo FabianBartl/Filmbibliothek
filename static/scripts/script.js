@@ -234,7 +234,7 @@ function searchResults(event, objectArray, inputElement, toArray, notResultClass
 
 	if (validQuery.length >= minLenght) {
 		// search for query in array
-		objectArray.filter((object) => {
+		objectArray.filter((object)=>{
 			objectArray = toArray(object).map((attribute)=>{
 				return attribute.toLowerCase().replace(invalidChars, "");
 			});
@@ -248,7 +248,7 @@ function searchResults(event, objectArray, inputElement, toArray, notResultClass
 			});
 			return !anyIsTrue;
 
-		}).forEach((object) => {
+		}).forEach((object)=>{
 			// add search classes
 			notResultClasses.forEach((resultClass)=>{
 				document.getElementById(`movie-${object.movieID}`).classList.add(resultClass);

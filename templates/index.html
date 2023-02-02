@@ -12,16 +12,16 @@
 			const movies_data = {{ movies_array | safe }};
 			
 			// call on typing in search field
-			search_input.keyup(function(event) {
+			search_input.keyup((evt)=>{
 				searchResults(
-					event, movies_data, search_input,
+					evt, movies_data, search_input,
 
 					// searchable values
 					function(movie) {
 						const keys = ["title", "description", "age-rating", "year", "resolution", "director", "writer", "genre", "main-cast", "duration", "camera", "studio", "ratings"];
 						var result = [];
 						// convert key objects into an array of strings
-						keys.forEach(function(key) {
+						keys.forEach((key)=>{
 							var object = movie[key];
 							if (object !== null && object !== undefined) {
 								// handle arrays
