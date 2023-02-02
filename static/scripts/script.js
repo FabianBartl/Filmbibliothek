@@ -150,8 +150,8 @@ function video_update_progress(video_wrapper) {
 	var remaining_time = jQ_video_wrapper.find(".controls .remaining-time");
 	// update video progress bar and timers
 	timeline.attr("value", Math.floor(video.currentTime));
-	elapsed_time.text(seconds_to_time(video.currentTime));
-	remaining_time.text(seconds_to_time(video.duration - video.currentTime));
+	elapsed_time.text(video.currentTime ? seconds_to_time(video.currentTime) : "00:00:00");
+	remaining_time.text(!!video.duration && !!video.currentTime ? seconds_to_time(video.duration - video.currentTime) : "00:00:00");
 }
 function video_update_UI(video_wrapper) {
 	var video = $(video_wrapper).children("video").get(0);
