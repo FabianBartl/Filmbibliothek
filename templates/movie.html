@@ -81,7 +81,7 @@
 					{% if age_restricted %}
 						<a class="button not-allowed age-restricted" href="#">
 					{% else %}
-						<a class="button" onclick="playAsFullscreen('#movie-stream > video');" href="#movie-stream">
+						<a class="button" onclick="playInFullscreen($('#movie-stream'));" href="#movie-stream">
 					{% endif %}
 						<i class="fa fa-play"></i>&ensp;Abspielen
 					</a>

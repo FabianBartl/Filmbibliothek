@@ -80,19 +80,19 @@ $(document).ready(()=>{
 		var video = jQ_video_wrapper.children("video").get(0);
 
 		// play video if clicked on video it-self
-		$(video).click(()=>{ video_play_pause(jQ_video_wrapper, video); });
+		$(video).click(()=>{ video_play_pause(jQ_video_wrapper); });
 
 		// left
-		jQ_video_wrapper.find(".controls .fullscreen").click(()=>{ video_fullscreen(jQ_video_wrapper, video); });
+		jQ_video_wrapper.find(".controls .fullscreen").click(()=>{ video_fullscreen(jQ_video_wrapper); });
 		// center
-		jQ_video_wrapper.find(".controls .backward").click(()=>{ video_backward(jQ_video_wrapper, video); });
-		jQ_video_wrapper.find(".controls .play-pause").click(()=>{ video_play_pause(jQ_video_wrapper, video); });
-		jQ_video_wrapper.find(".controls .forward").click(()=>{ video_forward(jQ_video_wrapper, video); });
+		jQ_video_wrapper.find(".controls .backward").click(()=>{ video_backward(jQ_video_wrapper); });
+		jQ_video_wrapper.find(".controls .play-pause").click(()=>{ video_play_pause(jQ_video_wrapper); });
+		jQ_video_wrapper.find(".controls .forward").click(()=>{ video_forward(jQ_video_wrapper); });
 		// right
-		jQ_video_wrapper.find(".controls .volume").click(()=>{ video_volume(jQ_video_wrapper, video); });
-		jQ_video_wrapper.find(".controls .subtitle").click(()=>{ video_subtitle(jQ_video_wrapper, video); });
+		jQ_video_wrapper.find(".controls .volume").click(()=>{ video_volume(jQ_video_wrapper); });
+		jQ_video_wrapper.find(".controls .subtitle").click(()=>{ video_subtitle(jQ_video_wrapper); });
 		// progress 
-		jQ_video_wrapper.find(".controls .timeline input[type='range']").change((evt)=>{ video_timeline(jQ_video_wrapper, video, evt.target); });
+		jQ_video_wrapper.find(".controls .timeline input[type='range']").change((evt)=>{ video_timeline(jQ_video_wrapper, evt.target); });
 
 		// init video controls
 		video.addEventListener("loadedmetadata", ()=>{
@@ -113,28 +113,27 @@ $(document).ready(()=>{
 		if (index === 0) {
 			$(document).bind("keydown", (evt)=>{
 				var key = evt.originalEvent.key;
-				console.log(key);
 				switch (key) {
 					case "f":
-						video_fullscreen(jQ_video_wrapper, video);
+						video_fullscreen(jQ_video_wrapper);
 						break;
 					case "ArrowLeft":
 					case "j":
-						video_backward(jQ_video_wrapper, video);
+						video_backward(jQ_video_wrapper);
 						break;
 					case " ":
 					case "k":
-						video_play_pause(jQ_video_wrapper, video);
+						video_play_pause(jQ_video_wrapper);
 						break;
 					case "ArrowRight":
 					case "l":
-						video_forward(jQ_video_wrapper, video);
+						video_forward(jQ_video_wrapper);
 						break;
 					case "m":
-						video_volume(jQ_video_wrapper, video);
+						video_volume(jQ_video_wrapper);
 						break;
 					case "c":
-						video_subtitle(jQ_video_wrapper, video);
+						video_subtitle(jQ_video_wrapper);
 						break;
 				}
 			});
@@ -166,44 +165,48 @@ function video_update_UI(video_wrapper) {
 	video_update_progress(video_wrapper);
 }
 
-function video_fullscreen(video_wrapper, video) {
+function video_fullscreen(video_wrapper) {
 	video_wrapper = $(video_wrapper).get(0);
-	document.webkitIsFullScreen ? document.webkitExitFullscreen : video_wrapper.webkitRequestFullscreen();
+	document.webkitIsFullScreen ? document.webkitExitFullscreen() : video_wrapper.webkitRequestFullscreen();
 	video_update_UI(video_wrapper);
 }
-function video_backward(video_wrapper, video, seconds=10) {
+function video_backward(video_wrapper, seconds=10) {
+	var video = video_wrapper.children("video").get(0);
 	video.currentTime -= seconds;
 	video_update_UI(video_wrapper);
 }
-function video_play_pause(video_wrapper, video) {
+function video_play_pause(video_wrapper) {
+	var video = video_wrapper.children("video").get(0);
 	if (video.ended) video.load();
 	video.playing ? video.pause() : video.play();
 	video_update_UI(video_wrapper);
 }
-function video_forward(video_wrapper, video, seconds=10) {
+function video_forward(video_wrapper, seconds=10) {
+	var video = video_wrapper.children("video").get(0);
 	video.currentTime += seconds;
 	video_update_UI(video_wrapper);
 }
-function video_volume(video_wrapper, video) {
+function video_volume(video_wrapper) {
+	var video = video_wrapper.children("video").get(0);
 	video.muted ? $(video).prop("muted", false) : $(video).prop("muted", true);
 	video_update_UI(video_wrapper);
 }
-function video_subtitle(video_wrapper, video) {
+function video_subtitle(video_wrapper) {
 	// TODO
 	video_update_UI(video_wrapper);
 }
-function video_timeline(video_wrapper, video, timeline) {
+function video_timeline(video_wrapper, timeline) {
+	var video = video_wrapper.children("video").get(0);
 	video.currentTime = parseInt(timeline.value);
 	video_update_UI(video_wrapper);
 }
 
 
 // show and play the video in full screen mode
-function playAsFullscreen(selector) {
-	video = document.querySelector(selector);
-	setTimeout(function(){
-		video.requestFullscreen();
-		video.play();
+function playInFullscreen(video_wrapper) {
+	setTimeout(()=>{
+		video_fullscreen(video_wrapper);
+		video_play_pause(video_wrapper);
 	}, 600);
 }
 
