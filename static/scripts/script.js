@@ -146,9 +146,11 @@ function video_update_UI(video_wrapper) {
 	var video = $(video_wrapper).children("video").get(0);
 	var video_wrapper = $(video_wrapper).get(0);
 	// update video wrapper classes
-	document.webkitIsFullScreen ? video_wrapper.classList.add("fullscreen") : video_wrapper.classList.remove("fullscreen");
-	video.playing ? video_wrapper.classList.remove("paused") : video_wrapper.classList.add("paused");
-	video.muted ? video_wrapper.classList.add("muted") : video_wrapper.classList.remove("muted");
+	setTimeout(()=>{
+		document.webkitIsFullScreen ? video_wrapper.classList.add("fullscreen") : video_wrapper.classList.remove("fullscreen");
+		video.playing ? video_wrapper.classList.remove("paused") : video_wrapper.classList.add("paused");
+		video.muted ? video_wrapper.classList.add("muted") : video_wrapper.classList.remove("muted");
+	}, 100);
 	// update video controls progress
 	video_update_progress(video_wrapper);
 }
