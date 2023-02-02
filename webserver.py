@@ -179,7 +179,8 @@ def movie(movieID):
 def movie_stream(movieID):
 	global MOVIES
 	if movie := MOVIES.get(movieID):
-		return send_from_directory(movie["movie_directory"], f"{movie['filename']}.{movie['extension']}", as_attachment=False)
+		if isfile(joinpath(movie["movie_directory"], file := f"{movie['filename']}.{movie['extension']}")):
+			return send_from_directory(movie["movie_directory"], file, as_attachment=False)
 	return abort(404)
 
 # get movie poster
