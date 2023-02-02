@@ -27,15 +27,17 @@
 								// handle arrays
 								if (typeof(object) === Array) {
 									value = object.join("");
+								}
 								// handle objects
-								} else if (typeof(object) === Object) {
+								else if (typeof(object) === Object) {
 									var values = [];
 									for (let key in object) {
 										values.push(object[key]);
 									}
 									value = values.join("");
+								}
 								// handle integers, strings, etc.
-								} else {
+								else {
 									value = object.toString();
 								}
 								result.push(value);
