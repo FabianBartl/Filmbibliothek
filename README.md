@@ -8,7 +8,9 @@
 ![wakatime](https://wakatime.com/badge/user/de63f4ec-0b0d-40c1-8ed3-36b881955881/project/46c670ca-6548-477b-bee3-399550e4b3e5.svg)&nbsp;
 ![visitors](https://visitor-badge.laobi.icu/badge?page_id=fabianbartl/filmbibliothek&query_only)&nbsp;
 
-A local hosted movie streaming service for your own movie collection.
+A local hosted movie streaming service for your own movie collection. 
+
+See some [Impressions](#impressions)
 
 ## [Release: v0.4.2](https://github.com/FabianBartl/Filmbibliothek/releases/tag/v0.4.2)
 
@@ -36,7 +38,9 @@ A local hosted movie streaming service for your own movie collection.
 - Import jQuery and CryptoJS from CDN
 - Fix shifted design of the last row on the movie overview page
 
-### Impressions
+<!-- ## Getting Started -->
+
+## Impressions
 
 #### Movie overview
 
