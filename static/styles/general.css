@@ -257,6 +257,21 @@ video {
 	background-color: var(--color-text);
 	box-shadow: -100vw 0 0 calc(100vw - 5px) var(--color-link);
 }
+/* state dependent button icons */
+.video-wrapper .controls .buttons * {
+	font-family: "Font Awesome 6 Free";
+}
+/* note: fullscreen and play-pause button indicates applied action */
+/* fa-expand, fa-compress */
+.video-wrapper.controls .buttons .fullscreen::before { content: "\f065"; }
+.video-wrapper.fullscreen .controls .buttons .fullscreen::before { content: "\f066"; }
+/* fa-pause, fa-play */
+.video-wrapper .controls .buttons .play-pause::before { content: "\f04c"; }
+.video-wrapper.paused .controls .buttons .play-pause::before { content: "\f04b"; }
+/* note: volume button indicates current state */
+/* fa-volume, fa-volume-xmark */
+.video-wrapper .controls .buttons .volume::before { content: "\f6a8"; }
+.video-wrapper.muted .controls .buttons .volume::before { content: "\f6a9"; }
 
 /* ---------------------------------------- pages and their elements ---------------------------------------- */
 
