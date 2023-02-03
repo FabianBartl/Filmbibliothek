@@ -8,35 +8,46 @@
 ![wakatime](https://wakatime.com/badge/user/de63f4ec-0b0d-40c1-8ed3-36b881955881/project/46c670ca-6548-477b-bee3-399550e4b3e5.svg)&nbsp;
 <!-- ![visitors](https://visitor-badge.laobi.icu/badge?page_id=fabianbartl/filmbibliothek&query_only)&nbsp; -->
 
-A local hosted movie streaming service for your own movie collection.
+A local hosted movie streaming service for your own movie collection. 
 
-## [Release: v0.4.2](https://github.com/FabianBartl/Filmbibliothek/releases/tag/v0.4.2)
+See some [Impressions](#impressions)
+
+## [Release: v0.4.3](https://github.com/FabianBartl/Filmbibliothek/releases/tag/v0.4.3)
 
 - Provides an installation script: [install.py](install.py)
 - Operates with *Flask* backend and can be reached in the browser at http://filmbibliothek/ or http://localhost/ or from another device in the same network
 - Scrapes all movie information from IMDb and user-defined YAML files
-
-<!-- ### Known issues -->
 
 ### Changes
 
 - Added `metadata-directories` configuration to specify the location of metadata and movie configuration files.
 - Added `accessible-in-network` configuration to be able to access the website within your local network using the IP address of your host device
 - Added `website`, `camera`, `studio`, `subtitles`, `scrape-additional-data` and `imdb-id` attributes as possible movie configuration
+- Added `age-restriction` configuration to restrict access to movies with an age rating higher than or equal to the specified limit
 - Renamed movie configuration attribute `author` to `writer`
 - Almost all possible movie data are now queried from IMDb
-- Subtitle support added
 - Allow only URLs or relative paths for attributes of movie configurations that require paths 
 - Responsive design for smartphones and tablets added
 
 ### Patch notes
 
-- Added `age-restriction` configuration to restrict access to movies with an age rating higher than or equal to the specified limit
-- Fix CSS font-face not found error
-- Import jQuery and CryptoJS from CDN
-- Fix shifted design of the last row on the movie overview page
+- Better error logging
+- Import Font Awesome from CDN
+- Added user rating support
+- Added custom video controls with hotkey support (only on not mobile devices available)
+- Subtitle support added, but not accessible in custom video controls
+- Add in-code option to run flask app in stable *serve* mode using *waitress*
 
-### Impressions
+<!-- ### Known Issues -->
+
+### Not made yet *(comes with version v0.5.0)*
+
+- Icon or logo
+- Getting Started
+
+<!-- ## Getting Started -->
+
+## Impressions
 
 #### Movie overview
 

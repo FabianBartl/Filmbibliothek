@@ -39,8 +39,7 @@ def getDescFromFile(filename:str) -> dict:
 		
 		# unexpected error
 		except Exception as error:
-			logger.error("failed to read description")
-			logger.error(error)
+			logger.error("UnexpectedError: failed to read description", exc_info=True)
 			return None
 
 
@@ -123,11 +122,12 @@ def getMetadataFromIMDB(moviename:str, *, imdb_id:str=None) -> dict:
 		logger.debug(f"get {attribute}")
 		if value := html_scrap.xpath(xpath).get():
 			if attribute == "age-rating":
-				value = f"ab {value}"
-			metadata[attribute] = value
-			logger.debug(f"{attribute}={value}")
-		else:
-			logger.warning(f"{attribute} of '{moviename}' not found")
+				value = f"ab {value}" if len(value) <= 3 else None
+			if value:
+				metadata[attribute] = value
+				logger.debug(f"{attribute}={value}")
+				continue
+		logger.warning(f"{attribute} of '{moviename}' not found")
 
 	# get list attributes
 	attribute_xpaths = {
@@ -246,14 +246,15 @@ def run(movie_directories:list[str], metadata_directories:list[str]) -> None:
 
 			# collect metadata from filepath
 			logger.debug("collect metadata from filepath")
-			movie_metadata = {}
-			movie_metadata["filename"] = filename.rsplit(".", 1)[0]
-			movie_metadata["extension"] = filename.rsplit(".", 1)[-1]
-			movie_metadata["filepath"] = abspath(joinpath(movie_directory, filename))
-			movie_metadata["movie_directory"] = movie_directory
-			movie_metadata["metadata_directory"] = metadata_directory
-			movie_metadata["title"] = movie_metadata["filename"]
-			movie_metadata["movieID"] = str(movieID)
+			movie_metadata = {
+				"filename": filename.rsplit(".", 1)[0],
+				"extension": filename.rsplit(".", 1)[-1],
+				"filepath": abspath(joinpath(movie_directory, filename)),
+				"movie_directory": movie_directory,
+				"metadata_directory": metadata_directory,
+				"title": movie_metadata["filename"],
+				"movieID": str(movieID)
+			}
 			logger.debug(f"{movie_metadata=}")
 			update(1)
 
@@ -276,15 +277,16 @@ def run(movie_directories:list[str], metadata_directories:list[str]) -> None:
 				if width := track.get("width"):
 					width = float(width)
 					# https://upload.wikimedia.org/wikipedia/commons/6/63/Vector_Video_Standards.svg
-					if width <= 1200: movie_metadata["resolution"] = "VGA"
-					elif width <= 1900: movie_metadata["resolution"] = "HD"
-					elif width <= 3400: movie_metadata["resolution"] = "FullHD"
-					elif width <= 5100: movie_metadata["resolution"] = "4K"
-					elif width <= 7600: movie_metadata["resolution"] = "5K"
-					else: movie_metadata["resolution"] = "8K"
-					logger.debug(f"{width=} {movie_metadata['resolution']=}")
+					key = "resolution"
+					if width <= 1200: movie_metadata[key] = "VGA"
+					elif width <= 1900: movie_metadata[key] = "HD"
+					elif width <= 3400: movie_metadata[key] = "FullHD"
+					elif width <= 5100: movie_metadata[key] = "4K"
+					elif width <= 7600: movie_metadata[key] = "5K"
+					else: movie_metadata[key] = "8K"
+					logger.debug(f"{width=} movie_metadata['{key}']={movie_metadata[key]}")
 			except:
-				logger.error(f"failed to collect metadata from file attributes")
+				logger.error(f"failed to collect metadata from file attributes", exc_info=True)
 			update(1)
 
 			# preload user-defined metadata, but apply them later
@@ -353,7 +355,7 @@ if __name__ == "__main__":
 	# movie-directories:
 	logger.debug(f"load movie directories from config.yml")
 	movie_directories = config_yaml.get("movie-directories", [])
-	if movie_directories == [] or movie_directories == "" or movie_directories == None:
+	if movie_directories == None or movie_directories == [None]:
 		logger.error("no movie directories configured")
 		print(Fore.RED + f"No movie directories configured")
 		print(Fore.YELLOW + "Please add your movie directories to the config.yml file.")
@@ -379,7 +381,7 @@ if __name__ == "__main__":
 	# metadata-directories:
 	logger.debug(f"load metadata directories from config.yml")
 	metadata_directories = config_yaml.get("metadata-directories", [])
-	if metadata_directories == [] or metadata_directories == "" or metadata_directories == None:
+	if metadata_directories == None or metadata_directories == [None]:
 		logger.error("no metadata directories configured")
 		print(Fore.RED + f"No metadata directories configured")
 		print(Fore.YELLOW + "Please add your metadata directories to the config.yml file.")

@@ -1,0 +1,19 @@
+{% extends 'default.html' %}
+
+{% set mainID = 'error-page' %}
+
+{% block main %}
+	<div class="code">
+		Error {{ code }} - {{ title }}
+	</div>
+	<div class="message">
+		{{ message }}
+	</div>
+	{% if details %}
+		<div class="details">
+			Details:
+			<br>
+			{{ details }}
+		</div>
+	{% endif %}
+{% endblock %}

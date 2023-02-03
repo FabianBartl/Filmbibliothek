@@ -19,13 +19,12 @@ try:
 	import winshell
 	from win32com.client import Dispatch
 except ModuleNotFoundError:
-	logger.error("the packages 'winshell' or 'win32com' could not be imported")
+	logger.error("the package 'winshell' or 'win32com' could not be imported", exc_info=True)
 	logger.debug("re-call the installation script")
 	subprocess.check_call([sys.executable, "install.py"])
 	exit(1)
 except Exception as error:
-	logger.critical(error)
-	print(Fore.RED + error)
+	logger.critical("UnexpectedError: the package 'winshell' or 'win32com' could not be imported", exc_info=True)
 	exit(2)
 
 init(autoreset=True)
@@ -59,11 +58,10 @@ if sys.platform == "win32":
 		logger.info(f"added {name=} to local dns resolver")
 		print(Fore.GREEN + f"Host '{name}' added to DNS resolver")
 	except PermissionError:
-		logger.warning(f"PermissionError: failed to add {name=} to local dns resolver")
+		logger.warning(f"PermissionError: failed to add {name=} to local dns resolver", exc_info=True)
 		print(Fore.YELLOW + f"Run the installation script as administrator to add '{name}' as host to local DNS resolver")
-	except Exception as error:
-		logger.critical(error)
-		print(Fore.RED + error)
+	except Exception:
+		logger.critical("UnexpectedError:", exc_info=True)
 		exit(3)
 # unsupported systems
 else:
@@ -94,9 +92,8 @@ else:
 # collect metadata
 try:
 	subprocess.check_call([sys.executable, "collect_metadata.py"])
-except Exception as error:
-	logger.error(error)
-	print(Fore.RED + error)
+except Exception:
+	logger.error("UnexpectedError:", exc_info=True)
 	exit(4)
 
 # start webserver
@@ -104,9 +101,8 @@ logger.debug("run webserver.py")
 print("Run webserver.py")
 try:
 	subprocess.check_call([sys.executable, "webserver.py"])
-except Exception as error:
-	logger.error(error)
-	print(Fore.RED + error)
+except Exception:
+	logger.error("UnexpectedError:", exc_info=True)
 	exit(5)
 
 logger.debug(f"end of script: {__file__}")

@@ -1,11 +1,11 @@
 
 /* colors */
 html {
-	--blue: #003049;
-	--red: #D62828;
-	--orange: #F77F00;
-	--yellow: #FCBF49;
-	--beige: #EAE2B7;
+	--blue: rgb(0, 48, 73);
+	--red: rgb(214, 40, 40);
+	--orange: rgb(247, 127, 0);
+	--yellow: rgb(252, 191, 73);
+	--beige: rgb(234, 226, 183);
 }
 
 /* themes */
@@ -32,14 +32,14 @@ html[theme="debug"] * {
 	color: #0f0 !important;
 	outline: 1px #f00 solid !important;
 	background: #000 !important;
-	background-color: rgba(255, 0, 0, 0.2) !important;
+	background-color: #f003 !important;
 }
 
-html[theme="debug"] * *               { background-color: rgba(  0, 255,   0, 0.2) !important; }
-html[theme="debug"] * * *             { background-color: rgba(  0,   0, 255, 0.2) !important; }
-html[theme="debug"] * * * *           { background-color: rgba(255,   0, 255, 0.2) !important; }
-html[theme="debug"] * * * * *         { background-color: rgba(  0, 255, 255, 0.2) !important; }
-html[theme="debug"] * * * * * *       { background-color: rgba(255, 255,   0, 0.2) !important; }
-html[theme="debug"] * * * * * * *     { background-color: rgba(255,   0,   0, 0.2) !important; }
-html[theme="debug"] * * * * * * * *   { background-color: rgba(  0, 255,   0, 0.2) !important; }
-html[theme="debug"] * * * * * * * * * { background-color: rgba(  0,   0, 255, 0.2) !important; }
+html[theme="debug"] * *               { background-color: #0f03 !important; }
+html[theme="debug"] * * *             { background-color: #00f3 !important; }
+html[theme="debug"] * * * *           { background-color: #f0f3 !important; }
+html[theme="debug"] * * * * *         { background-color: #0ff3 !important; }
+html[theme="debug"] * * * * * *       { background-color: #ff03 !important; }
+html[theme="debug"] * * * * * * *     { background-color: #f003 !important; }
+html[theme="debug"] * * * * * * * *   { background-color: #0f03 !important; }
+html[theme="debug"] * * * * * * * * * { background-color: #00f3 !important; }

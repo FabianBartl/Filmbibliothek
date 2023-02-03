@@ -4,6 +4,8 @@ logger = custom_logger.init(__file__, log_to_console=True)
 logger.debug(f"start of script: {__file__}")
 
 import json, yaml, minify_html, re, hashlib, time
+from math import floor, ceil
+from waitress import serve
 from os.path import abspath, isfile
 from os.path import join as joinpath
 from urllib.parse import unquote_plus, quote_plus, unquote, quote
@@ -18,6 +20,7 @@ from flask import render_template, send_from_directory, abort, request
 MOVIES = {}
 CONFIG = {}
 DEBUG = False
+SERVE = False
 
 # init flask app
 app = Flask(__name__)
@@ -36,9 +39,8 @@ def load_movies() -> dict:
 			logger.debug("loaded json movie data")
 			return data
 	# unexpected error
-	except Exception as error:
-		logger.error(f"Couldn't load movie data from '{filename}'")
-		logger.critical(error)
+	except Exception:
+		logger.critical(f"UnexpectedError: Couldn't load movie data from '{filename}'", exc_info=True)
 		print(Fore.RED + f"Couldn't load movie data from '{filename}'")
 		exit(1)
 
@@ -52,9 +54,8 @@ def load_config() -> dict:
 			logger.debug("loaded yaml config data")
 			return data
 	# unexpected error
-	except Exception as error:
-		logger.error(f"Couldn't load config data from '{filename}'")
-		logger.critical(error)
+	except Exception:
+		logger.error(f"UnexpectedError: Couldn't load config data from '{filename}'", exc_info=True)
 		print(Fore.RED + f"Couldn't load config data from '{filename}'")
 		exit(1)
 
@@ -67,8 +68,11 @@ app.jinja_env.filters["urlDecodePlus"] = lambda this: unquote(this)
 
 app.jinja_env.filters["str"] = str
 app.jinja_env.filters["int"] = int
-app.jinja_env.filters["abs"] = abs
 app.jinja_env.filters["float"] = float
+
+app.jinja_env.filters["abs"] = abs
+app.jinja_env.filters["floor"] = floor
+app.jinja_env.filters["ceil"] = ceil
 
 app.jinja_env.filters["md5"] = lambda this: hashlib.md5(this.encode("utf-8")).hexdigest()
 
@@ -109,16 +113,19 @@ logger.debug(f"added yaml config and app config to jinja context")
 
 # ---------- error pages ----------
 
+@app.errorhandler(401)
+def forbidden(error_msg):
+	return render_template("401.html", details=error_msg), 401
+
+@app.errorhandler(403)
+def forbidden(error_msg):
+	return render_template("403.html", details=error_msg), 403
+
 @app.errorhandler(404)
-def not_found(error):
-	return render_template("404.html"), 404
+def not_found(error_msg):
+	return render_template("404.html", details=error_msg), 404
 
 # ---------- other flask decorater functions ----------
-
-@app.before_first_request
-def get_client_ip():
-	if client_ip := request.headers.get("x-forwarded-for"):
-		logger.warning(f"{client_ip=}")
 
 @app.after_request
 def responde_minify(response):
@@ -137,6 +144,7 @@ def responde_minify(response):
 # ---------- url routes ----------
 
 # get favicon
+# error: 404 if icon not found
 @app.route("/favicon.ico")
 def favicon():
 	global CONFIG
@@ -156,6 +164,7 @@ def index():
 	return render_template("index.html", movies=MOVIES, movies_array=movies_array, search_query=search_query)
 
 # return detailed movie page
+# error: 404 if movie not found
 @app.route("/movie/<movieID>/")
 def movie(movieID):
 	global MOVIES
@@ -164,14 +173,17 @@ def movie(movieID):
 	return abort(404)
 
 # get movie stream
+# error: 404 if movie not found
 @app.route("/movie/<movieID>/stream/")
 def movie_stream(movieID):
 	global MOVIES
 	if movie := MOVIES.get(movieID):
-		return send_from_directory(movie["movie_directory"], f"{movie['filename']}.{movie['extension']}", as_attachment=False)
+		if isfile(joinpath(movie["movie_directory"], file := f"{movie['filename']}.{movie['extension']}")):
+			return send_from_directory(movie["movie_directory"], file, as_attachment=False)
 	return abort(404)
 
 # get movie poster
+# error: 404 if movie not found
 @app.route("/movie/<movieID>/poster/")
 def movie_poster(movieID):
 	global MOVIES
@@ -183,6 +195,7 @@ def movie_poster(movieID):
 	return abort(404)
 
 # get movie subtitles
+# error: 404 if movie or subtitle file not found
 @app.route("/movie/<movieID>/subtitles/<language>/")
 def movie_subtitles(movieID, language):
 	global MOVIES
@@ -224,6 +237,9 @@ if __name__ == "__main__":
 		logger.info("accessible in network")
 		print(Fore.YELLOW + f"accessible in your local network using the local network address of your host-computer")
 	# run app
-	app.run(debug=DEBUG, port=port, host=host)
+	if SERVE:
+		serve(app, port=port, host=host)
+	else:
+		app.run(debug=DEBUG, port=port, host=host)
 
 logger.debug(f"end of script: {__file__}")
