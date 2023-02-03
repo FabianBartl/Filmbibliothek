@@ -310,7 +310,6 @@ $(document).ready(()=>{
 		if (index === 0) {
 			$(document).bind("keydown", (evt)=>{
 				if (isPartiallyInViewport(video)) {
-					console.log(evt.keyCode);
 					switch (evt.originalEvent.key || evt.keyCode) {
 						case 70:
 						case "f":

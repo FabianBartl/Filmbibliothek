@@ -113,6 +113,10 @@ logger.debug(f"added yaml config and app config to jinja context")
 
 # ---------- error pages ----------
 
+@app.errorhandler(401)
+def forbidden(error_msg):
+	return render_template("401.html", details=error_msg), 401
+
 @app.errorhandler(403)
 def forbidden(error_msg):
 	return render_template("403.html", details=error_msg), 403
