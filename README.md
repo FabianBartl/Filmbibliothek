@@ -12,7 +12,7 @@ A local hosted movie streaming service for your own movie collection.
 
 See some [Impressions](#impressions)
 
-## [Release: v0.4.2](https://github.com/FabianBartl/Filmbibliothek/releases/tag/v0.4.2)
+## [Release: v0.4.3](https://github.com/FabianBartl/Filmbibliothek/releases/tag/v0.4.3)
 
 - Provides an installation script: [install.py](install.py)
 - Operates with *Flask* backend and can be reached in the browser at http://filmbibliothek/ or http://localhost/ or from another device in the same network
@@ -33,15 +33,14 @@ See some [Impressions](#impressions)
 
 - Better error logging
 - Import Font Awesome from CDN
-
-- User rating
-- Custom video controls with hotkey Support
+- Added user rating support
+- Added custom video controls with hotkey support (only on not mobile devices available)
 - Subtitle support added, but not accessible in custom video controls
 - Add in-code option to run flask app in stable *serve* mode using *waitress*
 
 <!-- ### Known Issues -->
 
-### Not made yet
+### Not made yet *(comes with version v0.5.0)*
 
 - Icon or logo
 - Getting Started
