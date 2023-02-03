@@ -194,8 +194,8 @@ function video_update_UI(video_wrapper) {
 function video_fullscreen(video_wrapper) {
 	var video = $(video_wrapper).children("video").get(0);
 	video_wrapper = $(video_wrapper).get(0);
-	// note: use default fullscreen for mobile
-	document.webkitIsFullScreen ? document.webkitExitFullscreen() : ( document.documentElement.clientWidth < 850 ? document.webkitRequestFullscreen() : video_wrapper.webkitRequestFullscreen() );
+	//                                                                note: use default video fullscreen for mobile
+	document.webkitIsFullScreen ? document.webkitExitFullscreen() : ( document.documentElement.clientWidth < 850 ? video.webkitRequestFullscreen() : video_wrapper.webkitRequestFullscreen() );
 	video_update_UI(video_wrapper);
 }
 function video_backward(video_wrapper, seconds=10) {
