@@ -192,33 +192,35 @@ function video_update_UI(video_wrapper) {
 
 // video actions
 function video_fullscreen(video_wrapper) {
+	var video = $(video_wrapper).children("video").get(0);
 	video_wrapper = $(video_wrapper).get(0);
-	document.webkitIsFullScreen ? document.webkitExitFullscreen() : video_wrapper.webkitRequestFullscreen();
+	// note: use default fullscreen for mobile
+	document.webkitIsFullScreen ? document.webkitExitFullscreen() : ( document.documentElement.clientWidth < 850 ? document.webkitRequestFullscreen() : video_wrapper.webkitRequestFullscreen() );
 	video_update_UI(video_wrapper);
 }
 function video_backward(video_wrapper, seconds=10) {
-	var video = video_wrapper.children("video").get(0);
+	var video = $(video_wrapper).children("video").get(0);
 	video.currentTime -= seconds;
 	video_update_UI(video_wrapper);
 }
 function video_play_pause(video_wrapper) {
-	var video = video_wrapper.children("video").get(0);
+	var video = $(video_wrapper).children("video").get(0);
 	if (video.ended) video.load();
 	video.playing ? video.pause() : video.play();
 	video_update_UI(video_wrapper);
 }
 function video_forward(video_wrapper, seconds=10) {
-	var video = video_wrapper.children("video").get(0);
+	var video = $(video_wrapper).children("video").get(0);
 	video.currentTime += seconds;
 	video_update_UI(video_wrapper);
 }
 function video_volume(video_wrapper) {
-	var video = video_wrapper.children("video").get(0);
+	var video = $(video_wrapper).children("video").get(0);
 	video.muted ? $(video).prop("muted", false) : $(video).prop("muted", true);
 	video_update_UI(video_wrapper);
 }
 function video_timeline(video_wrapper, timeline) {
-	var video = video_wrapper.children("video").get(0);
+	var video = $(video_wrapper).children("video").get(0);
 	video.currentTime = parseInt(timeline.value);
 	video_update_UI(video_wrapper);
 }
@@ -264,8 +266,9 @@ $(document).ready(()=>{
 		var click_bindings = "click touch";
 
 		// play video if clicked on video element
+		// note: only if custom controls are applies
 		$(video).bind(`${click_bindings}`, (evt)=>{
-			video_play_pause(jQ_video_wrapper);
+			if (document.documentElement.clientWidth >= 850) video_play_pause(jQ_video_wrapper);
 		});
 
 		// left

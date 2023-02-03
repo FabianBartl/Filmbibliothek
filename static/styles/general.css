@@ -25,7 +25,6 @@
 	scrollbar-gutter: stable;
 	scroll-behavior: smooth;
 	box-sizing: border-box;
-	-webkit-font-smoothing: antialiased;
 }
 
 /* font settings */
@@ -193,9 +192,12 @@ video {
 .video-wrapper > video {
 	width: 100%;
 }
-.video-wrapper > video[controls]::-webkit-media-controls,
-.video-wrapper > video[controls]::-webkit-media-controls-enclosure {
-	display: none !important;
+@media screen and (min-width: 850px) {
+	/* works only in this inverted form: conditional hiding, instead of conditional showing */
+	.video-wrapper > video[controls]::-webkit-media-controls,
+	.video-wrapper > video[controls]::-webkit-media-controls-enclosure {
+		display: none;
+	}
 }
 .video-wrapper > .controls {
 	position: absolute;
@@ -240,7 +242,7 @@ video {
 }
 /* webkit slider style */
 .video-wrapper .controls .timeline input[type="range"] {
-	-webkit-appearance: none;
+	appearance: none;
 	overflow: hidden;
 	cursor: pointer;
 	outline: 0;
@@ -250,7 +252,7 @@ video {
 	background-color: var(--color-background);
 }
 .video-wrapper .controls .timeline input[type="range"]::-webkit-slider-thumb {
-	-webkit-appearance: none;
+	appearance: none;
 	height: 0.7em;
 	width: 0.7em;
 	border-radius: 10px;
@@ -439,6 +441,11 @@ video {
 		font-size: 1.5em;
 		line-height: 1.5em;
 	}	
+
+	/* hide custom video controls as they work poorly on mobile or with touch */
+	.video-wrapper > .controls {
+		display: none;
+	}
 }
 @media screen and (max-width: 650px) {
 	/* coloumn design for details */
@@ -457,7 +464,7 @@ video {
 	/* prevent x-overflow */
 	#search-input {
 		width: 70%;
-	}	
+	}
 
 	/* two movies per row on the movie index page */
 	#movie-index .movie-overview {
