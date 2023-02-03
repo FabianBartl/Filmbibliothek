@@ -33,7 +33,7 @@ See some [Impressions](#impressions)
 
 - Better error logging
 - Import Font Awesome from CDN
-- Added user rating support
+- Added user rating (currently only if manually set in movies.json)
 - Added custom video controls with hotkey support (only on not mobile devices available)
 - Subtitle support added, but not accessible in custom video controls
 - Add in-code option to run flask app in stable *serve* mode using *waitress*
