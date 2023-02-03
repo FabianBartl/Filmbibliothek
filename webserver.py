@@ -19,7 +19,7 @@ from flask import render_template, send_from_directory, abort, request
 
 MOVIES = {}
 CONFIG = {}
-DEBUG = True
+DEBUG = False
 SERVE = False
 
 # init flask app
