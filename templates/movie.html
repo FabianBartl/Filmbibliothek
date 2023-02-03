@@ -122,7 +122,7 @@
 		</div>
 	</div>
 	
-	<div id="movie-stream" {% if config.get('custom-video-controls') %}class="video-wrapper"{% endif %}>
+	<div id="movie-stream" class="video-wrapper">
 		<video controls {% if age_restricted %}poster="{{ url_for('static', filename='images/age-restricted-movie.jpg') }}"{% endif %}>
 			{% if not age_restricted %}
 				<source src="stream/" type="video/mp4">
