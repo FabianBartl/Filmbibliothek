@@ -19,7 +19,7 @@ from flask import render_template, send_from_directory, abort, request
 
 MOVIES = {}
 CONFIG = {}
-DEBUG = True
+DEBUG = False
 SERVE = False
 
 # init flask app
@@ -126,11 +126,6 @@ def not_found(error_msg):
 	return render_template("404.html", details=error_msg), 404
 
 # ---------- other flask decorater functions ----------
-
-@app.before_first_request
-def get_client_ip():
-	if client_ip := request.headers.get("x-forwarded-for"):
-		logger.warning(f"{client_ip=}")
 
 @app.after_request
 def responde_minify(response):

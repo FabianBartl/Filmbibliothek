@@ -173,7 +173,6 @@ video {
 	background-color: var(--color-background);
 	border: var(--badge-border);
 	border-radius: 5px;
-	outline: 0;
 	text-overflow: ellipsis;
 	font-size: 1em;
 	width: 20rem;
