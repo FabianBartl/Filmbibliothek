@@ -44,6 +44,7 @@ See some [Impressions](#impressions)
 
 - Icon or logo
 - Getting Started
+- User rating
 
 <!-- ## Getting Started -->
 
