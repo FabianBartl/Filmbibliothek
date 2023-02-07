@@ -252,7 +252,7 @@ def run(movie_directories:list[str], metadata_directories:list[str]) -> None:
 				"filepath": abspath(joinpath(movie_directory, filename)),
 				"movie_directory": movie_directory,
 				"metadata_directory": metadata_directory,
-				"title": movie_metadata["filename"],
+				"title": filename.rsplit(".", 1)[0],  # same as filename
 				"movieID": str(movieID)
 			}
 			logger.debug(f"{movie_metadata=}")
