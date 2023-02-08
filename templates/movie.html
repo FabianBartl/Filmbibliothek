@@ -62,16 +62,15 @@
 					<li class="row user rating" title="Deine Bewertung">
 						{% set user_rating = movie.get('ratings', {}).get('user', 0) %}
 						{% for i in range(user_rating | int) %}
-							<i class="icon fa fa-star"></i>
+							<i class="icon fa-solid fa-star"></i>
 						{% endfor %}
+						{% set star_count = 5 %}
 						{% if user_rating % 1 >= 0.5 %}
-							{% set half_star = 1 %}
-							<i class="icon fa fa-star-half"></i>
-						{% else %}
-							{% set half_star = 0 %}
+							{% set star_count = 4 %}
+							<i class="icon fa-solid fa-star-half-stroke"></i>
 						{% endif %}
-						{% for i in range((5 - half_star) - (user_rating | int)) %}
-							<i class="icon fa fa-star-o"></i>
+						{% for i in range(star_count - user_rating|int) %}
+							<i class="icon fa-regular fa-star"></i>
 						{% endfor %}
 					</li>
 				</ul>
