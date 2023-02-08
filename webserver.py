@@ -19,7 +19,7 @@ from flask import render_template, send_from_directory, abort, request
 
 MOVIES = {}
 CONFIG = {}
-DEBUG = False
+DEBUG = True
 SERVE = False
 
 # init flask app
@@ -203,6 +203,16 @@ def movie_subtitles(movieID, language):
 		if subtitles := movie.get("subtitles", {}).get(language):
 			if isfile(joinpath(movie["metadata_directory"], subtitles)):
 				return send_from_directory(movie["metadata_directory"], subtitles, as_attachment=False)
+	return abort(404)
+
+# set movie user rating
+# error: 404 if movie not found
+@app.route("/movie/<movieID>/user-rating/")
+@app.route("/movie/<movieID>/user-rating/", methods=["GET"])
+def movie_user_rating(movieID):
+	global MOVIES
+	if movie := MOVIES.get(movieID):
+		user_rating = request.args.get("stars")
 	return abort(404)
 
 # ---------- start routine ----------
