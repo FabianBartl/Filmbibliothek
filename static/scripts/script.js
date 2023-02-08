@@ -260,7 +260,7 @@ $(document).ready(()=>{
 
 	// add events and hotkeys for custom video controls
 	// init video controls and add UI updater
-	$(".video-wrapper").each(function(index){
+	$(".video-wrapper").each(function(value, index){
 		var jQ_video_wrapper = $(this);
 		var video = jQ_video_wrapper.children("video").get(0);
 		var click_bindings = "click touch";
