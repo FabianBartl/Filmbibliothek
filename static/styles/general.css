@@ -242,7 +242,7 @@ video {
 }
 /* webkit slider style */
 .video-wrapper .controls .timeline input[type="range"] {
-	appearance: none;
+	-webkit-appearance: none;
 	overflow: hidden;
 	cursor: pointer;
 	outline: 0;
@@ -252,18 +252,12 @@ video {
 	background-color: var(--color-background);
 }
 .video-wrapper .controls .timeline input[type="range"]::-webkit-slider-thumb {
-	appearance: none;
+	-webkit-appearance: none;
 	height: 0.7em;
 	width: 0.7em;
 	border-radius: 10px;
 	background-color: var(--color-text);
 	box-shadow: -100vw 0 0 calc(100vw - 5px) var(--color-link);
-}
-/* hide custom video controls if no webkit browser */
-@supports not (::-webkit-scrollbar-thumb) {
-	.video-wrapper .controls {
-		display: none;
-	}
 }
 
 /* ---------------------------------------- pages and their elements ---------------------------------------- */

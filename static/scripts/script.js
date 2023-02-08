@@ -353,5 +353,11 @@ $(document).ready(()=>{
 			// right
 			jQ_video_wrapper.find(".controls .volume").attr("title", "Stummschalten (M)");
 		}
+
+		/* hide custom video controls if no webkit browser */
+		if (navigator.userAgent.indexOf("Chrome") === -1) {
+			var controls = jQ_video_wrapper.find(".controls").get(0);
+			controls.remove();
+		}
 	});
 });
