@@ -199,6 +199,7 @@ video {
 	}
 }
 .video-wrapper > .controls {
+	z-index: 2147483646;
 	position: absolute;
 	background: rgba(20, 20, 20, 0.7);
 	width: 100%;
@@ -257,6 +258,12 @@ video {
 	border-radius: 10px;
 	background-color: var(--color-text);
 	box-shadow: -100vw 0 0 calc(100vw - 5px) var(--color-link);
+}
+/* hide custom video controls if no webkit browser */
+@supports not (::-webkit-scrollbar-thumb) {
+	.video-wrapper .controls {
+		display: none;
+	}
 }
 
 /* ---------------------------------------- pages and their elements ---------------------------------------- */
