@@ -12,7 +12,7 @@ from urllib.parse import unquote_plus, quote_plus, unquote, quote
 from colorama import Fore, Back, init
 init(autoreset=True)
 
-from flask import Flask
+from flask import Flask, Response
 from flask import render_template, send_from_directory, abort, request
 
 # ---------- global used variables ----------
@@ -119,7 +119,7 @@ logger.debug(f"custom jinja filters defined")
 
 # set context variables for useage in templates
 @app.context_processor
-def inject_variables():
+def inject_variables() -> dict:
 	global CONFIG
 	return {"config": CONFIG, "app_config": app.config, "cookies": request.cookies}
 
@@ -128,21 +128,21 @@ logger.debug(f"added yaml config and app config to jinja context")
 # ---------- error pages ----------
 
 @app.errorhandler(401)
-def forbidden(error_msg):
+def forbidden(error_msg:str) -> tuple:
 	return render_template("401.html", details=error_msg), 401
 
 @app.errorhandler(403)
-def forbidden(error_msg):
+def forbidden(error_msg:str) -> tuple:
 	return render_template("403.html", details=error_msg), 403
 
 @app.errorhandler(404)
-def not_found(error_msg):
+def not_found(error_msg:str) -> tuple:
 	return render_template("404.html", details=error_msg), 404
 
 # ---------- other flask decorater functions ----------
 
 @app.after_request
-def responde_minify(response):
+def responde_minify(response:Response) -> Response:
 	global DEBUG
 	# minfy html, except in debug mode
 	if response.content_type == u"text/html; charset=utf-8" and not DEBUG:
@@ -160,7 +160,7 @@ def responde_minify(response):
 # get favicon
 # error: 404 if icon not found
 @app.route("/favicon.ico")
-def favicon():
+def favicon() -> Response:
 	global CONFIG
 	images_dir = abspath(joinpath("static", "images"))
 	if isfile(joinpath(images_dir, favicon := CONFIG.get("favicon"))):
@@ -180,7 +180,7 @@ def index():
 # return detailed movie page
 # error: 404 if movie not found
 @app.route("/movie/<movieID>/")
-def movie(movieID):
+def movie(movieID:str) -> Response:
 	global MOVIES
 	if movie := MOVIES.get(movieID):
 		return render_template("movie.html", movie=movie)
@@ -189,7 +189,7 @@ def movie(movieID):
 # get movie stream
 # error: 404 if movie not found
 @app.route("/movie/<movieID>/stream/")
-def movie_stream(movieID):
+def movie_stream(movieID:str) -> Response:
 	global MOVIES
 	if movie := MOVIES.get(movieID):
 		if isfile(joinpath(movie["movie_directory"], file := f"{movie['filename']}.{movie['extension']}")):
@@ -199,7 +199,7 @@ def movie_stream(movieID):
 # get movie poster
 # error: 404 if movie not found
 @app.route("/movie/<movieID>/poster/")
-def movie_poster(movieID):
+def movie_poster(movieID:str) -> Response:
 	global MOVIES
 	if movie := MOVIES.get(movieID):
 		if poster := movie.get("poster"):
@@ -211,7 +211,7 @@ def movie_poster(movieID):
 # get movie subtitles
 # error: 404 if movie or subtitle file not found
 @app.route("/movie/<movieID>/subtitles/<language>/")
-def movie_subtitles(movieID, language):
+def movie_subtitles(movieID:str, language:str) -> Response:
 	global MOVIES
 	if movie := MOVIES.get(movieID):
 		if subtitles := movie.get("subtitles", {}).get(language):
@@ -220,17 +220,19 @@ def movie_subtitles(movieID, language):
 	return abort(404)
 
 # set movie user rating
-# error: 404 if movie not found
+# error: 204 if user rating saved successfully
+#        503 if saving the user rating failed
+#        502 if stars value is not between 0 and 5
+#        404 if movie not found OR if type of stars not integer / float
 @app.route("/movie/<movieID>/user-rating/set/<int:stars>")
-def movie_user_rating(movieID:str, stars:int):
+@app.route("/movie/<movieID>/user-rating/set/<float:stars>")
+def movie_user_rating(movieID:str, stars:float) -> Response:
 	global MOVIES
 	if movie := MOVIES.get(movieID):
-		print(stars)
 		if 0 <= stars <= 5:
 			MOVIES[movieID]["ratings"]["user"] = stars
-			if save_movies():
-				return "{ 'success': true }", 200
-		return "{ 'success': false }", 500
+			return ("", 204) if save_movies() else ("", 503)
+		return "", 502
 	return abort(404)
 
 # ---------- start routine ----------

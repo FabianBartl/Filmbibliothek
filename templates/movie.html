@@ -65,7 +65,7 @@
 							<i class="icon fa-solid fa-star"></i>
 						{% endfor %}
 						{% set star_count = 5 %}
-						{% if user_rating % 1 >= 0.5 %}
+						{% if 0.2 <= user_rating % 1 <= 0.8 %}
 							{% set star_count = star_count - 1 %}
 							<i class="icon fa-solid fa-star-half-stroke"></i>
 						{% endif %}
