@@ -223,10 +223,9 @@ def movie_subtitles(movieID:str, language:str) -> Response:
 # error: 204 if user rating saved successfully
 #        503 if saving the user rating failed
 #        502 if stars value is not between 0 and 5
-#        404 if movie not found OR if type of stars not integer / float
+#        404 if movie not found OR if type of stars not integer
 @app.route("/movie/<movieID>/user-rating/set/<int:stars>")
-@app.route("/movie/<movieID>/user-rating/set/<float:stars>")
-def movie_user_rating(movieID:str, stars:float) -> Response:
+def movie_user_rating(movieID:str, stars:int) -> Response:
 	global MOVIES
 	if movie := MOVIES.get(movieID):
 		if 0 <= stars <= 5:

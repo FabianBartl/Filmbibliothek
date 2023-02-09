@@ -60,17 +60,14 @@
 						</li>
 					{% endif %}
 					<li class="row user rating" title="Deine Bewertung">
-						{% set user_rating = movie.get('ratings', {}).get('user', 0) %}
-						{% for i in range(user_rating | int) %}
-							<i class="icon fa-solid fa-star"></i>
-						{% endfor %}
-						{% set star_count = 5 %}
-						{% if 0.2 <= user_rating % 1 <= 0.8 %}
-							{% set star_count = star_count - 1 %}
-							<i class="icon fa-solid fa-star-half-stroke"></i>
-						{% endif %}
-						{% for i in range(star_count - user_rating|int) %}
-							<i class="icon fa-regular fa-star"></i>
+						{% set user_rating = movie.get('ratings', {}).get('user', 0) | int %}
+						{% for i in range(5) %}
+							{% if i < user_rating and user_rating != 0 %}
+								{% set class = 'fa-solid fa-star' %}
+							{% else %}
+								{% set class = 'fa-regular fa-star' %}
+							{% endif %}
+							<i class="icon {{ class }}" data-star-position="{{ i+1 }}" data-star-class="icon {{ class }}"></i>
 						{% endfor %}
 					</li>
 				</ul>
