@@ -84,6 +84,27 @@ if sys.platform == "win32":
 	shortcut.save()
 	logger.info("added webserver.py to windows startup directory")
 	print(Fore.GREEN + "Webserver script added to windows startup directory")
+# for linux (not tested)
+elif sys.platform == "linux":
+	logger.debug("routine for linux")
+	try:
+		path = "~/.bashrc"
+		target_path = abspath(joinpath(os.path.curdir, "webserver.py"))
+		with open(path, "r", encoding="utf-8") as file:
+			content = file.read()
+		with open(path, "a", encoding="utf-8") as file:
+			if not target_path in content:
+				file.write(f"\n# start flask webserver of '{name}' project")
+				file.write(f"\npython3 '{target_path}'\n")
+		
+		logger.info(f"added '{target_path}' to ~/.bashrc")
+		print(Fore.GREEN + "Webserver script added to linux ~/.bashrc")
+	except PermissionError:
+		logger.warning(f"PermissionError: failed to add '{target_path}' to ~/.bashrc", exc_info=True)
+		print(Fore.YELLOW + f"Run the installation script as sudo to add '{target_path}' to ~/.bashrc")
+	except Exception:
+		logger.critical("UnexpectedError:", exc_info=True)
+		exit(6)
 # unsupported systems
 else:
 	logger.warning(f"failed to add webserver.py to startup directory / script; your '{sys.platform}' system is not supported")
