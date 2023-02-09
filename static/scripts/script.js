@@ -260,7 +260,7 @@ $(document).ready(()=>{
 
 	// add events and hotkeys for custom video controls
 	// init video controls and add UI updater
-	$(".video-wrapper").each(function(value, index){
+	$(".video-wrapper").each(function(index, value){
 		var jQ_video_wrapper = $(this);
 		var video = jQ_video_wrapper.children("video").get(0);
 		var click_bindings = "click touch";
@@ -359,5 +359,68 @@ $(document).ready(()=>{
 			var controls = jQ_video_wrapper.find(".controls").get(0);
 			controls.remove();
 		}
+	});
+
+	// add hover and click events for user rating (on movie pages)
+	$(".user.rating").each(function(){
+		var user_rating_el = $(this);
+
+		// mark selected stars
+		user_rating_el.find(".icon[data-star-action='set']").on("mouseover", (evt)=>{
+			var this_star_el = evt.target;
+			var this_star_pos = parseInt($(this_star_el).attr("data-star-position"));
+
+			for (var pos=1; pos<=this_star_pos; pos++) {
+				var star = user_rating_el.find(`.icon[data-star-position='${pos}']`);
+				star.attr("class", user_rating_el.attr("data-star-filled"));
+			}
+			for (var pos=this_star_pos+1; pos<=5; pos++) {
+				var star = user_rating_el.find(`.icon[data-star-position='${pos}']`);
+				star.attr("class", user_rating_el.attr("data-star-empty"));
+			}
+		});
+		
+		// reset selected stars to loaded state
+		user_rating_el.on("mouseleave", (evt)=>{
+			for (var pos=1; pos<=5; pos++) {
+				var star = user_rating_el.find(`.icon[data-star-position='${pos}'][data-star-action='set']`);
+				star.attr("class", star.attr("data-star-default"));
+			}
+		});
+
+		// send selected stars to the api and if no error occurs, update the stars' default data attribute
+		user_rating_el.find(".icon[data-star-action='set']").on("click touch", (evt)=>{
+			var this_star_el = evt.target;
+			var this_star_pos = parseInt($(this_star_el).attr("data-star-position"));
+			var url = `${window.location.pathname}user-rating/set/${this_star_pos}`;
+			
+			$.ajax({
+				url: url,
+				error: ()=>{ alert("Failed to save user rating."); },
+				success: ()=>{
+					for (var pos=1; pos<=5; pos++) {
+						var star = user_rating_el.find(`.icon[data-star-position='${pos}'][data-star-action='set']`);
+						star.attr("data-star-default", star.attr("class"));
+					}
+				}
+			});
+		});
+
+		// reset user rating (send 0 stars to the api) and if no error occurs, update the stars' default data attribute
+		user_rating_el.find(".icon[data-star-action='reset']").on("click touch", (evt)=>{
+			var url = `${window.location.pathname}user-rating/set/0`;
+			
+			$.ajax({
+				url: url,
+				error: ()=>{ alert("Failed to reset user rating."); },
+				success: ()=>{
+					for (var pos=1; pos<=5; pos++) {
+						var star = user_rating_el.find(`.icon[data-star-position='${pos}'][data-star-action='set']`);
+						star.attr("data-star-default", user_rating_el.attr("data-star-empty"));
+						user_rating_el.trigger("mouseleave");
+					}
+				}
+			});
+		});
 	});
 });

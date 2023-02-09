@@ -59,16 +59,20 @@
 							</div>
 						</li>
 					{% endif %}
-					<li class="row user rating" title="Deine Bewertung">
+					{% set class_star_filled = 'icon fa-solid fa-star' %}
+					{% set class_star_empty = 'icon fa-regular fa-star' %}
+					<li class="row user rating" title="Deine Bewertung" data-star-filled="{{ class_star_filled }}" data-star-empty="{{ class_star_empty }}">
 						{% set user_rating = movie.get('ratings', {}).get('user', 0) | int %}
 						{% for i in range(5) %}
+							{% set pos = i + 1 %}
 							{% if i < user_rating and user_rating != 0 %}
-								{% set class = 'fa-solid fa-star' %}
+								{% set class = class_star_filled %}
 							{% else %}
-								{% set class = 'fa-regular fa-star' %}
+								{% set class = class_star_empty %}
 							{% endif %}
-							<i class="icon {{ class }}" data-star-position="{{ i+1 }}" data-star-class="icon {{ class }}"></i>
+							<i class="{{ class }}" data-star-position="{{ pos }}" data-star-default="{{ class }}" data-star-action="set" title="Mit {{ pos }} Stern{% if pos != 1 %}en{% endif %} bewerten"></i>
 						{% endfor %}
+						<i class="icon fa fa-delete-left" data-star-action="reset" title="Bewertung löschen"></i>
 					</li>
 				</ul>
 			{% endif %}

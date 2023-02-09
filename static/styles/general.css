@@ -10,8 +10,8 @@
 /* variables */
 :root {
 	--text-font: "Dubai", "Source Sans Pro", "Open Sans", sans-serif;
-	--animate-all: all 0.2s ease-in-out;
-	--animate-all-fast: all 0.1s ease-in-out;
+	--animate-all: all 200ms ease-in-out;
+	--animate-all-fast: all 100ms ease-in-out;
 	--badge-border: 2px solid var(--color-text);
 	/* default filter values */
 	--blur-value: 0;
@@ -377,10 +377,19 @@ video {
 /* user rating */
 .ratings > .user.rating .icon {
 	align-self: center;
-	color: rgb(245, 197, 24);
+	color: var(--gold);
+	transition: var(--animate-all-fast);
 }
 .ratings > .user.rating .icon:not(:last-child) {
 	margin-right: 0.3em;
+}
+.ratings > .user.rating .icon[data-star-action="reset"] {
+	margin-left: 0.5em;
+	color: var(--color-link);
+	transition: var(--animate-all-fast);
+}
+.ratings > .user.rating .icon[data-star-action="reset"]:hover {
+	color: var(--color-highlight);
 }
 
 /* on page movie stream */
