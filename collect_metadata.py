@@ -305,12 +305,10 @@ def run(movie_directories:list[str], metadata_directories:list[str]) -> None:
 			update(1)
 
 			# merge user rating into ratings dict key of movie metadata (can already contain imdb rating)
-			# get user rating
 			if user_rating := movie_metadata.get("user-rating"):
 				del movie_metadata["user-rating"]
 			else:
 				user_rating = 0
-			# merge it
 			if movie_metadata.get("ratings") is None:
 				movie_metadata["ratings"] = {}
 			movie_metadata["ratings"]["user"] = user_rating

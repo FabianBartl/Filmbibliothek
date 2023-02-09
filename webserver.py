@@ -39,7 +39,7 @@ def load_movies() -> dict:
 			logger.debug("loaded json movie data")
 			return data
 	# unexpected error
-	except Exception:
+	except:
 		logger.critical(f"UnexpectedError: Couldn't load movie data from '{filename}'", exc_info=True)
 		print(Fore.RED + f"Couldn't load movie data from '{filename}'")
 		exit(1)
@@ -54,10 +54,24 @@ def load_config() -> dict:
 			logger.debug("loaded yaml config data")
 			return data
 	# unexpected error
-	except Exception:
+	except:
 		logger.error(f"UnexpectedError: Couldn't load config data from '{filename}'", exc_info=True)
 		print(Fore.RED + f"Couldn't load config data from '{filename}'")
 		exit(1)
+
+# save movies data file
+def save_movies() -> bool:
+	global MOVIES
+	filename = abspath(joinpath("static", "data", "movies.json"))
+	logger.debug(f"try: open {filename=}")
+	try:
+		with open(filename, "w+", encoding="utf-8") as file:
+			logger.debug("dump json data")
+			json.dump(MOVIES, file, indent=2)
+		return True
+	except:
+		logger.error(f"UnexpectedError: Couldn't save movie data as JSON in file '{filename}'", exc_info=True)
+		return False
 
 # ---------- custom jinja filters ----------
 
@@ -207,12 +221,16 @@ def movie_subtitles(movieID, language):
 
 # set movie user rating
 # error: 404 if movie not found
-@app.route("/movie/<movieID>/user-rating/")
-@app.route("/movie/<movieID>/user-rating/", methods=["GET"])
-def movie_user_rating(movieID):
+@app.route("/movie/<movieID>/user-rating/set/<int:stars>")
+def movie_user_rating(movieID:str, stars:int):
 	global MOVIES
 	if movie := MOVIES.get(movieID):
-		user_rating = request.args.get("stars")
+		print(stars)
+		if 0 <= stars <= 5:
+			MOVIES[movieID]["ratings"]["user"] = stars
+			if save_movies():
+				return "{ 'success': true }", 200
+		return "{ 'success': false }", 500
 	return abort(404)
 
 # ---------- start routine ----------
