@@ -207,6 +207,9 @@ video {
 	opacity: 0.2;
 	transition: var(--animate-all);
 }
+.video-wrapper[class*="fullscreen"] > .controls {
+	width: calc(100% - 1em);
+}
 .video-wrapper:hover > .controls {
 	opacity: 1;
 }
@@ -444,12 +447,6 @@ video {
 		width: 20em;
 		margin-right: 0.5em;
 	}
-
-	/* bigger video controls UI */
-	.video-wrapper > .controls > .buttons {
-		font-size: 1.5em;
-		line-height: 1.5em;
-	}	
 
 	/* hide custom video controls as they work poorly on mobile or with touch */
 	.video-wrapper > .controls {
