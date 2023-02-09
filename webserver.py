@@ -127,17 +127,35 @@ logger.debug(f"added yaml config and app config to jinja context")
 
 # ---------- error pages ----------
 
+# @app.errorhandler(204)
+def no_content(error_msg:str) -> tuple:
+	logger.info(f"app errorhandler: {error_msg}")
+	return render_template("204.html", details=error_msg), 204
+
 @app.errorhandler(401)
-def forbidden(error_msg:str) -> tuple:
+def unauthorized(error_msg:str) -> tuple:
+	logger.error(f"app errorhandler: {error_msg}")
 	return render_template("401.html", details=error_msg), 401
 
 @app.errorhandler(403)
 def forbidden(error_msg:str) -> tuple:
+	logger.error(f"app errorhandler: {error_msg}")
 	return render_template("403.html", details=error_msg), 403
 
 @app.errorhandler(404)
 def not_found(error_msg:str) -> tuple:
+	logger.error(f"app errorhandler: {error_msg}")
 	return render_template("404.html", details=error_msg), 404
+
+@app.errorhandler(502)
+def bad_gateway(error_msg:str) -> tuple:
+	logger.error(f"app errorhandler: {error_msg}")
+	return render_template("502.html", details=error_msg), 502
+
+@app.errorhandler(503)
+def service_unavailable(error_msg:str) -> tuple:
+	logger.error(f"app errorhandler: {error_msg}")
+	return render_template("503.html", details=error_msg), 503
 
 # ---------- other flask decorater functions ----------
 
@@ -178,26 +196,26 @@ def index():
 	return render_template("index.html", movies=MOVIES, movies_array=movies_array, search_query=search_query)
 
 # return detailed movie page
-# error: 404 if movie not found
+# error: 404 [not found] if movie not found
 @app.route("/movie/<movieID>/")
 def movie(movieID:str) -> Response:
 	global MOVIES
 	if movie := MOVIES.get(movieID):
 		return render_template("movie.html", movie=movie)
-	return abort(404)
+	return not_found(f"Movie not found.")
 
 # get movie stream
-# error: 404 if movie not found
+# error: 404 [not found] if movie not found
 @app.route("/movie/<movieID>/stream/")
 def movie_stream(movieID:str) -> Response:
 	global MOVIES
 	if movie := MOVIES.get(movieID):
 		if isfile(joinpath(movie["movie_directory"], file := f"{movie['filename']}.{movie['extension']}")):
 			return send_from_directory(movie["movie_directory"], file, as_attachment=False)
-	return abort(404)
+	return not_found(f"Movie not found.")
 
 # get movie poster
-# error: 404 if movie not found
+# error: 404 [not found] if movie not found
 @app.route("/movie/<movieID>/poster/")
 def movie_poster(movieID:str) -> Response:
 	global MOVIES
@@ -206,10 +224,10 @@ def movie_poster(movieID:str) -> Response:
 			if isfile(joinpath(movie["metadata_directory"], poster)):
 				return send_from_directory(movie["metadata_directory"], poster, as_attachment=False)
 		return send_from_directory(abspath(joinpath("static", "images")), "blank-poster.jpg")
-	return abort(404)
+	return not_found(f"Movie not found.")
 
 # get movie subtitles
-# error: 404 if movie or subtitle file not found
+# error: 404 [not found] if movie or subtitle file not found
 @app.route("/movie/<movieID>/subtitles/<language>/")
 def movie_subtitles(movieID:str, language:str) -> Response:
 	global MOVIES
@@ -217,22 +235,26 @@ def movie_subtitles(movieID:str, language:str) -> Response:
 		if subtitles := movie.get("subtitles", {}).get(language):
 			if isfile(joinpath(movie["metadata_directory"], subtitles)):
 				return send_from_directory(movie["metadata_directory"], subtitles, as_attachment=False)
-	return abort(404)
+	return not_found(f"Movie not found.")
 
 # set movie user rating
-# error: 204 if user rating saved successfully
-#        503 if saving the user rating failed
-#        502 if stars value is not between 0 and 5
-#        404 if movie not found OR if type of stars not integer
+# error: 204 [no content] if user rating saved successfully
+#        503 [service unavailable] if saving the user rating failed
+#        502 [bad gateway] if stars value is not between 0 and 5 OR if type of stars not integer
+#        404 [not found] if movie not found
 @app.route("/movie/<movieID>/user-rating/set/<int:stars>")
 def movie_user_rating(movieID:str, stars:int) -> Response:
 	global MOVIES
 	if movie := MOVIES.get(movieID):
 		if 0 <= stars <= 5:
 			MOVIES[movieID]["ratings"]["user"] = stars
-			return ("", 204) if save_movies() else ("", 503)
-		return "", 502
-	return abort(404)
+			return no_content("User rating successfully saved.") if save_movies() else service_unavailable("Failed to save user rating.")
+		return bad_gateway("The user rating value must be between 0 and 5.")
+	return not_found(f"Movie not found.")
+# just to return better error if type of stars is not integer
+@app.route("/movie/<movieID>/user-rating/set/<stars>")
+def movie_user_rating_error(movieID:str, stars:str) -> Response:
+	return bad_gateway(f"User rating value must be of type integer.")
 
 # ---------- start routine ----------
 
