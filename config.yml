@@ -9,7 +9,7 @@ theme: dark
 # possible strings: [absolute path]
 # (multiple values allowed)
 movie-directories:
-  - F:\\Filme
+  - N:\Videos\Filme
 
 # directories to search for associated metadata files of the movies
 # possible strings: [absolute path]
@@ -17,7 +17,7 @@ movie-directories:
 #       e.g. the first directory of the 'metadata-directories' contains the metadata yaml files for the movies in the first directory of the 'movie-directories'
 # (multiple values allowed)
 metadata-directories:
-  - F:\\Metadaten
+  - N:\Videos\Filme
 
 # length of title displayed in movie overview
 # possible integers: >= 0
