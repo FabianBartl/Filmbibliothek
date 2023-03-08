@@ -73,6 +73,7 @@
 				{% endif %}
 			{% endif %}
 		{% endif %}
+        
 		<div id="movie-{{ movieID }}" class="movie-overview {% if age_restricted %}not-allowed age-restricted{% endif %}">
 			<a {% if not age_restricted %}href="/movie/{{ movieID }}/"{% endif %}>
 				{% if movie.get('poster', '').startswith('http') %}
