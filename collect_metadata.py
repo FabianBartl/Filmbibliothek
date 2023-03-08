@@ -113,11 +113,9 @@ def getMetadataFromIMDB(moviename:str, *, imdb_id:str=None) -> dict:
 
 	# get simple attributes
 	attribute_xpaths = {
-		"director": "//*[@id='__next']/main/div/section[1]/section/div[3]/section/section/div[3]/div[2]/div[1]/div[3]/ul/li[1]/div/ul/li/a/text()",
-		"writer": "//*[@id='__next']/main/div/section[1]/section/div[3]/section/section/div[3]/div[2]/div[1]/div[3]/ul/li[2]/div/ul/li/a/text()",
-		"year": "//*[@id='__next']/main/div/section[1]/section/div[3]/section/section/div[2]/div[1]/div/ul/li[1]/a/text()",
-		"age-rating": "//*[@id='__next']/main/div/section[1]/section/div[3]/section/section/div[2]/div[1]/div/ul/li[2]/a/text()",
-		"description": "//*[@id='__next']/main/div/section[1]/section/div[3]/section/section/div[3]/div[2]/div[1]/div[1]/div[2]/span[3]/text()"
+		"year": '/html/body/div[2]/main/div/section[1]/section/div[3]/section/section/div[2]/div[1]/div/ul/li[1]/a/text()',
+		"age-rating": '/html/body/div[2]/main/div/section[1]/section/div[3]/section/section/div[2]/div[1]/div/ul/li[2]/a/text()',
+		"description": '/html/body/div[2]/main/div/section[1]/section/div[3]/section/section/div[3]/div[2]/div[1]/div[1]/div[2]/span[3]/text()'
 	}
 	for attribute, xpath in attribute_xpaths.items():
 		logger.debug(f"get {attribute}")
@@ -134,9 +132,11 @@ def getMetadataFromIMDB(moviename:str, *, imdb_id:str=None) -> dict:
 
 	# get list attributes
 	attribute_xpaths = {
-		"main-cast": "//*[@id='__next']/main/div/section[1]/section/div[3]/section/section/div[3]/div[2]/div[1]/div[3]/ul/li[3]/div/ul/li[{}]/a/text()",
-		"genre": "//*[@id='__next']/main/div/section[1]/section/div[3]/section/section/div[3]/div[2]/div[1]/div[1]/div[1]/div[2]/a[{}]/span/text()",
-		"studio": "//*[@id='__next']/main/div/section[1]/div/section/div/div[1]/section[7]/div[2]/ul/li[6]/div/ul/li[{}]/a/text()"
+		"writer": '/html/body/div[2]/main/div/section[1]/section/div[3]/section/section/div[3]/div[2]/div[1]/div[3]/ul/li[2]/div/ul/li[{}]/a/text()',
+		"director": '/html/body/div[2]/main/div/section[1]/section/div[3]/section/section/div[3]/div[2]/div[1]/div[3]/ul/li[1]/div/ul/li[{}]/a/text()',
+		"main-cast": '/html/body/div[2]/main/div/section[1]/section/div[3]/section/section/div[3]/div[2]/div[1]/div[3]/ul/li[3]/div/ul/li[{}]/a/text()',
+		"genre": '/html/body/div[2]/main/div/section[1]/section/div[3]/section/section/div[3]/div[2]/div[1]/div[1]/div[1]/div[2]/a[{}]/text()',
+		"studio": '/html/body/div[2]/main/div/section[1]/div/section/div/div[1]/section[6]/div[2]/ul/li[6]/div/ul/li[{}]/a/text()'
 	}
 	for attribute, xpath in attribute_xpaths.items():
 		logger.debug(f"get {attribute}")
@@ -153,13 +153,13 @@ def getMetadataFromIMDB(moviename:str, *, imdb_id:str=None) -> dict:
 
 	# get imdb rating
 	logger.debug(f"get imdb rating")
-	outer_xpath = "//*[@id='__next']/main/div/section[1]/section/div[3]/section/section/div[2]/div[2]/div/div[1]/a/span/div/div[2]"
+	outer_xpath = '//*[@id="__next"]/main/div/section[1]/section/div[3]/section/section/div[2]/div[2]/div/div[1]/a/span/div/div[2]'
 	if html_scrap.xpath(outer_xpath).get():
 		imdb_rating_points = html_scrap.xpath(f"{outer_xpath}/div[1]/span[1]/text()").get()
 		imdb_rating_votes = html_scrap.xpath(f"{outer_xpath}/div[3]/text()").get()
 		imdb_rating = {
 			"points": imdb_rating_points.replace(".", ","),
-			"votes": imdb_rating_votes.replace(".", "").replace("K", ".000")
+			"votes": imdb_rating_votes.replace(".", "").replace("K", ".000").replace("M", ".000.000")
 		}
 		metadata["imdb-rating"] = imdb_rating
 		logger.debug(f"{imdb_rating=}")
