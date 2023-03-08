@@ -1,13 +1,14 @@
 
 import custom_logger, logging
-logger = custom_logger.init(__file__, log_to_console=False)
+logger = custom_logger.init(__file__, log_to_console=True)
 logger.debug(f"start of script: {__file__}")
 
-import requests, json, yaml, urllib.parse, random
+import requests, json, yaml, urllib.parse, random, sys
 import user_agents
 from os import listdir
 from os.path import abspath, isfile, isdir
 from os.path import join as joinpath
+from copy import deepcopy
 from scrapy.selector import Selector
 from pymediainfo import MediaInfo
 from bs4 import BeautifulSoup
@@ -97,7 +98,7 @@ def getMetadataFromIMDB(moviename:str, *, imdb_id:str=None) -> dict:
 	html_scrap = Selector(text=response.content)
 
 	# for debugging only: store response
-	if False:
+	if True:
 		with open(f"logs/{moviename}_page.html", "wb+") as file:
 			file.write(response.content)
 	
@@ -123,6 +124,8 @@ def getMetadataFromIMDB(moviename:str, *, imdb_id:str=None) -> dict:
 		if value := html_scrap.xpath(xpath).get():
 			if attribute == "age-rating":
 				value = f"ab {value}" if len(value) <= 3 else None
+			elif attribute == "year":
+				value = int(value) if value.isnumeric() else None
 			if value:
 				metadata[attribute] = value
 				logger.debug(f"{attribute}={value}")
@@ -150,21 +153,33 @@ def getMetadataFromIMDB(moviename:str, *, imdb_id:str=None) -> dict:
 
 	# get imdb rating
 	logger.debug(f"get imdb rating")
-	if html_scrap.xpath("//*[@id='__next']/main/div/section[1]/section/div[3]/section/section/div[2]/div[2]/div/div[1]/a/div/div/div[2]").get():
-		imdb_rating_points = html_scrap.xpath("//*[@id='__next']/main/div/section[1]/section/div[3]/section/section/div[2]/div[2]/div/div[1]/a/div/div/div[2]/div[1]/span[1]/text()").get()
-		imdb_rating_votes = html_scrap.xpath("//*[@id='__next']/main/div/section[1]/section/div[3]/section/section/div[2]/div[2]/div/div[1]/a/div/div/div[2]/div[3]/text()").get()
-		imdb_rating = {"imdb": {
+	outer_xpath = "//*[@id='__next']/main/div/section[1]/section/div[3]/section/section/div[2]/div[2]/div/div[1]/a/span/div/div[2]"
+	if html_scrap.xpath(outer_xpath).get():
+		imdb_rating_points = html_scrap.xpath(f"{outer_xpath}/div[1]/span[1]/text()").get()
+		imdb_rating_votes = html_scrap.xpath(f"{outer_xpath}/div[3]/text()").get()
+		imdb_rating = {
 			"points": imdb_rating_points.replace(".", ","),
 			"votes": imdb_rating_votes.replace(".", "").replace("K", ".000")
-		}}
-		metadata["ratings"] = imdb_rating
+		}
+		metadata["imdb-rating"] = imdb_rating
 		logger.debug(f"{imdb_rating=}")
 	else:
 		logger.warning(f"imdb rating of '{moviename}' not found")
 
 	# TODO: get top cast with images
 
+	metadata["imdb-data-already-scraped"] = True
 	logger.info(f"collect {metadata=} and return")
+	return metadata
+
+
+# remove for user permitted datafields from metadata
+def delPermittedDatafields(metadata:dict) -> dict:
+	permitted_datafields = ["filename", "extension", "filepath", "movie_directory", "metadata_directory", "movieID", "duration", "resolution"]
+	logger.debug("iterate over metadate and remove permitted datafields")
+	for key in deepcopy(metadata):
+		if key in permitted_datafields:
+			del metadata[key]
 	return metadata
 
 
@@ -177,16 +192,10 @@ def getUserDefMetadata(filename:str) -> dict:
 		logger.debug(f"loaded {metadata=}")
 
 	# remove permitted datafields
-	permitted_datafields = ["filename", "extension", "filepath", "movie_directory", "metadata_directory", "movieID", "duration", "resolution", "ratings"]
-	logger.debug("iterate over metadate and remove permitted datafields")
-	for key in metadata.copy():
-		if key in permitted_datafields:
-			logger.warning(f"remove datafield '{key}' with '{metadata[key]}'")
-			del metadata[key]
-
+	metadata = delPermittedDatafields(metadata)
 	logger.info(f"return {metadata=}")
 	return metadata
-	
+
 
 # save collected metadata as json format
 def saveMetadata(filename:str, metadata:dict) -> None:
@@ -224,7 +233,7 @@ def run(movie_directories:list[str], metadata_directories:list[str]) -> None:
 		subStepsNum = 7
 		progress_bar = tqdm(
 			total = len(directory) * subStepsNum,
-			unit = "Movie (substeps)",
+			unit = " Movie processing substeps",
 			unit_divisor = subStepsNum,
 			desc = f"Directory {directoryNum+1}/{len(movie_directories)} '{movie_directory}'"
 		)
@@ -302,7 +311,8 @@ def run(movie_directories:list[str], metadata_directories:list[str]) -> None:
 			user_defined_metadata = getUserDefMetadata(file) if isfile(file := f"{metadata_file}.yml") else {}
 			
 			# get additional metadata
-			if user_defined_metadata.get("scrape-additional-data", True):
+			imdb_conditions = not user_defined_metadata.get("imdb-data-already-scraped", False) or "re-scrape_imdb_data" in sys.argv
+			if user_defined_metadata.get("scrape-additional-data", True) and imdb_conditions:
 				# check if imdb data already complete
 				logger.debug("check if imdb data already complete")
 				imdb_data_complete = True
@@ -321,7 +331,7 @@ def run(movie_directories:list[str], metadata_directories:list[str]) -> None:
 				else:
 					logger.debug("imdb data already complete")
 			else:
-				logger.debug("scraping of additional data is not wanted")
+				logger.debug("scraping of additional data is not wanted or imdb data already scraped")
 			update(1)
 
 			logger.debug(f"get metadata from local files: {metadata_file=}")
@@ -339,8 +349,12 @@ def run(movie_directories:list[str], metadata_directories:list[str]) -> None:
 				movie_metadata |= user_defined_metadata
 			update(1)
 
+			# remove new lines from description
+			if description := movie_metadata.get("description"):
+				movie_metadata["description"] = description.replace("\n", "")
+
 			# save completed metadata
-			stored_movie_metadata = movie_metadata
+			stored_movie_metadata = delPermittedDatafields(deepcopy(movie_metadata))
 			saveMovieMetadata(f"{metadata_file}.yml", stored_movie_metadata)
 			update(1)
 
