@@ -73,6 +73,28 @@ def save_movies() -> bool:
 		logger.error(f"UnexpectedError: Couldn't save movie data as JSON in file '{filename}'", exc_info=True)
 		return False
 
+# get user rating from user defined yaml file
+def getUserRating(filename:str) -> int:
+	logger.debug(f"open {filename=}")
+	with open(filename, "r+", encoding="utf-8") as file:
+		logger.debug("safe load yaml file")
+		rating = yaml.safe_load(file).get("user-rating", 0)
+		logger.debug(f"loaded {rating=}")
+	return rating
+
+# store user rating in user defined yaml file
+def setUserRating(filename:str, rating:int) -> None:
+	logger.debug(f"open {filename=}")
+	with open(filename, "r+", encoding="utf-8") as file:
+		metadata = yaml.safe_load(file)
+		logger.debug(f"loaded {metadata=}")
+	logger.debug(f"open {filename=}")
+	with open(filename, "w+", encoding="utf-8") as file:
+		logger.debug("dump yaml data")
+		metadata["user-rating"] = rating
+		yaml.dump(metadata, file, indent=2)
+		logger.debug(f"stored {rating=}")
+
 # ---------- custom jinja filters ----------
 
 app.jinja_env.filters["urlEncode"] = quote_plus
@@ -247,7 +269,8 @@ def movie_user_rating(movieID:str, stars:int) -> Response:
 	global MOVIES
 	if movie := MOVIES.get(movieID):
 		if 0 <= stars <= 5:
-			MOVIES[movieID]["ratings"]["user"] = stars
+			MOVIES[movieID]["user-rating"] = stars
+			setUserRating(joinpath(MOVIES[movieID]["metadata_directory"], f"{MOVIES[movieID]['filename']}.yml"), stars)
 			return no_content("User rating successfully saved.") if save_movies() else service_unavailable("Failed to save user rating.")
 		return bad_gateway("The user rating value must be between 0 and 5.")
 	return not_found(f"Movie not found.")
