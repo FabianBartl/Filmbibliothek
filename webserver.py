@@ -78,15 +78,16 @@ def getUserRating(filename:str) -> int:
 	logger.debug(f"open {filename=}")
 	with open(filename, "r+", encoding="utf-8") as file:
 		logger.debug("safe load yaml file")
-		rating = yaml.safe_load(file).get("user-rating", 0)
-		logger.debug(f"loaded {rating=}")
+		metadata = yaml.safe_load(file)
+	rating = metadata.get("user-rating", 0) if metadata else 0
+	logger.debug(f"loaded {rating=}")
 	return rating
 
 # store user rating in user defined yaml file
 def setUserRating(filename:str, rating:int) -> None:
 	logger.debug(f"open {filename=}")
 	with open(filename, "r+", encoding="utf-8") as file:
-		metadata = yaml.safe_load(file)
+		metadata = data if (data := yaml.safe_load(file)) else {}
 		logger.debug(f"loaded {metadata=}")
 	logger.debug(f"open {filename=}")
 	with open(filename, "w+", encoding="utf-8") as file:
