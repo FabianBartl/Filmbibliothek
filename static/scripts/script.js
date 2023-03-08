@@ -25,8 +25,7 @@ function setCookie(cookieName, cookieValue, expiredTime=1, unit="h") {
 			factor = 60 * 60;
 	}
 	time.setTime(time.getTime() + (expiredTime * factor * 1000));
-	var expires = `expires=${time.toUTCString()}`;
-	document.cookie = `${cookieName}=${cookieValue};${expires};path=/`;
+	document.cookie = `${cookieName}=${cookieValue};expires=${time.toUTCString()};path=/`;
 }
 function getCookie(cookieName) {
 	var name = cookieName + "=";
