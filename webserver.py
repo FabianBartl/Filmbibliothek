@@ -75,10 +75,10 @@ def save_movies() -> bool:
 
 # ---------- custom jinja filters ----------
 
-app.jinja_env.filters["urlEncode"] = lambda this: quote_plus(this)
-app.jinja_env.filters["urlEncodePlus"] = lambda this: quote(this)
-app.jinja_env.filters["urlDecode"] = lambda this: unquote_plus(this)
-app.jinja_env.filters["urlDecodePlus"] = lambda this: unquote(this)
+app.jinja_env.filters["urlEncode"] = quote_plus
+app.jinja_env.filters["urlEncodePlus"] = quote
+app.jinja_env.filters["urlDecode"] = unquote_plus
+app.jinja_env.filters["urlDecodePlus"] = unquote
 
 app.jinja_env.filters["str"] = str
 app.jinja_env.filters["int"] = int
