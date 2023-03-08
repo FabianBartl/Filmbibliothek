@@ -17,7 +17,7 @@ movie-directories:
 #       e.g. the first directory of the 'metadata-directories' contains the metadata yaml files for the movies in the first directory of the 'movie-directories'
 # (multiple values allowed)
 metadata-directories:
-  - N:\Videos\Filme
+  - N:\Videos\Metadaten
 
 # length of title displayed in movie overview
 # possible integers: >= 0
