@@ -179,7 +179,7 @@ def getUserDefMetadata(filename:str) -> dict:
 	# remove permitted datafields
 	permitted_datafields = ["filename", "extension", "filepath", "movie_directory", "metadata_directory", "movieID", "duration", "resolution", "ratings"]
 	logger.debug("iterate over metadate and remove permitted datafields")
-	for key in metadata:
+	for key in metadata.copy():
 		if key in permitted_datafields:
 			logger.warning(f"remove datafield '{key}' with '{metadata[key]}'")
 			del metadata[key]
@@ -194,6 +194,14 @@ def saveMetadata(filename:str, metadata:dict) -> None:
 	with open(filename, "w+", encoding="utf-8") as file:
 		logger.debug("dump json data")
 		json.dump(metadata, file, indent=2)
+
+
+# save collected metadata from a single movie as yaml format
+def saveMovieMetadata(filename:str, metadata:dict) -> None:
+	logger.debug(f"open {filename=}")
+	with open(filename, "w+", encoding="utf-8") as file:
+		logger.debug("dump yaml data")
+		yaml.dump(metadata, file, indent=2)
 
 
 # get random user agent
@@ -213,10 +221,10 @@ def run(movie_directories:list[str], metadata_directories:list[str]) -> None:
 		directory = listdir(movie_directory)
 
 		# just the progress bar for the user
-		subStepsNum = 6
+		subStepsNum = 7
 		progress_bar = tqdm(
 			total = len(directory) * subStepsNum,
-			unit = "Movie",
+			unit = "Movie (substeps)",
 			unit_divisor = subStepsNum,
 			desc = f"Directory {directoryNum+1}/{len(movie_directories)} '{movie_directory}'"
 		)
@@ -295,23 +303,26 @@ def run(movie_directories:list[str], metadata_directories:list[str]) -> None:
 			
 			# get additional metadata
 			if user_defined_metadata.get("scrape-additional-data", True):
-				# scrape from imdb
-				logger.debug("get metadata from imdb")
-				if imdb_metadata := getMetadataFromIMDB(user_defined_metadata.get("title", movie_metadata["title"]), imdb_id=user_defined_metadata.get("imdb-id")):
-					movie_metadata |= imdb_metadata
-					logger.debug("metadata from imdb scraped")
+				# check if imdb data already complete
+				logger.debug("check if imdb data already complete")
+				imdb_data_complete = True
+				imdb_datafields = ["website", "poster", "director", "writer", "age-rating", "description", "main-cast", "genre", "studio", "imdb-rating"]
+				for key in imdb_datafields:
+					if not key in user_defined_metadata:
+						imdb_data_complete = False
+						logger.debug("imdb data not complete")
+						break
+				# scrape from imdb if not complete
+				if not imdb_data_complete:
+					logger.debug("get metadata from imdb")
+					if imdb_metadata := getMetadataFromIMDB(user_defined_metadata.get("title", movie_metadata["title"]), imdb_id=user_defined_metadata.get("imdb-id")):
+						movie_metadata |= imdb_metadata
+						logger.debug("metadata from imdb scraped")
+				else:
+					logger.debug("imdb data already complete")
 			else:
 				logger.debug("scraping of additional data is not wanted")
 			update(1)
-
-			# merge user rating into ratings dict key of movie metadata (can already contain imdb rating)
-			if user_rating := movie_metadata.get("user-rating"):
-				del movie_metadata["user-rating"]
-			else:
-				user_rating = 0
-			if movie_metadata.get("ratings") is None:
-				movie_metadata["ratings"] = {}
-			movie_metadata["ratings"]["user"] = user_rating
 
 			logger.debug(f"get metadata from local files: {metadata_file=}")
 			# get description from mediathek-view file
@@ -326,6 +337,11 @@ def run(movie_directories:list[str], metadata_directories:list[str]) -> None:
 			if isfile(file := f"{metadata_file}.yml"):
 				logger.debug("get metadata from user-defined yaml file")
 				movie_metadata |= user_defined_metadata
+			update(1)
+
+			# save completed metadata
+			stored_movie_metadata = movie_metadata
+			saveMovieMetadata(f"{metadata_file}.yml", stored_movie_metadata)
 			update(1)
 
 			logger.info(f"add movie with {movieID=} and {movie_metadata=}")
