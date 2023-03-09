@@ -98,7 +98,7 @@ def getMetadataFromIMDB(moviename:str, *, imdb_id:str=None) -> dict:
 	html_scrap = Selector(text=response.content)
 
 	# for debugging only: store response
-	if True:
+	if False:
 		with open(f"logs/{moviename}_page.html", "wb+") as file:
 			file.write(response.content)
 	
@@ -113,13 +113,13 @@ def getMetadataFromIMDB(moviename:str, *, imdb_id:str=None) -> dict:
 
 	# get simple attributes
 	attribute_xpaths = {
-		"year": '/html/body/div[2]/main/div/section[1]/section/div[3]/section/section/div[2]/div[1]/div/ul/li[1]/a/text()',
-		"age-rating": '/html/body/div[2]/main/div/section[1]/section/div[3]/section/section/div[2]/div[1]/div/ul/li[2]/a/text()',
-		"description": '/html/body/div[2]/main/div/section[1]/section/div[3]/section/section/div[3]/div[2]/div[1]/div[1]/div[2]/span[3]/text()'
+		"year": '/html/body/div[2]/main/div/section[1]/section/div[3]/section/section/div[2]/div[1]/div/ul/li[1]/a',
+		"age-rating": '/html/body/div[2]/main/div/section[1]/section/div[3]/section/section/div[2]/div[1]/div/ul/li[2]/a',
+		"description": '/html/body/div[2]/main/div/section[1]/section/div[3]/section/section/div[3]/div[2]/div[1]/div[1]/div[2]/span[3]'
 	}
 	for attribute, xpath in attribute_xpaths.items():
 		logger.debug(f"get {attribute}")
-		if value := html_scrap.xpath(xpath).get():
+		if value := html_scrap.xpath(f"{xpath}/text()").get():
 			if attribute == "age-rating":
 				value = f"ab {value}" if len(value) <= 3 else None
 			elif attribute == "year":
@@ -132,17 +132,17 @@ def getMetadataFromIMDB(moviename:str, *, imdb_id:str=None) -> dict:
 
 	# get list attributes
 	attribute_xpaths = {
-		"writer": '/html/body/div[2]/main/div/section[1]/section/div[3]/section/section/div[3]/div[2]/div[1]/div[3]/ul/li[2]/div/ul/li[{}]/a/text()',
-		"director": '/html/body/div[2]/main/div/section[1]/section/div[3]/section/section/div[3]/div[2]/div[1]/div[3]/ul/li[1]/div/ul/li[{}]/a/text()',
-		"main-cast": '/html/body/div[2]/main/div/section[1]/section/div[3]/section/section/div[3]/div[2]/div[1]/div[3]/ul/li[3]/div/ul/li[{}]/a/text()',
-		"genre": '/html/body/div[2]/main/div/section[1]/section/div[3]/section/section/div[3]/div[2]/div[1]/div[1]/div[1]/div[2]/a[{}]/text()',
-		"studio": '/html/body/div[2]/main/div/section[1]/div/section/div/div[1]/section[6]/div[2]/ul/li[6]/div/ul/li[{}]/a/text()'
+		"writer": '/html/body/div[2]/main/div/section[1]/section/div[3]/section/section/div[3]/div[2]/div[1]/div[3]/ul/li[2]/div/ul/li[{}]/a',
+		"director": '/html/body/div[2]/main/div/section[1]/section/div[3]/section/section/div[3]/div[2]/div[1]/div[3]/ul/li[1]/div/ul/li[{}]/a',
+		"main-cast": '/html/body/div[2]/main/div/section[1]/section/div[3]/section/section/div[3]/div[2]/div[1]/div[3]/ul/li[3]/div/ul/li[{}]/a',
+		"genre": '/html/body/div[2]/main/div/section[1]/section/div[3]/section/section/div[3]/div[2]/div[1]/div[1]/div[1]/div[2]/a[{}]',
+		"studio": '/html/body/div[2]/main/div/section[1]/div/section/div/div[1]/section[6]/div[2]/ul/li[6]/div/ul/li[{}]/a'
 	}
 	for attribute, xpath in attribute_xpaths.items():
 		logger.debug(f"get {attribute}")
 		values = []
 		i = 1
-		while value := html_scrap.xpath(xpath.format(i)).get():
+		while value := html_scrap.xpath(f"{xpath.format(i)}/text()").get():
 			values.append(value)
 			i += 1
 		if values != []:
@@ -311,8 +311,8 @@ def run(movie_directories:list[str], metadata_directories:list[str]) -> None:
 			user_defined_metadata = getUserDefMetadata(file) if isfile(file := f"{metadata_file}.yml") else {}
 			
 			# get additional metadata
-			imdb_conditions = not user_defined_metadata.get("imdb-data-already-scraped", False) or "re-scrape_imdb_data" in sys.argv
-			if user_defined_metadata.get("scrape-additional-data", True) and imdb_conditions:
+			imdb_conditions = "re-scrape_imdb_data" in sys.argv
+			if user_defined_metadata.get("scrape-additional-data", True) and not user_defined_metadata.get("imdb-data-already-scraped", False):
 				# check if imdb data already complete
 				logger.debug("check if imdb data already complete")
 				imdb_data_complete = True
