@@ -32,6 +32,12 @@ not-result-filters:
   - faded
   - unclickable
 
+# filters that are applied to movie elements that are age restricted
+# possible strings: hidden, blurred, grayed, darkened, inverted, faded, cleared
+# (multiple values allowed)
+age-restricted-filters:
+  - hidden
+
 # webpage icon
 # possible strings: [path relative to 'static/images/']
 favicon: favicon.png

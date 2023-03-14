@@ -74,13 +74,27 @@
 			{% endif %}
 		{% endif %}
         
-		<div id="movie-{{ movieID }}" class="movie-overview {% if age_restricted %}not-allowed age-restricted{% endif %}">
+		<div
+			id="movie-{{ movieID }}"
+			class="movie-overview
+				{% if age_restricted %}
+					not-allowed age-restricted
+					{% if "hidden" in config.get("age-restricted-filters", []) %}hidden{% endif %}
+				{% endif %}"
+			>
 			<a {% if not age_restricted %}href="/movie/{{ movieID }}/"{% endif %}>
-				{% if movie.get('poster', '').startswith('http') %}
-					<img class="poster" src="{{ movie.get('poster') }}" alt="movie poster for '{{ movie.get('title') }}'">
-				{% else %}
-					<img class="poster" src="/movie/{{ movieID }}/poster/" alt="movie poster for '{{ movie.get('title') }}'">
-				{% endif %}
+				<img
+					src="{% if movie.get('poster', '').startswith('http') %}{{ movie.get('poster') }}{% else %}/movie/{{ movieID }}/poster/{% endif %}"
+					class="poster
+						{% if age_restricted %}combine-filters
+							{% for filter in config.get("age-restricted-filters", []) %}
+								{% if filter in ["blurred", "grayed", "darkened", "inverted", "faded", "cleared"] %}
+									{{ filter }}
+								{% endif %}
+							{% endfor %}
+						{% endif %}"
+					alt="movie poster for '{{ movie.get('title') }}'"
+				>
 			</a>
 			<div class="title">
 				{% if config.get('title_length', 0) != 0 %}
