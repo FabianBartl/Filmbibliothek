@@ -175,11 +175,8 @@ video {
 	border-radius: 5px;
 	text-overflow: ellipsis;
 	font-size: 1em;
-	width: 20rem;
-	transition: var(--animate-all);
-}
-#search-input:focus {
 	width: 100%;
+	transition: var(--animate-all);
 }
 
 /* custom video controls */
@@ -204,7 +201,7 @@ video {
 	background: rgba(20, 20, 20, 0.7);
 	width: 100%;
 	bottom: 0.5em;
-	opacity: 0.2;
+	opacity: 0;
 	transition: var(--animate-all);
 }
 .video-wrapper[class*="fullscreen"] > .controls {
@@ -467,11 +464,6 @@ video {
 
 /* style for smartphones */
 @media screen and (max-width: 590px) {
-	/* prevent x-overflow */
-	#search-input {
-		width: 70%;
-	}
-
 	/* two movies per row on the movie index page */
 	#movie-index .movie-overview {
 		--movie-overview-width: 45vw;
