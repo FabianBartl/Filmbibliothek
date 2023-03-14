@@ -216,8 +216,8 @@ $(document).ready(()=>{
 						case "j":
 							video_backward(jQ_video_wrapper);
 							break;
-						// case 32:
-						// case " ":
+						case 32:
+						case " ":
 						case 75:
 						case "k":
 							video_play_pause(jQ_video_wrapper);
