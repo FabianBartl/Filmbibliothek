@@ -128,100 +128,30 @@ Object.defineProperty(HTMLMediaElement.prototype, "playing", {
 })
 
 
-// functions for custom video controls
-// UI updater
-function video_update_progress(video_wrapper) {
-	var jQ_video_wrapper = $(video_wrapper);
-	var video = jQ_video_wrapper.children("video").get(0);
-	var timeline = jQ_video_wrapper.find(".controls .timeline input[type='range']");
-	var elapsed_time = jQ_video_wrapper.find(".controls .elapsed-time");
-	var remaining_time = jQ_video_wrapper.find(".controls .remaining-time");
-	// update video progress bar and timers
-	timeline.attr("value", Math.floor(video.currentTime));
-	elapsed_time.text(video.currentTime !== undefined ? secondsToTime(video.currentTime) : "00:00:00");
-	remaining_time.text(video.duration !== undefined && video.currentTime !== undefined ? secondsToTime(video.duration - video.currentTime) : "00:00:00");
-}
-function video_update_UI(video_wrapper) {
-	var jQ_video_wrapper = $(video_wrapper);
-	var video_wrapper = jQ_video_wrapper.get(0);
-	var video = jQ_video_wrapper.children("video").get(0);
-	// controls
-	var controls_fullscreen = jQ_video_wrapper.find(".controls .fullscreen i.fa").get(0);
-	var controls_play_pause = jQ_video_wrapper.find(".controls .play-pause i.fa").get(0);
-	var controls_volume = jQ_video_wrapper.find(".controls .volume i.fa").get(0);
-	// update video wrapper classes
-	// wait a short time to be sure that all changes have been applied
-	setTimeout(()=>{
-		// note: fullscreen and play-pause button indicates applied action
-		// fullscreen
-		if (document.webkitIsFullScreen) {
-			video_wrapper.classList.add("fullscreen");
-			controls_fullscreen.classList.add("fa-compress");
-			controls_fullscreen.classList.remove("fa-expand");
-		} else {
-			video_wrapper.classList.remove("fullscreen");
-			controls_fullscreen.classList.remove("fa-compress");
-			controls_fullscreen.classList.add("fa-expand");
-		}
-		// play-pause
-		if (video.playing) {
-			video_wrapper.classList.remove("paused");
-			controls_play_pause.classList.add("fa-pause");
-			controls_play_pause.classList.remove("fa-play");
-		} else {
-			video_wrapper.classList.add("paused");
-			controls_play_pause.classList.remove("fa-pause");
-			controls_play_pause.classList.add("fa-play");
-		}
-		// note: volume button indicates current state
-		// volume
-		if (video.muted) {
-			video_wrapper.classList.add("muted");
-			controls_volume.classList.add("fa-volume-xmark");
-			controls_volume.classList.remove("fa-volume-high");
-		} else {
-			video_wrapper.classList.remove("muted");
-			controls_volume.classList.remove("fa-volume-xmark");
-			controls_volume.classList.add("fa-volume-high");
-		}
-	}, 100);
-	// update video controls progress
-	video_update_progress(video_wrapper);
-}
-
+// functions for to control the video playback with hotkeys 
 // video actions
 function video_fullscreen(video_wrapper) {
 	var video = $(video_wrapper).children("video").get(0);
 	video_wrapper = $(video_wrapper).get(0);
 	//                                                                note: use default video fullscreen for mobile
-	document.webkitIsFullScreen ? document.webkitExitFullscreen() : ( document.documentElement.clientWidth < 850 ? video.webkitRequestFullscreen() : video_wrapper.webkitRequestFullscreen() );
-	video_update_UI(video_wrapper);
+	document.webkitIsFullScreen ? document.webkitExitFullscreen() : ( document.documentElement.clientWidth < 850 ? video.webkitRequestFullscreen() : video.webkitRequestFullscreen() );
 }
 function video_backward(video_wrapper, seconds=10) {
 	var video = $(video_wrapper).children("video").get(0);
 	video.currentTime -= seconds;
-	video_update_UI(video_wrapper);
 }
 function video_play_pause(video_wrapper) {
 	var video = $(video_wrapper).children("video").get(0);
 	if (video.ended) video.load();
 	video.playing ? video.pause() : video.play();
-	video_update_UI(video_wrapper);
 }
 function video_forward(video_wrapper, seconds=10) {
 	var video = $(video_wrapper).children("video").get(0);
 	video.currentTime += seconds;
-	video_update_UI(video_wrapper);
 }
 function video_volume(video_wrapper) {
 	var video = $(video_wrapper).children("video").get(0);
 	video.muted ? $(video).prop("muted", false) : $(video).prop("muted", true);
-	video_update_UI(video_wrapper);
-}
-function video_timeline(video_wrapper, timeline) {
-	var video = $(video_wrapper).children("video").get(0);
-	video.currentTime = parseInt(timeline.value);
-	video_update_UI(video_wrapper);
 }
 
 // play specific video in fullscreen
@@ -270,43 +200,6 @@ $(document).ready(()=>{
 			if (document.documentElement.clientWidth >= 850) video_play_pause(jQ_video_wrapper);
 		});
 
-		// left
-		jQ_video_wrapper.find(".controls .fullscreen").bind(`${click_bindings}`, (evt)=>{
-			video_fullscreen(jQ_video_wrapper);
-		});
-		// center
-		jQ_video_wrapper.find(".controls .backward").bind(`${click_bindings}`, (evt)=>{
-			video_backward(jQ_video_wrapper);
-		});
-		jQ_video_wrapper.find(".controls .play-pause").bind(`${click_bindings}`, (evt)=>{
-			video_play_pause(jQ_video_wrapper);
-		});
-		jQ_video_wrapper.find(".controls .forward").bind(`${click_bindings}`, (evt)=>{
-			video_forward(jQ_video_wrapper);
-		});
-		// right
-		jQ_video_wrapper.find(".controls .volume").bind(`${click_bindings}`, (evt)=>{
-			video_volume(jQ_video_wrapper);
-		});
-		// progress 
-		jQ_video_wrapper.find(".controls .timeline input[type='range']").bind(`change ${click_bindings}`, (evt)=>{
-			video_timeline(jQ_video_wrapper, evt.target);
-		});
-
-		// init video controls
-		video.addEventListener("loadedmetadata", ()=>{
-			video_update_UI(jQ_video_wrapper);
-			$(jQ_video_wrapper).find(".controls .timeline input[type='range']").attr("max", Math.floor(video.duration));
-		});
-		// update progress continuously if video is playing
-		video.addEventListener("playing", function listener_update_progress(evt) {
-			video_update_progress(jQ_video_wrapper);
-			setInterval(() => {
-				if (!evt.target.paused) video_update_progress(jQ_video_wrapper);
-			}, 500);
-			video.removeEventListener("playing", listener_update_progress);
-		});
-
 		// bind hotkeys to video controls
 		// apply only to first video wrapper
 		if (index === 0) {
@@ -323,8 +216,8 @@ $(document).ready(()=>{
 						case "j":
 							video_backward(jQ_video_wrapper);
 							break;
-						case 32:
-						case " ":
+						// case 32:
+						// case " ":
 						case 75:
 						case "k":
 							video_play_pause(jQ_video_wrapper);
@@ -342,21 +235,6 @@ $(document).ready(()=>{
 					}
 				}
 			});
-			// add title with keybind hint 
-			// left
-			jQ_video_wrapper.find(".controls .fullscreen").attr("title", "Vollbild (F)");
-			// center
-			jQ_video_wrapper.find(".controls .backward").attr("title", "Zurückspulen (J / Pfeilteste Links)");
-			jQ_video_wrapper.find(".controls .play-pause").attr("title", "Abspielen (K / Leertaste)");
-			jQ_video_wrapper.find(".controls .forward").attr("title", "Vorspulen (L / Pfeiltaste Rechts)");
-			// right
-			jQ_video_wrapper.find(".controls .volume").attr("title", "Stummschalten (M)");
-		}
-
-		/* hide custom video controls if no webkit browser */
-		if (navigator.userAgent.indexOf("Chrome") === -1) {
-			var controls = jQ_video_wrapper.find(".controls").get(0);
-			controls.remove();
 		}
 	});
 

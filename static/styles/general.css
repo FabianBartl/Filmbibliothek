@@ -188,77 +188,6 @@ video {
 .video-wrapper > video {
 	width: 100%;
 }
-@media screen and (min-width: 850px) {
-	/* works only in this inverted form: conditional hiding, instead of conditional showing */
-	.video-wrapper > video[controls]::-webkit-media-controls,
-	.video-wrapper > video[controls]::-webkit-media-controls-enclosure {
-		display: none;
-	}
-}
-.video-wrapper > .controls {
-	z-index: 2147483646;
-	position: absolute;
-	background: rgba(20, 20, 20, 0.7);
-	width: 100%;
-	bottom: 0.5em;
-	opacity: 0;
-	transition: var(--animate-all);
-}
-.video-wrapper[class*="fullscreen"] > .controls {
-	width: calc(100% - 1em);
-}
-.video-wrapper:hover > .controls {
-	opacity: 1;
-}
-.video-wrapper > .controls > div {
-	justify-content: space-between;
-	padding: 0.3em;
-	font-size: 1.1em;
-	line-height: 1.1em;
-}
-.video-wrapper > .controls > .progress > .timeline,
-.video-wrapper > .controls > .progress > .timeline > input[type="range"] {
-	width: 100%;
-}
-.video-wrapper > .controls > .buttons > div {
-	width: 30%;
-	display: flex;
-}
-.video-wrapper > .controls > .buttons > div.left {
-	justify-content: start;
-}
-.video-wrapper > .controls > .buttons > div.center {
-	justify-content: center;
-}
-.video-wrapper > .controls > .buttons > div.right {
-	justify-content: end;
-}
-.video-wrapper > .controls > .buttons > div > div {
-	color: var(--color-text);
-	transition: var(--animate-all-fast);
-}
-.video-wrapper > .controls > .buttons > div > div:hover {
-	color: var(--color-highlight);
-}
-/* webkit slider style */
-.video-wrapper .controls .timeline input[type="range"] {
-	-webkit-appearance: none;
-	overflow: hidden;
-	cursor: pointer;
-	outline: 0;
-	height: 0.4em;
-	border-radius: 10px;
-	transform: translateY(-0.2em);
-	background-color: var(--color-background);
-}
-.video-wrapper .controls .timeline input[type="range"]::-webkit-slider-thumb {
-	-webkit-appearance: none;
-	height: 0.7em;
-	width: 0.7em;
-	border-radius: 10px;
-	background-color: var(--color-text);
-	box-shadow: -100vw 0 0 calc(100vw - 5px) var(--color-link);
-}
 
 /* ---------------------------------------- pages and their elements ---------------------------------------- */
 
@@ -443,11 +372,6 @@ video {
 	#movie-details .poster {
 		width: 20em;
 		margin-right: 0.5em;
-	}
-
-	/* hide custom video controls as they work poorly on mobile or with touch */
-	.video-wrapper > .controls {
-		display: none;
 	}
 }
 @media screen and (max-width: 650px) {
