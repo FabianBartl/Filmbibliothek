@@ -220,18 +220,26 @@ def index():
 
 # return detailed movie page
 # error: 404 [not found] if movie not found
-@app.route("/movie/<movieID>/")
-def movie(movieID:str) -> Response:
+@app.route("/movie/<int:movieID>/")
+def movie(movieID:int) -> Response:
 	global MOVIES
+	movieID = str(movieID)
 	if movie := MOVIES.get(movieID):
 		return render_template("movie.html", movie=movie)
 	return not_found(f"Movie not found.")
 
+# just to return better error if type of movie is not integer
+# error: 502 [not found] if movieID not integer
+@app.route("/movie/<path:movieID>")
+def movie_error(movieID:str) -> Response:
+	return bad_gateway(f"Movie ID value must be of type integer.")
+
 # get movie stream
 # error: 404 [not found] if movie not found
-@app.route("/movie/<movieID>/stream/")
-def movie_stream(movieID:str) -> Response:
+@app.route("/movie/<int:movieID>/stream/")
+def movie_stream(movieID:int) -> Response:
 	global MOVIES
+	movieID = str(movieID)
 	if movie := MOVIES.get(movieID):
 		if isfile(joinpath(movie["movie_directory"], file := f"{movie['filename']}.{movie['extension']}")):
 			return send_from_directory(movie["movie_directory"], file, as_attachment=False)
@@ -239,9 +247,10 @@ def movie_stream(movieID:str) -> Response:
 
 # get movie poster
 # error: 404 [not found] if movie not found
-@app.route("/movie/<movieID>/poster/")
-def movie_poster(movieID:str) -> Response:
+@app.route("/movie/<int:movieID>/poster/")
+def movie_poster(movieID:int) -> Response:
 	global MOVIES
+	movieID = str(movieID)
 	if movie := MOVIES.get(movieID):
 		if poster := movie.get("poster"):
 			if isfile(joinpath(movie["metadata_directory"], poster)):
@@ -251,9 +260,10 @@ def movie_poster(movieID:str) -> Response:
 
 # get movie subtitles
 # error: 404 [not found] if movie or subtitle file not found
-@app.route("/movie/<movieID>/subtitles/<language>/")
-def movie_subtitles(movieID:str, language:str) -> Response:
+@app.route("/movie/<int:movieID>/subtitles/<string:language>/")
+def movie_subtitles(movieID:int, language:str) -> Response:
 	global MOVIES
+	movieID = str(movieID)
 	if movie := MOVIES.get(movieID):
 		if subtitles := movie.get("subtitles", {}).get(language):
 			if isfile(joinpath(movie["metadata_directory"], subtitles)):
@@ -265,9 +275,10 @@ def movie_subtitles(movieID:str, language:str) -> Response:
 #        503 [service unavailable] if saving the user rating failed
 #        502 [bad gateway] if stars value is not between 0 and 5 OR if type of stars not integer
 #        404 [not found] if movie not found
-@app.route("/movie/<movieID>/user-rating/set/<int:stars>")
-def movie_user_rating(movieID:str, stars:int) -> Response:
+@app.route("/movie/<int:movieID>/user-rating/set/<int:stars>")
+def movie_user_rating(movieID:int, stars:int) -> Response:
 	global MOVIES
+	movieID = str(movieID)
 	if movie := MOVIES.get(movieID):
 		if 0 <= stars <= 5:
 			MOVIES[movieID]["user-rating"] = stars
@@ -275,9 +286,11 @@ def movie_user_rating(movieID:str, stars:int) -> Response:
 			return no_content("User rating successfully saved.") if save_movies() else service_unavailable("Failed to save user rating.")
 		return bad_gateway("The user rating value must be between 0 and 5.")
 	return not_found(f"Movie not found.")
+
 # just to return better error if type of stars is not integer
-@app.route("/movie/<movieID>/user-rating/set/<stars>")
-def movie_user_rating_error(movieID:str, stars:str) -> Response:
+# error: 502 [bad gateway] if stars not integer
+@app.route("/movie/<int:movieID>/user-rating/set/<stars>")
+def movie_user_rating_error(movieID:int, stars:str) -> Response:
 	return bad_gateway(f"User rating value must be of type integer.")
 
 # ---------- start routine ----------
