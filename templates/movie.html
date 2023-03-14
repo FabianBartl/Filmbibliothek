@@ -15,6 +15,7 @@
 {% block main %}
 	<div class="row">
 		<img
+			class="poster" 
 			src="{% if movie.get('poster', '').startswith('http') %}{{ movie.get('poster') }}{% else %}poster/{% endif %}"
 			alt="movie poster for '{{ movie.get('title') }}'"
 		>
@@ -125,7 +126,11 @@
 		</div>
 	</div>
 	
-	<video id="movie-stream" controls {% if age_restricted %}poster="{{ url_for('static', filename='images/age-restricted-movie.jpg') }}"{% endif %}>
+	<video
+		id="movie-stream"
+		controls
+		{% if age_restricted %}poster="{{ url_for('static', filename='images/age-restricted-movie.jpg') }}"{% endif %}
+	>
 		{% if not age_restricted %}
 			<source src="stream/" type="video/mp4">
 		{% endif %}
