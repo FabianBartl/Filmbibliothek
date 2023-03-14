@@ -179,16 +179,6 @@ video {
 	transition: var(--animate-all);
 }
 
-/* custom video controls */
-.video-wrapper {
-	scrollbar-gutter: unset;
-	position: relative;
-	overflow: hidden;
-}
-.video-wrapper > video {
-	width: 100%;
-}
-
 /* ---------------------------------------- pages and their elements ---------------------------------------- */
 
 /* error page */

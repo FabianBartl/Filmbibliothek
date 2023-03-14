@@ -14,11 +14,10 @@
 
 {% block main %}
 	<div class="row">
-		{% if movie.get('poster', '').startswith('http') %}
-			<img class="poster" src="{{ movie.get('poster') }}" alt="movie poster for '{{ movie.get('title') }}'">
-		{% else %}
-			<img class="poster" src="poster/" alt="movie poster for '{{ movie.get('title') }}'">
-		{% endif %}
+		<img
+			src="{% if movie.get('poster', '').startswith('http') %}{{ movie.get('poster') }}{% else %}poster/{% endif %}"
+			alt="movie poster for '{{ movie.get('title') }}'"
+		>
 
 		<div class="details">
 			<h2 class="title">
@@ -126,18 +125,16 @@
 		</div>
 	</div>
 	
-	<div id="movie-stream" class="video-wrapper">
-		<video controls {% if age_restricted %}poster="{{ url_for('static', filename='images/age-restricted-movie.jpg') }}"{% endif %}>
-			{% if not age_restricted %}
-				<source src="stream/" type="video/mp4">
+	<video id="movie-stream" controls {% if age_restricted %}poster="{{ url_for('static', filename='images/age-restricted-movie.jpg') }}"{% endif %}>
+		{% if not age_restricted %}
+			<source src="stream/" type="video/mp4">
+		{% endif %}
+		{% for language, subtitles in movie.get('subtitles', {}).items() %}
+			{% if subtitles.startswith(('http', '/localpath/')) %}
+				<track src="{{ subtitles }}" kind="subtitles" srclang="{{ language }}" label="{{ language }}">
+			{% else %}
+				<track src="subtitles/{{ language }}/" kind="subtitles" srclang="{{ language }}" label="{{ language }}">
 			{% endif %}
-			{% for language, subtitles in movie.get('subtitles', {}).items() %}
-				{% if subtitles.startswith(('http', '/localpath/')) %}
-					<track src="{{ subtitles }}" kind="subtitles" srclang="{{ language }}" label="{{ language }}">
-				{% else %}
-					<track src="subtitles/{{ language }}/" kind="subtitles" srclang="{{ language }}" label="{{ language }}">
-				{% endif %}
-			{% endfor %}
-		</video>
-	</div>
+		{% endfor %}
+	</video>
 {% endblock %}
