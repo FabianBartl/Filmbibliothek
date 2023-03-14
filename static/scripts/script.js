@@ -132,7 +132,7 @@ Object.defineProperty(HTMLMediaElement.prototype, "playing", {
 // video actions
 function video_fullscreen(video) {
 	var video = $(video).get(0);
-	video.webkitRequestFullscreen();
+	video.webkitRequestFullscreen ? video.webkitRequestFullscreen() : video.requestFullscreen();
 }
 function video_backward(video, seconds = 10) {
 	var video = $(video).get(0);
