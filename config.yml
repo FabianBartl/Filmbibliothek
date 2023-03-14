@@ -36,7 +36,8 @@ not-result-filters:
 # possible strings: hidden, blurred, grayed, darkened, inverted, faded, cleared
 # (multiple values allowed)
 age-restricted-filters:
-  - hidden
+  - grayed
+  - faded
 
 # webpage icon
 # possible strings: [path relative to 'static/images/']
