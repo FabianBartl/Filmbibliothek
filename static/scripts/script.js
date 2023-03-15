@@ -134,7 +134,7 @@ function video_fullscreen(video) {
 	var video = $(video).get(0);
 	video.webkitRequestFullscreen ? video.webkitRequestFullscreen() : video.requestFullscreen();
 }
-function video_backward(video, seconds = 10) {
+function video_backward(video, seconds=10) {
 	var video = $(video).get(0);
 	video.currentTime -= seconds;
 }
@@ -143,7 +143,7 @@ function video_play_pause(video) {
 	if (video.ended) video.load();
 	video.playing ? video.pause() : video.play();
 }
-function video_forward(video, seconds = 10) {
+function video_forward(video, seconds=10) {
 	var video = $(video).get(0);
 	video.currentTime += seconds;
 }
@@ -153,7 +153,7 @@ function video_volume(video) {
 }
 
 // play specific video in fullscreen
-function playInFullscreen(video, delay_ms = 0) {
+function playInFullscreen(video, delay_ms=0) {
 	setTimeout(() => {
 		video_fullscreen(video);
 		video_play_pause(video);

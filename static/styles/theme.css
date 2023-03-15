@@ -11,7 +11,7 @@ html {
 
 /* themes */
 html,
-html[theme="dark"] {
+html[data-theme="dark"] {
 	--color-background: var(--blue);
 	--color-accent: var(--red);
 	--color-text: var(--beige);
@@ -19,7 +19,7 @@ html[theme="dark"] {
 	--color-highlight: var(--yellow);
 	--color-shadow: #000e;
 }
-html[theme="light"] {
+html[data-theme="light"] {
 	--color-background: var(--beige);
 	--color-accent: var(--red);
 	--color-text: var(--blue);
@@ -29,18 +29,18 @@ html[theme="light"] {
 }
 
 /* debug */
-html[theme="debug"] * {
+html[data-theme="debug"] * {
 	color: #0f0 !important;
 	outline: 1px #f00 solid !important;
 	background: #000 !important;
 	background-color: #f003 !important;
 }
 
-html[theme="debug"] * *               { background-color: #0f03 !important; }
-html[theme="debug"] * * *             { background-color: #00f3 !important; }
-html[theme="debug"] * * * *           { background-color: #f0f3 !important; }
-html[theme="debug"] * * * * *         { background-color: #0ff3 !important; }
-html[theme="debug"] * * * * * *       { background-color: #ff03 !important; }
-html[theme="debug"] * * * * * * *     { background-color: #f003 !important; }
-html[theme="debug"] * * * * * * * *   { background-color: #0f03 !important; }
-html[theme="debug"] * * * * * * * * * { background-color: #00f3 !important; }
+html[data-theme="debug"] * *               { background-color: #0f03 !important; }
+html[data-theme="debug"] * * *             { background-color: #00f3 !important; }
+html[data-theme="debug"] * * * *           { background-color: #f0f3 !important; }
+html[data-theme="debug"] * * * * *         { background-color: #0ff3 !important; }
+html[data-theme="debug"] * * * * * *       { background-color: #ff03 !important; }
+html[data-theme="debug"] * * * * * * *     { background-color: #f003 !important; }
+html[data-theme="debug"] * * * * * * * *   { background-color: #0f03 !important; }
+html[data-theme="debug"] * * * * * * * * * { background-color: #00f3 !important; }
