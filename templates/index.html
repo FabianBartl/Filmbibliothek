@@ -4,11 +4,40 @@
 {% set mainID = 'movie-index' %}
 
 {% block aside %}
-	<input id="search-input" type="text" {% if search_query %}value="{{ search_query }}"{% endif %} placeholder="Filme durchsuchen ...">
+	<form id="searchbox" method="GET" action="/">
+		<input name="query" type="text" {% if search_query %}value="{{ search_query }}"{% endif %} placeholder="Filme durchsuchen ..." autofocus>
+		<input type="submit">
+		
+		<details open>
+			<summary>Erweiterte Filter</summary>
+			<div class="row">
+				<fieldset>
+					<label>Suchfilter:</label><br>
+					<label>Von </label><input name="year_min" type="number" min="0" placeholder="untere Jahresgrenze">
+					<label>bis </label><input name="year_max" type="number" min="0" placeholder="obere Jahresgrenze"><br>
+				</fieldset>
+
+				<fieldset>
+					<label>Filme sortieren nach:</label><br>
+					<input name="sort_by" value="title" type="radio" checked><label>Titel</label><br>
+					<input name="sort_by" value="year" type="radio"><label>Jahr</label><br>
+					<input name="sort_by" value="imdb_rating" type="radio"><label>IMDb Bewertung</label><br>
+					<input name="sort_by" value="user_rating" type="radio"><label>Eigener Bewertung</label><br>
+				</fieldset>
+
+				<fieldset>
+					<label>Anzeige Einstellungen:</label><br>
+					<input name="hide_age_restricted_movies" type="checkbox"><label>Filme mit Altersbeschränkung ausblenden</label><br>
+					<input name="hide_not_search_results" type="checkbox"><label>Nur Suchergebnisse anzeigen</label><br>
+				</fieldset>
+			</div>
+		</details>
+	</form>
+	
 	<script>
 		$(document).ready(function(){
 			// search input field and data source
-			var search_input = $("#search-input");
+			var search_input = $("#searchbox > input[name='query']");
 			const movies_data = {{ movies_array | safe }};
 			
 			// call on typing in search field
@@ -73,7 +102,7 @@
 				{% endif %}
 			{% endif %}
 		{% endif %}
-        
+		
 		<div
 			id="movie-{{ movieID }}"
 			class="movie-overview

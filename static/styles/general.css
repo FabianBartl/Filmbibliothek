@@ -82,15 +82,18 @@ ul.row:not(:last-child) {
 	margin-right: 1.5em;
 }
 
-/* links */
+/* links and details */
 a,
-a:active {
+a:active,
+details > summary,
+details > summary:active {
 	text-decoration: none;
 	color: var(--color-link);
 	cursor: pointer;
 	transition: var(--animate-all);
 }
-a:hover {
+a:hover,
+details > summary:hover {
 	text-decoration: none;
 	color: var(--color-highlight);
 }
@@ -98,6 +101,27 @@ a:hover {
 /* movie streams */
 video {
 	width: 100%;
+}
+
+/* forms and form elements */
+fieldset {
+	border: unset;
+	padding: unset;
+	margin: unset;
+}
+
+fieldset + fieldset {
+	border-left: var(--badge-border);
+	padding-left: 1.3em;
+	margin-left: 1em;
+}
+
+input + label {
+	margin-left: 0.1em;
+}
+
+label + input {
+	margin-right: 0.1em;
 }
 
 /* buttons */
@@ -167,7 +191,7 @@ video {
 /* ---------------------------------------- special elements ---------------------------------------- */
 
 /* search */
-#search-input {
+#searchbox > input[name="query"] {
 	padding: 0.5em;
 	color: var(--color-text);
 	background-color: var(--color-background);
@@ -175,8 +199,21 @@ video {
 	border-radius: 5px;
 	text-overflow: ellipsis;
 	font-size: 1em;
-	width: 100%;
+	width: 80%;
 	transition: var(--animate-all);
+}
+
+#searchbox > [type="submit"] {
+	display: none;
+}
+
+#searchbox > details {
+	margin: 0.5em;
+}
+
+
+#searchbox > details > .row > fieldset {
+	min-width: 10%;
 }
 
 /* ---------------------------------------- pages and their elements ---------------------------------------- */
