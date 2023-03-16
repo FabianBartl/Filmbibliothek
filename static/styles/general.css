@@ -13,6 +13,7 @@
 	--animate-all: all 200ms ease-in-out;
 	--animate-all-fast: all 100ms ease-in-out;
 	--badge-border: 2px solid var(--color-text);
+	--thin-border: 1px solid var(--color-text);
 	/* default filter values */
 	--blur-value: 0;
 	--grayscale-value: 0;
@@ -116,28 +117,51 @@ fieldset + fieldset {
 	margin-left: 1em;
 }
 
-input + label {
-	margin-left: 0.1em;
+fieldset > label.title {
+	font-style: italic;
+	letter-spacing: 0.3px;
 }
 
-label + input {
-	margin-right: 0.1em;
+select,
+select > option,
+input[type="text"],
+input[type="number"] {
+	padding: 0.2em;
+	color: var(--color-text);
+	background-color: var(--color-background);
+	border: var(--thin-border);
+	border-radius: 5px;
+	text-overflow: ellipsis;
+	transition: var(--animate-all);
 }
 
-/* buttons */
+/* (pseudo) buttons */
+
+input[type="button"],
+input[type="submit"],
+button,
 .button {
 	font-weight: bold;
 	color: var(--color-background);
+	border: none;
 	border-radius: 5px;
 	background-color: var(--color-link);
 	padding: 4px 9px;
 	cursor: pointer;
 	transition: var(--animate-all);
 }
+
+input[type="button"]:hover,
+input[type="submit"]:hover,
+button:hover,
 .button:hover {
 	color: var(--color-background);
 	background-color: var(--color-highlight);
 }
+
+input[type="button"].not-allowed:hover,
+input[type="submit"].not-allowed:hover,
+button.not-allowed:hover,
 .button.not-allowed:hover {
 	background-color: var(--color-link);
 }
@@ -191,20 +215,19 @@ label + input {
 /* ---------------------------------------- special elements ---------------------------------------- */
 
 /* search */
-#searchbox > input[name="query"] {
+#searchbox > input[name="query"],
+#searchbox > [type="submit"] {
 	padding: 0.5em;
-	color: var(--color-text);
-	background-color: var(--color-background);
-	border: var(--badge-border);
-	border-radius: 5px;
-	text-overflow: ellipsis;
 	font-size: 1em;
-	width: 80%;
-	transition: var(--animate-all);
+}
+
+#searchbox > input[name="query"] {
+	width: calc(100% - 6em);
+	margin-right: 0.5em;
 }
 
 #searchbox > [type="submit"] {
-	display: none;
+	width: 5em;
 }
 
 #searchbox > details {

@@ -6,19 +6,30 @@
 {% block aside %}
 	<form id="searchbox" method="GET" action="/">
 		<input name="query" type="text" {% if search_query %}value="{{ search_query }}"{% endif %} placeholder="Filme durchsuchen ..." autofocus>
-		<input type="submit">
+		<button type="submit">Suchen</button>
 		
 		<details open>
 			<summary>Erweiterte Filter</summary>
 			<div class="row">
 				<fieldset>
-					<label>Suchfilter:</label><br>
+					<label class="title">Suchfilter:</label><br>
 					<label>Von </label><input name="year_min" type="number" min="0" placeholder="untere Jahresgrenze">
 					<label>bis </label><input name="year_max" type="number" min="0" placeholder="obere Jahresgrenze"><br>
+
+					<label>Mit </label><input name="with" type="text" placeholder="Schauspieler, Genre, ...">
+					<label>als </label>
+					<select name="as">
+						<option value="director">Regisseur</option>
+						<option value="writer">Drehbuchautor</option>
+						<option value="studio">Studio</option>
+						<option value="genre">Genre</option>
+						<option value="main_cast">Hauptbesetzung</option>
+						<option value="camera">Kamerabesetzung</option>
+					</select><br>
 				</fieldset>
 
 				<fieldset>
-					<label>Filme sortieren nach:</label><br>
+					<label class="title">Filme sortieren nach:</label><br>
 					<input name="sort_by" value="title" type="radio" checked><label>Titel</label><br>
 					<input name="sort_by" value="year" type="radio"><label>Jahr</label><br>
 					<input name="sort_by" value="imdb_rating" type="radio"><label>IMDb Bewertung</label><br>
@@ -26,7 +37,7 @@
 				</fieldset>
 
 				<fieldset>
-					<label>Anzeige Einstellungen:</label><br>
+					<label class="title">Anzeige Einstellungen:</label><br>
 					<input name="hide_age_restricted_movies" type="checkbox"><label>Filme mit Altersbeschränkung ausblenden</label><br>
 					<input name="hide_not_search_results" type="checkbox"><label>Nur Suchergebnisse anzeigen</label><br>
 				</fieldset>
