@@ -234,9 +234,12 @@ button.not-allowed:hover,
 	margin: 0.5em;
 }
 
-
 #searchbox > details > .row > fieldset {
 	min-width: 10%;
+}
+
+#searchbox > details > .row > fieldset > input[name^="year_"] {
+	width: 11em;
 }
 
 /* ---------------------------------------- pages and their elements ---------------------------------------- */
