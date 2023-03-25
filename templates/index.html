@@ -30,7 +30,8 @@
 
 				<fieldset>
 					<label class="title">Filme sortieren nach:</label><br>
-					<input name="sort_by" value="title" type="radio" {% if url_params.sort_by == 'title' %}checked{% endif %}><label>Titel</label><br>
+					<input name="sort_reversed" type="checkbox" {% if url_params.sort_reversed %}checked{% endif %}><label>Reihenfolge umdrehen</label><br>
+					<input name="sort_by" value="title" type="radio" checked><label>Titel</label><br>
 					<input name="sort_by" value="year" type="radio" {% if url_params.sort_by == 'year' %}checked{% endif %}><label>Jahr</label><br>
 					<input name="sort_by" value="imdb_rating" type="radio" {% if url_params.sort_by == 'imdb_rating' %}checked{% endif %}><label>IMDb Bewertung</label><br>
 					<input name="sort_by" value="user_rating" type="radio" {% if url_params.sort_by == 'user_rating' %}checked{% endif %}><label>Eigener Bewertung</label><br>
@@ -104,7 +105,8 @@
 {% endblock %}
 
 {% block main %}
-	{% for movieID, movie in movies.items() %}
+	{% for movie in movies %}
+		{% set movieID = movie["movieID"] %}
 		{% set age_restricted = false %}
 		{% if cookies.get('age_restriction_unlocked') != 'true' %}
 			{% if config.get('age-restriction', {}).get('limit') %}
@@ -121,7 +123,7 @@
 					not-allowed age-restricted
 					{% if "hidden" in config.get("age-restricted-filters", []) %}hidden{% endif %}
 				{% endif %}"
-			>
+		>
 			<a {% if not age_restricted %}href="/movie/{{ movieID }}/"{% endif %}>
 				<img
 					src="{% if movie.get('poster', '').startswith('http') %}{{ movie.get('poster') }}{% else %}/movie/{{ movieID }}/poster/{% endif %}"
