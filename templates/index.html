@@ -5,7 +5,7 @@
 
 {% block aside %}
 	<form id="searchbox" method="GET" action="/">
-		<input name="query" type="text" {% if search_query %}value="{{ search_query }}"{% endif %} placeholder="Filme durchsuchen ..." autofocus>
+		<input name="query" type="text" {% if url_params.query %}value="{{ url_params.query }}"{% endif %} placeholder="Filme durchsuchen ..." autofocus>
 		<button type="submit">Suchen</button>
 		
 		<details open>
@@ -13,33 +13,33 @@
 			<div class="row">
 				<fieldset>
 					<label class="title">Suchfilter:</label><br>
-					<label>Von </label><input name="year_min" type="number" min="0" placeholder="untere Jahresgrenze">
-					<label>bis </label><input name="year_max" type="number" min="0" placeholder="obere Jahresgrenze"><br>
+					<label>Von </label><input name="year_min" type="number" {% if url_params.year_min %}value="{{ url_params.year_min }}"{% endif %} min="1900" placeholder="untere Jahresgrenze">
+					<label>bis </label><input name="year_max" type="number" {% if url_params.year_max %}value="{{ url_params.year_max }}"{% endif %} min="1900" placeholder="obere Jahresgrenze"><br>
 
-					<label>Mit </label><input name="with" type="text" placeholder="Name">
+					<label>Mit </label><input name="with" type="text" {% if url_params.with %}value="{{ url_params.with }}"{% endif %} placeholder="Name">
 					<label>als </label>
 					<select name="as">
-						<option value="director">Regisseur</option>
-						<option value="writer">Drehbuchautor</option>
-						<option value="studio">Studio</option>
-						<option value="genre">Genre</option>
-						<option value="main_cast">Hauptbesetzung</option>
-						<option value="camera">Kamerabesetzung</option>
+						<option value="director" {% if url_params.as == 'director' %}selected{% endif %}>Regisseur</option>
+						<option value="writer" {% if url_params.as == 'writer' %}selected{% endif %}>Drehbuchautor</option>
+						<option value="studio" {% if url_params.as == 'studio' %}selected{% endif %}>Studio</option>
+						<option value="genre" {% if url_params.as == 'genre' %}selected{% endif %}>Genre</option>
+						<option value="main_cast" {% if url_params.as == 'main_cast' %}selected{% endif %}>Hauptbesetzung</option>
+						<option value="camera" {% if url_params.as == 'camera' %}selected{% endif %}>Kamerabesetzung</option>
 					</select><br>
 				</fieldset>
 
 				<fieldset>
 					<label class="title">Filme sortieren nach:</label><br>
-					<input name="sort_by" value="title" type="radio" checked><label>Titel</label><br>
-					<input name="sort_by" value="year" type="radio"><label>Jahr</label><br>
-					<input name="sort_by" value="imdb_rating" type="radio"><label>IMDb Bewertung</label><br>
-					<input name="sort_by" value="user_rating" type="radio"><label>Eigener Bewertung</label><br>
+					<input name="sort_by" value="title" type="radio" {% if url_params.sort_by == 'title' %}checked{% endif %}><label>Titel</label><br>
+					<input name="sort_by" value="year" type="radio" {% if url_params.sort_by == 'year' %}checked{% endif %}><label>Jahr</label><br>
+					<input name="sort_by" value="imdb_rating" type="radio" {% if url_params.sort_by == 'imdb_rating' %}checked{% endif %}><label>IMDb Bewertung</label><br>
+					<input name="sort_by" value="user_rating" type="radio" {% if url_params.sort_by == 'user_rating' %}checked{% endif %}><label>Eigener Bewertung</label><br>
 				</fieldset>
 
 				<fieldset>
 					<label class="title">Anzeige Einstellungen:</label><br>
-					<input name="hide_age_restricted_movies" type="checkbox"><label>Filme mit Altersbeschränkung ausblenden</label><br>
-					<input name="hide_not_search_results" type="checkbox"><label>Nur Suchergebnisse anzeigen</label><br>
+					<input name="hide_age_restricted_movies" type="checkbox" {% if url_params.hide_age_restricted_movies %}checked{% endif %}><label>Filme mit Altersbeschränkung ausblenden</label><br>
+					<input name="hide_not_search_results" type="checkbox" {% if url_params.hide_not_search_results %}checked{% endif %}><label>Nur Suchergebnisse anzeigen</label><br>
 				</fieldset>
 			</div>
 		</details>

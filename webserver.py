@@ -215,8 +215,8 @@ def index():
 	global MOVIES
 	# convert nested objects to repr strings
 	movies_array = json.dumps([ dict({ key: str(value) for key, value in obj.items() }) for obj in MOVIES.values() ])
-	search_query = request.args.get("query")
-	return render_template("index.html", movies=MOVIES, movies_array=movies_array, search_query=search_query)
+	url_params = request.args
+	return render_template("index.html", movies=MOVIES, movies_array=movies_array, url_params=url_params)
 
 # return detailed movie page
 # error: 404 [not found] if movie not found
