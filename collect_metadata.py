@@ -311,8 +311,8 @@ def run(movie_directories:list[str], metadata_directories:list[str]) -> None:
 			user_defined_metadata = getUserDefMetadata(file) if isfile(file := f"{metadata_file}.yml") else {}
 			
 			# get additional metadata
-			imdb_conditions = "re-scrape_imdb_data" in sys.argv
-			if user_defined_metadata.get("scrape-additional-data", True) and not user_defined_metadata.get("imdb-data-already-scraped", False):
+			imdb_conditions = "--force" in sys.argv or "-f" in sys.argv
+			if user_defined_metadata.get("scrape-additional-data", True) and not user_defined_metadata.get("imdb-data-already-scraped", False) or imdb_conditions:
 				# check if imdb data already complete
 				logger.debug("check if imdb data already complete")
 				imdb_data_complete = True
