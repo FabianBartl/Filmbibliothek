@@ -13,8 +13,10 @@
 			<div class="row">
 				<fieldset>
 					<label class="title">Suchfilter:</label><br>
-					<label>Von </label><input name="year_min" type="number" {% if url_params.year_min %}value="{{ url_params.year_min }}"{% endif %} min="1900" placeholder="untere Jahresgrenze">
-					<label>bis </label><input name="year_max" type="number" {% if url_params.year_max %}value="{{ url_params.year_max }}"{% endif %} min="1900" placeholder="obere Jahresgrenze"><br>
+					{% set year_min_default = 1900 %}
+					{% set year_max_default = 2100 %}
+					<label>Von </label><input name="year_min" type="number" {% if url_params.year_min and url_params.year_min|valid_int(year_min_default) >= year_min_default %}value="{{ url_params.year_min }}"{% endif %} min="{{ year_min_default }}" max="{{ year_max_default }}" placeholder="untere Jahresgrenze">
+					<label>bis </label><input name="year_max" type="number" {% if url_params.year_max and url_params.year_max|valid_int(year_max_default) <= year_max_default %}value="{{ url_params.year_max }}"{% endif %} min="{{ year_min_default }}" max="{{ year_max_default }}" placeholder="obere Jahresgrenze"><br>
 
 					<label>Mit </label><input name="with" type="text" {% if url_params.with %}value="{{ url_params.with }}"{% endif %} placeholder="Name">
 					<label>als </label>
