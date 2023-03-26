@@ -452,7 +452,7 @@ if __name__ == "__main__":
 	logger.debug("validate command line arguments")
 	cli_args = {
 		"force": "--force" in sys.argv or "-f" in sys.argv,
-		"log": "--log" in sys.argv or "-l" in sys.argv  # impact already applied at start of file
+		"log": "--log" in sys.argv or "-l" in sys.argv  # already applied at the beginning of the file
 	}
 	logger.info("command line arguments validated")
 
