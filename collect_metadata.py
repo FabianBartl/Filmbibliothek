@@ -248,7 +248,7 @@ def run(movie_directories:list[str], metadata_directories:list[str], args:dict[s
 		update = lambda n=1: progress_bar.update(n); progress_bar.refresh()
 
 		# add custom logging handler for the tqdm progress bar
-		tqdm_handler = custom_logger.getTqdmHandler(progress_bar, logging.DEBUG)
+		tqdm_handler = custom_logger.getTqdmHandler(progress_bar, logging.DEBUG, args.get("colored", True))
 		logger.addHandler(tqdm_handler)
 		logger.debug("custom logging handler for the tqdm progress bar added")
 		
