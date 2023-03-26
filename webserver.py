@@ -223,32 +223,10 @@ def index():
 	global MOVIES
 	url_params = request.args
 	# convert nested objects to repr strings
-	movies_array = json.dumps([ dict({ key: str(value) for key, value in obj.items() }) for obj in MOVIES.values() ])
-	# apply year range filter
-	movies = []
-	year_min = valid_int(url_params.get("year_min"), 1900)
-	year_max = valid_int(url_params.get("year_max"), 2100)
-	for movie in MOVIES:
-		year = valid_int(MOVIES[movie].get("year"), 0)
-		if year_min <= year <= year_max:
-			print(year, MOVIES[movie]["title"])
-			movies.append(MOVIES[movie])
-	# sort movies
-	sort_reversed = url_params.get("sort_reversed") == "on"
-	sort_by = url_params.get("sort_by", "title")
-	if sort_by == "title":
-		sort_function = lambda x: x.get("title", "")
-	elif sort_by == "year":
-		sort_function = lambda x: x.get("year", 0)
-	elif sort_by == "imdb_rating":
-		sort_function = lambda x: x.get("imdb-rating", {}).get("points", 0)
-		sort_reversed = not sort_reversed
-	elif sort_by == "user_rating":
-		sort_function = lambda x: x.get("user-rating", 0)
-		sort_reversed = not sort_reversed
-	movies.sort(key=sort_function, reverse=sort_reversed)
-	# return
-	return render_template("index.html", movies=movies, movies_array=movies_array, url_params=url_params)
+	js_movies_array = json.dumps([ dict({ key: str(value) for key, value in obj.items() }) for obj in MOVIES.values() ])
+	# convert movies dict to list
+	movies = [ MOVIES[str(movieID)] for movieID in range(len(MOVIES)) ]
+	return render_template("index.html", movies=movies, movies_array=js_movies_array, url_params=url_params)
 
 # return detailed movie page
 # error: 404 [not found] if movie not found
