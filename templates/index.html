@@ -46,63 +46,6 @@
 			</div>
 		</details>
 	</div>
-	
-	<script>
-		$(document).ready(function(){
-			// search input field and data source
-			var search_input = $("#searchbox > input[name='query']");
-			const movies_data = {{ movies_array | safe }};
-			
-			// call on typing in search field
-			search_input.keyup((evt)=>{
-				searchResults(
-					evt, movies_data, search_input,
-
-					// searchable values
-					function(movie) {
-						const keys = ["title", "description", "age-rating", "year", "resolution", "director", "writer", "genre", "main-cast", "duration", "camera", "studio", "ratings"];
-						var result = [];
-						// convert key objects into an array of strings
-						keys.forEach((key)=>{
-							var object = movie[key];
-							if (object !== null && object !== undefined) {
-								// handle arrays
-								if (typeof(object) === Array) {
-									value = object.join("");
-								}
-								// handle objects
-								else if (typeof(object) === Object) {
-									var values = [];
-									for (let key in object) {
-										values.push(object[key]);
-									}
-									value = values.join("");
-								}
-								// handle integers, strings, etc.
-								else {
-									value = object.toString();
-								}
-								result.push(value);
-							}
-						});
-						return result;
-					},
-
-					[
-						{% for filter in config.get("not-result-filters", []) %}
-							{% if filter in ["unclickable", "hidden", "blurred", "grayed", "darkened", "inverted", "faded", "cleared"] %}
-								"{{ filter }}",
-							{% else %}
-								// filter '{{ filter }}' not allowed
-							{% endif %}
-						{% endfor %}
-						"combine-filters", "not-search-result"
-					]
-				);
-			});
-			search_input.keyup();
-		});
-	</script>
 {% endblock %}
 
 {% block main %}
@@ -157,4 +100,66 @@
 	{% for _ in range(20) %}
 		<div class="movie-overview"></div>
 	{% endfor %}
+{% endblock %}
+
+{% block end_of_body %}
+	<script>
+		$(document).ready(function(){
+			// store generated html structure of movies
+			const movies_html = $("#{{ mainID }} > [id^='movie-']");
+
+			// search input field and data source
+			const search_input = $("#searchbox > input[name='query']");
+			const movies_data = {{ movies_array | safe }};
+			
+			// call on typing in search field
+			search_input.keyup((evt)=>{
+				searchResults(
+					evt, movies_data, search_input,
+
+					// searchable values
+					function(movie) {
+						const keys = ["title", "description", "age-rating", "year", "resolution", "director", "writer", "genre", "main-cast", "duration", "camera", "studio", "ratings"];
+						let result = [];
+						// convert key objects into an array of strings
+						keys.forEach((key)=>{
+							const object = movie[key];
+							if (object !== null && object !== undefined) {
+								// handle arrays
+								if (typeof(object) === Array) {
+									value = object.join("");
+								}
+								// handle objects
+								else if (typeof(object) === Object) {
+									var values = [];
+									for (let key in object) {
+										values.push(object[key]);
+									}
+									value = values.join("");
+								}
+								// handle integers, strings, etc.
+								else {
+									value = object.toString();
+								}
+								result.push(value);
+							}
+						});
+						return result;
+					},
+
+					[
+						{% for filter in config.get("not-result-filters", []) %}
+							{% if filter in ["unclickable", "hidden", "blurred", "grayed", "darkened", "inverted", "faded", "cleared"] %}
+								"{{ filter }}",
+							{% else %}
+								// filter '{{ filter }}' not allowed
+							{% endif %}
+						{% endfor %}
+						"combine-filters", "not-search-result"
+					]
+				);
+			});
+			search_input.keyup();
+		});
+	</script>
 {% endblock %}
