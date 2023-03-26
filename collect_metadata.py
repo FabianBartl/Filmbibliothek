@@ -25,6 +25,10 @@ from colorama import Fore, Style, init
 logger.debug("init colorama")
 init(autoreset=True)
 
+# remove colorama colors to fully apply '--no-color' cl-arg
+if not cl_args.get("colored", True):
+	Fore.BLACK = Fore.BLUE = Fore.CYAN = Fore.GREEN = Fore.LIGHTBLACK_EX = Fore.LIGHTBLUE_EX = Fore.LIGHTCYAN_EX = Fore.LIGHTGREEN_EX = Fore.LIGHTMAGENTA_EX = Fore.LIGHTRED_EX = Fore.LIGHTWHITE_EX = Fore.LIGHTYELLOW_EX = Fore.MAGENTA = Fore.RED = Fore.RESET = Fore.WHITE = Fore.YELLOW = Fore.RESET
+	Style.BRIGHT = Style.DIM = Style.NORMAL = Style.RESET_ALL
 
 # readout description from metadata file
 def getDescFromFile(filename:str) -> dict:
