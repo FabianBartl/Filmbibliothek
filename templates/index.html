@@ -10,7 +10,7 @@
 		<details open>
 			<summary>Erweiterte Filter</summary>
 			<div class="row">
-				<fieldset>
+				<fieldset id="filter-search">
 					<label class="title">Suchfilter:</label><br>
 					{% set year_min_default = 1900 %}
 					{% set year_max_default = 2100 %}
@@ -29,7 +29,7 @@
 					</select><br>
 				</fieldset>
 
-				<fieldset>
+				<fieldset id="filter-sort">
 					<label class="title">Filme sortieren nach:</label><br>
 					<input name="sort_reversed" type="checkbox" {% if url_params.sort_reversed %}checked{% endif %}><label>Reihenfolge umdrehen</label><br>
 					<input name="sort_by" value="title" type="radio" checked><label>Titel</label><br>
@@ -38,7 +38,7 @@
 					<input name="sort_by" value="user_rating" type="radio" {% if url_params.sort_by == 'user_rating' %}checked{% endif %}><label>Eigener Bewertung</label><br>
 				</fieldset>
 
-				<fieldset>
+				<fieldset id="filter-display">
 					<label class="title">Anzeige Einstellungen:</label><br>
 					<input name="hide_age_restricted_movies" type="checkbox" {% if url_params.hide_age_restricted_movies %}checked{% endif %}><label>Filme mit Altersbeschränkung ausblenden</label><br>
 					<input name="hide_not_search_results" type="checkbox" {% if url_params.hide_not_search_results %}checked{% endif %}><label>Nur Suchergebnisse anzeigen</label><br>
@@ -105,15 +105,36 @@
 {% block end_of_body %}
 	<script>
 		$(document).ready(function(){
-			// store generated html structure of movies
-			const movies_html = $("#{{ mainID }} > [id^='movie-']");
-
-			// search input field and data source
+			// search input field, generated html structure of movies and data source
 			const search_input = $("#searchbox > input[name='query']");
+			const movies_html = $("#{{ mainID }} > [id^='movie-']");
 			const movies_data = {{ movies_array | safe }};
+
+			// run, if any sort filter changes
+			function update_sort(evt, sort_by) {
+				const movies_data_sorted = movies_data.sort(function(a, b) {
+					const a_sort_by = a[sort_by];
+					const b_sort_by = b[sort_by];
+					if (a_sort_by !== undefined && b_sort_by !== undefined)
+					{
+						if (a_sort_by < b_sort_by)
+							return -1;
+						if (a_sort_by > b_sort_by)
+							return 1;
+						return 0;
+					}
+					return -2;
+				});
+
+				movies_data_sorted.forEach(function (movie, index) {
+					const id = movie["movieID"];
+					const movieHTML = movies_html.get(id);
+					document.getElementById("{{ mainID }}").innerHTML += movieHTML;
+				});
+			}
 			
-			// call on typing in search field
-			search_input.keyup((evt)=>{
+			// run, if any search filter changes 
+			function update_search(evt) {
 				searchResults(
 					evt, movies_data, search_input,
 
@@ -158,8 +179,19 @@
 						"combine-filters", "not-search-result"
 					]
 				);
-			});
+			}
+
+			// call on typing in search field
+			search_input.keyup((evt)=>{ update_search(evt); });
 			search_input.keyup();
+
+			// call on change of sort filters
+			$("#filter-sort > input[type='radio']").click((evt)=>{
+				const radio_input = $(evt.target);
+				console.log(radio_input);
+				if (radio_input.is(":checked"))
+					update_sort(evt, radio_input.attr("value"));
+			})
 		});
 	</script>
 {% endblock %}
