@@ -111,6 +111,8 @@ app.jinja_env.filters["abs"] = abs
 app.jinja_env.filters["floor"] = floor
 app.jinja_env.filters["ceil"] = ceil
 
+app.jinja_env.filters["len"] = len
+
 app.jinja_env.filters["md5"] = lambda this: hashlib.md5(this.encode("utf-8")).hexdigest()
 
 # truncate string and append ellipsis
