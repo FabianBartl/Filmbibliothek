@@ -1,9 +1,9 @@
 
-import custom_logger, logging
-logger = custom_logger.init(__file__, log_to_console=True)
+import custom_logger, logging, sys
+logger = custom_logger.init(__file__, log_to_console=("--log" in sys.argv or "-l" in sys.argv))
 logger.debug(f"start of script: {__file__}")
 
-import requests, json, yaml, urllib.parse, random, sys
+import requests, json, yaml, urllib.parse, random
 import user_agents
 from os import listdir
 from os.path import abspath, isfile, isdir
@@ -448,11 +448,11 @@ if __name__ == "__main__":
 		msg_closeAndRunAgain()
 		exit(5)
 
-	# validate command line args
+	# validate / parse command line arguments
 	logger.debug("validate command line arguments")
 	cli_args = {
 		"force": "--force" in sys.argv or "-f" in sys.argv,
-		"log": "--log" in sys.argv or "-l" in sys.argv
+		"log": "--log" in sys.argv or "-l" in sys.argv  # impact already applied at start of file
 	}
 	logger.info("command line arguments validated")
 
