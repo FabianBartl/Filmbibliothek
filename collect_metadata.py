@@ -258,7 +258,8 @@ def run(movie_directories:list[str], metadata_directories:list[str], args:dict[s
 		
 		# iterate over movie files
 		logger.debug(f"iterate over movie files in {movie_directory=}")
-		progress_bar.colour = custom_logger.level_to_color(logging.DEBUG)
+		if cl_args.get("colored", True):
+			progress_bar.colour = custom_logger.level_to_color(logging.DEBUG)
 		for filename in directory:
 			# filter for movie files in directory
 			logger.debug(f"filter for movie files")
@@ -373,8 +374,9 @@ def run(movie_directories:list[str], metadata_directories:list[str], args:dict[s
 			metadata[movieID] = movie_metadata
 			movieID += 1
 		
-		# set color to green, close the progress bar and remove it's logging handler 
-		progress_bar.colour = "#8CE10B"
+		# set color to green, close the progress bar and remove it's logging handler
+		if cl_args.get("colored", True):
+			progress_bar.colour = "#8CE10B"
 		progress_bar.close()
 		logger.removeHandler(tqdm_handler)
 		logger.debug("custom logging handler of the tqdm progress bar removed")
