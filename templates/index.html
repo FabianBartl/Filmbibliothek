@@ -113,8 +113,20 @@
 			// should run, if any sort filter changes
 			function update_sort(evt, sort_by, reversed=false) {
 				const movies_data_sorted = movies_data.sort(function(a, b) {
-					const a_sort_by = a[sort_by];
-					const b_sort_by = b[sort_by];
+					if (sort_by.includes("rating"))
+						sort_by = sort_by.replace("_", "-");
+					// get sortable values
+					let a_sort_by, b_sort_by;
+					if (sort_by === "imdb-rating") {
+						if (a[sort_by] !== undefined)
+							a_sort_by = a[sort_by]["points"];
+						if (b[sort_by] !== undefined)
+							 b_sort_by = b[sort_by]["points"];
+					} else {
+						a_sort_by = a[sort_by];
+						b_sort_by = b[sort_by];
+					}
+					// define order
 					let order = 0;
 					if (a_sort_by === undefined || b_sort_by === undefined)
 						order = -1;
@@ -194,7 +206,7 @@
 			search_sort_input.click((evt)=>{
 				const target = $(evt.target);
 				let radio_input = target;
-				// if click on 'reverse' checkbox instead of radio button
+				// search for checked radio button, if click on 'sort_reversed' checkbox
 				if (target.attr("name") === "sort_reversed") {
 					search_sort_by.each(function(index, input) {
 						input = $(input);
@@ -202,12 +214,13 @@
 							radio_input = input;
 					});
 				}
-				const sort_by = radio_input.attr("value");
-				let reversed = search_sort_reversed.is(":checked");
-				if (sort_by.includes("rating"))
-					reversed = !reversed;
-				if (radio_input.is(":checked"))
+				if (radio_input.is(":checked")) {
+					const sort_by = radio_input.attr("value");
+					let reversed = search_sort_reversed.is(":checked");
+					if (sort_by.includes("rating"))
+						reversed = !reversed;
 					update_sort(evt, sort_by, reversed);
+				}
 			});
 		});
 	</script>
