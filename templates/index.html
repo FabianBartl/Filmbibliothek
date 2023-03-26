@@ -129,12 +129,12 @@
 					// define order
 					let order = 0;
 					if (a_sort_by === undefined || b_sort_by === undefined)
-						order = -1;
+						order = 1;
 					else if (a_sort_by < b_sort_by)
 						order = -1;
 					else if (a_sort_by > b_sort_by)
 						order = 1;
-					return reversed ? -order : order;
+					return reversed ? order*-1 : order;
 				});
 				
 				const movie_index = $("#{{ mainID }}");
