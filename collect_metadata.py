@@ -1,7 +1,15 @@
 
-import custom_logger, logging, sys
-logger = custom_logger.init(__file__, log_to_console=("--log" in sys.argv or "-l" in sys.argv))
+from sys import argv
+# command line arguments for logger init
+cl_args = {
+	"log": "--log" in argv or "-l" in argv,
+	"colored": "--no-color" not in argv and "-nc" not in argv 
+}
+
+import custom_logger, logging
+logger = custom_logger.init(__file__, log_to_console=cl_args.get("log", False), colored_console=cl_args.get("colored", True))
 logger.debug(f"start of script: {__file__}")
+logger.info(f"command line arguments loaded ({cl_args=})")
 
 import requests, json, yaml, urllib.parse, random
 import user_agents
@@ -448,17 +456,14 @@ if __name__ == "__main__":
 		msg_closeAndRunAgain()
 		exit(5)
 
-	# validate / parse command line arguments
+	# validate command line arguments
 	logger.debug("validate command line arguments")
-	cli_args = {
-		"force": "--force" in sys.argv or "-f" in sys.argv,
-		"log": "--log" in sys.argv or "-l" in sys.argv  # already applied at the beginning of the file
-	}
-	logger.info("command line arguments validated")
+	cl_args["force"] = "--force" in argv or "-f" in argv
+	logger.info(f"command line arguments validated and loaded ({cl_args=})")
 
 	# run with args
 	logger.debug(f"collect metadata with {movie_directories=} {metadata_directories=}")
-	run(movie_directories, metadata_directories, cli_args)
+	run(movie_directories, metadata_directories, cl_args)
 	logger.info("movie data collected and stored")
 	print(Fore.GREEN + "Movie data collected and stored")
 
