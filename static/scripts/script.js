@@ -134,7 +134,8 @@ function video_backward(video, seconds=10) {
 }
 function video_play_pause(video) {
 	video = $(video).get(0);
-	if (video.ended) video.load();
+	if (video.ended)
+		video.load();
 	video.playing ? video.pause() : video.play();
 }
 function video_forward(video, seconds=10) {
