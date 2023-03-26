@@ -4,9 +4,8 @@
 {% set mainID = 'movie-index' %}
 
 {% block aside %}
-	<form id="searchbox" method="GET" action="/">
+	<div id="searchbox">
 		<input name="query" type="text" {% if url_params.query %}value="{{ url_params.query }}"{% endif %} placeholder="Filme durchsuchen ..." autofocus>
-		<button type="submit">Suchen</button>
 		
 		<details open>
 			<summary>Erweiterte Filter</summary>
@@ -46,7 +45,7 @@
 				</fieldset>
 			</div>
 		</details>
-	</form>
+	</div>
 	
 	<script>
 		$(document).ready(function(){
