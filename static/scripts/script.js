@@ -6,7 +6,7 @@ function min(a, b) { return a < b ? a : b; }
 // cookies
 function setCookie(cookieName, cookieValue, expiredTime = 1, unit = "h") {
 	const time = new Date();
-	var factor = 1;
+	let factor = 1;
 	switch (unit) {
 		case "y":
 			factor = 60 * 60 * 24 * 365.25
@@ -28,12 +28,14 @@ function setCookie(cookieName, cookieValue, expiredTime = 1, unit = "h") {
 	document.cookie = `${cookieName}=${cookieValue};expires=${time.toUTCString()};path=/`;
 }
 function getCookie(cookieName) {
-	var name = cookieName + "=";
-	var cookieArray = document.cookie.split(";");
-	for (var i = 0; i < cookieArray.length; i++) {
-		var cookieChar = cookieArray[i];
-		while (cookieChar.charAt(0) === " ") cookieChar = cookieChar.substring(1);
-		if (cookieChar.indexOf(name) === 0) return cookieChar.substring(name.length, cookieChar.length);
+	const name = cookieName + "=";
+	const cookieArray = document.cookie.split(";");
+	for (let i = 0; i < cookieArray.length; i++) {
+		let cookieChar = cookieArray[i];
+		while (cookieChar.charAt(0) === " ")
+			cookieChar = cookieChar.substring(1);
+		if (cookieChar.indexOf(name) === 0)
+			return cookieChar.substring(name.length, cookieChar.length);
 	}
 	return null;
 }
@@ -74,9 +76,9 @@ function isPartiallyInViewport(element) {
 
 // search for query in array and add css classes to results
 function searchResults(event, objectArray, inputElement, toArray, notResultClasses, minLenght = 1) {
-	var invalidChars = /[^a-z0-9\-]/gi;
-	var query = inputElement.val().toLowerCase();
-	var validQuery = query.replace(invalidChars, "");
+	const invalidChars = /[^a-z0-9\-]/gi;
+	const query = inputElement.val().toLowerCase();
+	const validQuery = query.replace(invalidChars, "");
 
 	// remove previous added search classes
 	objectArray.forEach((object) => {
@@ -92,7 +94,7 @@ function searchResults(event, objectArray, inputElement, toArray, notResultClass
 				return attribute.toLowerCase().replace(invalidChars, "");
 			});
 
-			var anyIsTrue = false;
+			let anyIsTrue = false;
 			objectArray.forEach((attribute) => {
 				if (attribute.includes(validQuery)) {
 					anyIsTrue = true;
@@ -123,24 +125,24 @@ Object.defineProperty(HTMLMediaElement.prototype, "playing", {
 // functions for to control the video playback with hotkeys 
 // video actions
 function video_fullscreen(video) {
-	var video = $(video).get(0);
+	video = $(video).get(0);
 	video.webkitRequestFullscreen ? video.webkitRequestFullscreen() : video.requestFullscreen();
 }
 function video_backward(video, seconds=10) {
-	var video = $(video).get(0);
+	video = $(video).get(0);
 	video.currentTime -= seconds;
 }
 function video_play_pause(video) {
-	var video = $(video).get(0);
+	video = $(video).get(0);
 	if (video.ended) video.load();
 	video.playing ? video.pause() : video.play();
 }
 function video_forward(video, seconds=10) {
-	var video = $(video).get(0);
+	video = $(video).get(0);
 	video.currentTime += seconds;
 }
 function video_volume(video) {
-	var video = $(video).get(0);
+	video = $(video).get(0);
 	video.muted ? $(video).prop("muted", false) : $(video).prop("muted", true);
 }
 
@@ -166,8 +168,8 @@ $(document).ready(() => {
 	// add click events to age restricted elements
 	// query the configured pin and (if correct) disable the age restriction
 	$(".age-restricted").click(() => {
-		var pinInput = prompt("PIN eingeben, um die Altersbeschränkung aufzuheben:");
-		var pinInputHash = CryptoJS.MD5(pinInput).toString();
+		const pinInput = prompt("PIN eingeben, um die Altersbeschränkung aufzuheben:");
+		const pinInputHash = CryptoJS.MD5(pinInput).toString();
 		if (pinInputHash === window.ageRestriction_PinHash) {
 			setCookie("age_restriction_unlocked", "true", window.ageRestriction_SessionDuration, "h");
 			alert(`Die Altersbeschränkung ist für ${window.ageRestriction_SessionDuration.toString()} Stunden aufgehoben.`);
@@ -180,7 +182,7 @@ $(document).ready(() => {
 	// add events and hotkeys for custom video controls
 	// init video controls and add UI updater
 	$(".video-wrapper").each(function (index, value) {
-		var video = $(this).children("video").get(0);
+		const video = $(this).children("video").get(0);
 
 		// bind hotkeys to video controls
 		// apply only to first video wrapper
@@ -222,43 +224,43 @@ $(document).ready(() => {
 
 	// add hover and click events for user rating (on movie pages)
 	$(".user.rating").each(function () {
-		var user_rating_el = $(this);
+		const user_rating_el = $(this);
 
 		// mark selected stars
 		user_rating_el.find(".icon[data-star-action='set']").on("mouseover", (evt) => {
-			var this_star_el = evt.target;
-			var this_star_pos = parseInt($(this_star_el).attr("data-star-position"));
+			const this_star_el = evt.target;
+			const this_star_pos = parseInt($(this_star_el).attr("data-star-position"));
 
-			for (var pos = 1; pos <= this_star_pos; pos++) {
-				var star = user_rating_el.find(`.icon[data-star-position='${pos}']`);
+			for (let pos = 1; pos <= this_star_pos; pos++) {
+				let star = user_rating_el.find(`.icon[data-star-position='${pos}']`);
 				star.attr("class", user_rating_el.attr("data-star-filled"));
 			}
 			for (var pos = this_star_pos + 1; pos <= 5; pos++) {
-				var star = user_rating_el.find(`.icon[data-star-position='${pos}']`);
+				let star = user_rating_el.find(`.icon[data-star-position='${pos}']`);
 				star.attr("class", user_rating_el.attr("data-star-empty"));
 			}
 		});
 
 		// reset selected stars to loaded state
 		user_rating_el.on("mouseleave", (evt) => {
-			for (var pos = 1; pos <= 5; pos++) {
-				var star = user_rating_el.find(`.icon[data-star-position='${pos}'][data-star-action='set']`);
+			for (let pos = 1; pos <= 5; pos++) {
+				let star = user_rating_el.find(`.icon[data-star-position='${pos}'][data-star-action='set']`);
 				star.attr("class", star.attr("data-star-default"));
 			}
 		});
 
 		// send selected stars to the api and if no error occurs, update the stars' default data attribute
 		user_rating_el.find(".icon[data-star-action='set']").on("click touch", (evt) => {
-			var this_star_el = evt.target;
-			var this_star_pos = parseInt($(this_star_el).attr("data-star-position"));
-			var url = `${window.location.pathname}user-rating/set/${this_star_pos}`;
+			const this_star_el = evt.target;
+			const this_star_pos = parseInt($(this_star_el).attr("data-star-position"));
+			const url = `${window.location.pathname}user-rating/set/${this_star_pos}`;
 
 			$.ajax({
 				url: url,
 				error: () => { alert("Failed to save user rating."); },
 				success: () => {
-					for (var pos = 1; pos <= 5; pos++) {
-						var star = user_rating_el.find(`.icon[data-star-position='${pos}'][data-star-action='set']`);
+					for (let pos = 1; pos <= 5; pos++) {
+						let star = user_rating_el.find(`.icon[data-star-position='${pos}'][data-star-action='set']`);
 						star.attr("data-star-default", star.attr("class"));
 					}
 				}
@@ -267,14 +269,14 @@ $(document).ready(() => {
 
 		// reset user rating (send 0 stars to the api) and if no error occurs, update the stars' default data attribute
 		user_rating_el.find(".icon[data-star-action='reset']").on("click touch", (evt) => {
-			var url = `${window.location.pathname}user-rating/set/0`;
+			const url = `${window.location.pathname}user-rating/set/0`;
 
 			$.ajax({
 				url: url,
 				error: () => { alert("Failed to reset user rating."); },
 				success: () => {
-					for (var pos = 1; pos <= 5; pos++) {
-						var star = user_rating_el.find(`.icon[data-star-position='${pos}'][data-star-action='set']`);
+					for (let pos = 1; pos <= 5; pos++) {
+						let star = user_rating_el.find(`.icon[data-star-position='${pos}'][data-star-action='set']`);
 						star.attr("data-star-default", user_rating_el.attr("data-star-empty"));
 						user_rating_el.trigger("mouseleave");
 					}
