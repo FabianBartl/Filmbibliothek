@@ -49,7 +49,7 @@ class CustomFormatter(logging.Formatter):
 
 # return a logging handler for a colored tqdm progress bar
 # def getTqdmHandler( tqdm_progressBar: tqdm, level: int ) -> TqdmLoggingHandler
-def getTqdmHandler(tqdm_progressBar, level:int):
+def getTqdmHandler(tqdm_progressBar, level:int, colored:bool=True):
 	try:
 		import tqdm
 
@@ -74,7 +74,8 @@ def getTqdmHandler(tqdm_progressBar, level:int):
 						(self.counter[record.levelno] % 5 != 0 and logging.INFO == record.levelno):
 						return
 				# set color and refresh bar
-				self.progress_bar.colour = level_to_color(record.levelno)
+				if colored:
+					self.progress_bar.colour = level_to_color(record.levelno)
 				self.progress_bar.refresh()
 		
 		return TqdmLoggingHandler(tqdm_progressBar, level)
