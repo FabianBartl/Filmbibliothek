@@ -454,29 +454,6 @@ if __name__ == "__main__":
 		"force": "--force" in sys.argv or "-f" in sys.argv,
 		"log": "--log" in sys.argv or "-l" in sys.argv
 	}
-	if (log_index := sys.argv.index("log")) != -1:
-		logger.debug("try: get and validate logging level from cl-args")
-		try:
-			log_level = sys.argv[log_index+1].upper()
-			log_level_int = custom_logger.level_to_int(log_level)
-			if log_level != "DEBUG" and log_level_int == logging.DEBUG:
-				logger.error(f"{log_level=} and {log_level_int=} -> non-existing logging level given")
-				print(Fore.RED + f"logging level '{log_level}' does not exist")
-				msg_closeAndRunAgain()
-				exit(6)
-		except IndexError as error:
-			log_level = config_yaml.get("log-level")
-			log_level_int = custom_logger.level_to_int(log_level)
-			logger.warning(f"no value (level) for 'log' cl-args given, use level set in config ({log_level_int})")
-		# unexpected error
-		except Exception as error:
-			logger.error("UnexpectedError: failed to validate value (level) of 'log' cl-args", exc_info=True)
-			print(Fore.RED + f"Failed to validate level of command line argument 'log'")
-			msg_closeAndRunAgain()
-			exit(7)
-		logger.info(f"logging level validated")
-		# set logging level
-		logger.info(f"logging level set to {log_level_int}")
 	logger.info("command line arguments validated")
 
 	# run with args
