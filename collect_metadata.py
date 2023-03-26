@@ -222,7 +222,7 @@ def getUserAgent(*, without_referer:bool=False) -> dict:
 
 
 # run
-def run(movie_directories:list[str], metadata_directories:list[str]) -> None:
+def run(movie_directories:list[str], metadata_directories:list[str], args:dict[str:bool]={}) -> None:
 	metadata = {}
 	movieID = 0
 	logger.debug(f"iterate over {movie_directories=}")
@@ -311,8 +311,7 @@ def run(movie_directories:list[str], metadata_directories:list[str]) -> None:
 			user_defined_metadata = getUserDefMetadata(file) if isfile(file := f"{metadata_file}.yml") else {}
 			
 			# get additional metadata
-			imdb_conditions = "--force" in sys.argv or "-f" in sys.argv
-			if user_defined_metadata.get("scrape-additional-data", True) and not user_defined_metadata.get("imdb-data-already-scraped", False) or imdb_conditions:
+			if user_defined_metadata.get("scrape-additional-data", True) and not user_defined_metadata.get("imdb-data-already-scraped", False) or args.get("force"):
 				# check if imdb data already complete
 				logger.debug("check if imdb data already complete")
 				imdb_data_complete = True
@@ -449,9 +448,40 @@ if __name__ == "__main__":
 		msg_closeAndRunAgain()
 		exit(5)
 
-	# run
+	# validate command line args
+	logger.debug("validate command line arguments")
+	cli_args = {
+		"force": "--force" in sys.argv or "-f" in sys.argv,
+		"log": "--log" in sys.argv or "-l" in sys.argv
+	}
+	if (log_index := sys.argv.index("log")) != -1:
+		logger.debug("try: get and validate logging level from cl-args")
+		try:
+			log_level = sys.argv[log_index+1].upper()
+			log_level_int = custom_logger.level_to_int(log_level)
+			if log_level != "DEBUG" and log_level_int == logging.DEBUG:
+				logger.error(f"{log_level=} and {log_level_int=} -> non-existing logging level given")
+				print(Fore.RED + f"logging level '{log_level}' does not exist")
+				msg_closeAndRunAgain()
+				exit(6)
+		except IndexError as error:
+			log_level = config_yaml.get("log-level")
+			log_level_int = custom_logger.level_to_int(log_level)
+			logger.warning(f"no value (level) for 'log' cl-args given, use level set in config ({log_level_int})")
+		# unexpected error
+		except Exception as error:
+			logger.error("UnexpectedError: failed to validate value (level) of 'log' cl-args", exc_info=True)
+			print(Fore.RED + f"Failed to validate level of command line argument 'log'")
+			msg_closeAndRunAgain()
+			exit(7)
+		logger.info(f"logging level validated")
+		# set logging level
+		logger.info(f"logging level set to {log_level_int}")
+	logger.info("command line arguments validated")
+
+	# run with args
 	logger.debug(f"collect metadata with {movie_directories=} {metadata_directories=}")
-	run(movie_directories, metadata_directories)
+	run(movie_directories, metadata_directories, cli_args)
 	logger.info("movie data collected and stored")
 	print(Fore.GREEN + "Movie data collected and stored")
 
