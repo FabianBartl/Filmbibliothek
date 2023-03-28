@@ -267,7 +267,7 @@ def run(movie_directories:list[str], metadata_directories:list[str], args:dict[s
 				logger.warning(f"'{filename}' is not a file")
 				update(subStepsNum)
 				continue
-			if not filename.lower().endswith((".mp4", ".mov", ".m4v", ".mkv")):
+			if not filename.lower().endswith((".mp4", ".mov", ".m4v", ".mkv", ".avi")):
 				logger.warning(f"'{filename}' is not a movie")
 				update(subStepsNum)
 				continue
