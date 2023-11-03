@@ -282,6 +282,16 @@ def movie_subtitles(movieID:int, language:str) -> Response:
 				return send_from_directory(movie["metadata_directory"], subtitles, as_attachment=False)
 	return not_found(f"Movie not found.")
 
+# # return movie edit page
+# # error: 404 [not found] if movie not found
+# @app.route("/movie/<int:movieID>/edit/")
+# def movie_edit(movieID:int) -> Response:
+# 	global MOVIES
+# 	movieID = str(movieID)
+# 	if movie := MOVIES.get(movieID):
+# 		return render_template("edit.html", movie=movie)
+# 	return not_found(f"Movie not found.")
+
 # set movie user rating
 # error: 204 [no content] if user rating saved successfully
 #        503 [service unavailable] if saving the user rating failed

@@ -40,6 +40,27 @@ function getCookie(cookieName) {
 	return null;
 }
 
+// https://bitexperts.com/Question/Detail/3316/determine-file-size-in-javascript-without-downloading-a-filex
+// https://stackoverflow.com/questions/33531140/get-file-size-in-mb-or-kb
+function getUrlFileSize(url)
+{
+	var fileSize = 0;
+	var http = new XMLHttpRequest();
+	http.open("HEAD", url, false); // false = Synchronous
+	http.send(null); // it will stop here until this http request is complete
+
+	// when we are here, we already have a response, b/c we used Synchronous XHR
+	if (http.status === 200)
+		fileSize = Number(http.getResponseHeader("content-length"));
+	else
+		return -1;
+
+	// get best unit
+	var fSExt = new Array("Bytes", "KB", "MB", "GB");
+	i=0;while(fileSize>900){fileSize/=1024;i++;}
+	var exactSize = (Math.round(fileSize*100)/100)+' '+fSExt[i];
+	return exactSize;
+}
 
 // convert seconds to time format of HH:MM:SS
 function secondsToTime(seconds) {

@@ -88,6 +88,15 @@
 						<i class="fa fa-play"></i>&ensp;Abspielen
 					</a>
 				</li>
+				<li>
+					{% if age_restricted %}
+						<a class="button not-allowed age-restricted" href="#">
+					{% else %}
+						<a class="button" href="stream/" download>
+					{% endif %}
+						<i class="fa fa-download"></i>&ensp;Herunterladen (<script>document.write(getUrlFileSize("stream/"))</script>)
+					</a>
+				</li>
 				{% if movie.get('website') %}
 					<li>
 						<a class="button" href="{{ movie.get('website') }}" target="_blank">
@@ -95,6 +104,11 @@
 						</a>
 					</li>
 				{% endif %}
+				<!-- <li>
+					<a class="button" href="edit/">
+						<i class="fa fa-pen"></i>&ensp;Bearbeiten
+					</a>
+				</li> -->
 			</ul>
 
 			{% if movie.get('description') %}
@@ -129,6 +143,7 @@
 	<video
 		id="movie-stream"
 		controls
+		preload="auto"
 		{% if age_restricted %}poster="{{ url_for('static', filename='images/age-restricted-movie.jpg') }}"{% endif %}
 	>
 		{% if not age_restricted %}
