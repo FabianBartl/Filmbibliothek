@@ -171,7 +171,7 @@ def getMetadataFromIMDB(moviename:str, *, imdb_id:str=None) -> dict:
 		imdb_rating_votes = html_scrap.xpath(f"{outer_xpath}/div[3]/text()").get()
 		imdb_rating = {
 			"points": imdb_rating_points.replace(".", ","),
-			"votes": imdb_rating_votes.replace(".", "").replace("K", ".000").replace("M", ".000.000")
+			"votes": imdb_rating_votes  # TODO: remove number suffix and generate exact value
 		}
 		metadata["imdb-rating"] = imdb_rating
 		logger.debug(f"{imdb_rating=}")
@@ -242,14 +242,15 @@ def run(movie_directories:list[str], metadata_directories:list[str], args:dict[s
 		directory = listdir(movie_directory)
 
 		# just the progress bar for the user
+		progress_desc = lambda film="": f"Directory {directoryNum+1}/{len(movie_directories)} {movie_directory} Film '{film[:25]:.^25}'"
 		subStepsNum = 7
 		progress_bar = tqdm(
 			total = len(directory) * subStepsNum,
-			unit = " Movie processing substeps",
+			unit = "steps",
 			unit_divisor = subStepsNum,
-			desc = f"Directory {directoryNum+1}/{len(movie_directories)} '{movie_directory}'"
+			desc = progress_desc()
 		)
-		update = lambda n=1: progress_bar.update(n); progress_bar.refresh()
+		update = lambda n=1: (progress_bar.update(n), progress_bar.refresh())
 
 		# add custom logging handler for the tqdm progress bar
 		tqdm_handler = custom_logger.getTqdmHandler(progress_bar, logging.DEBUG, args.get("colored", True))
@@ -286,6 +287,7 @@ def run(movie_directories:list[str], metadata_directories:list[str], args:dict[s
 				"movieID": str(movieID)
 			}
 			logger.debug(f"{movie_metadata=}")
+			progress_bar.set_description(progress_desc(movie_metadata["title"]))
 			update(1)
 
 			# collect metadata from file attributes
