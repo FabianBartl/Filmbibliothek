@@ -56,7 +56,7 @@ function getUrlFileSize(url)
 		return -1;
 
 	// get best unit
-	var fSExt = new Array("Bytes", "KB", "MB", "GB");
+	var fSExt = new Array("Bytes", "KiB", "MiB", "GiB");
 	i=0;while(fileSize>900){fileSize/=1024;i++;}
 	var exactSize = (Math.round(fileSize*100)/100)+' '+fSExt[i];
 	return exactSize;
