@@ -53,7 +53,7 @@ function getUrlFileSize(url)
 	if (http.status === 200)
 		fileSize = Number(http.getResponseHeader("content-length"));
 	else
-		return -1;
+		return "unbekannte Dateigröße";
 
 	// get best unit
 	var fSExt = new Array("Bytes", "KiB", "MiB", "GiB");

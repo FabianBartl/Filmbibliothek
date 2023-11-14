@@ -11,7 +11,7 @@ logger = custom_logger.init(__file__, log_to_console=cl_args.get("log", False), 
 logger.debug(f"start of script: {__file__}")
 logger.info(f"command line arguments loaded ({cl_args=})")
 
-import requests, json, yaml, urllib.parse, random
+import requests, json, yaml, urllib.parse, random, re
 import user_agents
 from os import listdir
 from os.path import abspath, isfile, isdir
@@ -168,13 +168,16 @@ def getMetadataFromIMDB(moviename:str, *, imdb_id:str=None) -> dict:
 	outer_xpath = '//*[@id="__next"]/main/div/section[1]/section/div[3]/section/section/div[2]/div[2]/div/div[1]/a/span/div/div[2]'
 	if html_scrap.xpath(outer_xpath).get():
 		imdb_rating_points = html_scrap.xpath(f"{outer_xpath}/div[1]/span[1]/text()").get()
-		imdb_rating_votes = html_scrap.xpath(f"{outer_xpath}/div[3]/text()").get()
+		imdb_rating_votes = html_scrap.xpath(f"{outer_xpath}/div[3]/text()").get().upper()
+		# remove number suffix and generate exact value
+		imdb_rating_votes_factor = {"B": 1_000_000_000, "M": 1_000_000, "K": 1_000}.get(imdb_rating_votes[-1], 1)
+		imdb_rating_votes_num = int(float(re.sub(r"[BMK]", "", imdb_rating_votes)) * imdb_rating_votes_factor)
 		imdb_rating = {
 			"points": imdb_rating_points.replace(".", ","),
-			"votes": imdb_rating_votes  # TODO: remove number suffix and generate exact value
+			"votes": f"{imdb_rating_votes_num:_.0f}".replace("_", ".")
 		}
 		metadata["imdb-rating"] = imdb_rating
-		logger.debug(f"{imdb_rating=}")
+		logger.debug(f"{imdb_rating_votes=} {imdb_rating_votes_factor=} {imdb_rating_points=} {imdb_rating=}")
 	else:
 		logger.warning(f"imdb rating of '{moviename}' not found")
 
@@ -316,7 +319,7 @@ def run(movie_directories:list[str], metadata_directories:list[str], args:dict[s
 					elif width <= 5100: movie_metadata[key] = "4K"
 					elif width <= 7600: movie_metadata[key] = "5K"
 					else: movie_metadata[key] = "8K"
-					logger.debug(f"{width=} movie_metadata['{key}']={movie_metadata[key]}")
+					logger.debug(f"{width=} {movie_metadata[key]=}")
 			except:
 				logger.error(f"failed to collect metadata from file attributes", exc_info=True)
 			update(1)
@@ -326,7 +329,12 @@ def run(movie_directories:list[str], metadata_directories:list[str], args:dict[s
 			user_defined_metadata = getUserDefMetadata(file) if isfile(file := f"{metadata_file}.yml") else {}
 			
 			# get additional metadata
-			if user_defined_metadata.get("scrape-additional-data", True) and not user_defined_metadata.get("imdb-data-already-scraped", False) or args.get("force"):
+			scrape_additional_data = user_defined_metadata.get("scrape-additional-data", True)
+			imdb_data_already_scraped = user_defined_metadata.get("imdb-data-already-scraped", False)
+			update_imdb_data = args.get("update-imdb-data", False)
+			add_imdb_data = args.get("add-imdb-data", False)
+			logger.info(f"scrape decision parameters: {scrape_additional_data=} {imdb_data_already_scraped=} {update_imdb_data=} {add_imdb_data=}")
+			if not scrape_additional_data or update_imdb_data or add_imdb_data:
 				# check if imdb data already complete
 				logger.debug("check if imdb data already complete")
 				imdb_data_complete = True
@@ -336,14 +344,23 @@ def run(movie_directories:list[str], metadata_directories:list[str], args:dict[s
 						imdb_data_complete = False
 						logger.debug("imdb data not complete")
 						break
-				# scrape from imdb if not complete
-				if not imdb_data_complete:
+				# scrape from imdb if not complete or update requested
+				if (not imdb_data_complete or update_imdb_data) and not scrape_additional_data:
 					logger.debug("get metadata from imdb")
 					if imdb_metadata := getMetadataFromIMDB(user_defined_metadata.get("title", movie_metadata["title"]), imdb_id=user_defined_metadata.get("imdb-id")):
-						movie_metadata |= imdb_metadata
-						logger.debug("metadata from imdb scraped")
+						# add scraped data
+						if add_imdb_data:
+							movie_metadata |= imdb_metadata
+							logger.debug("scraped imdb data added")
+						# overwrite only already existing data
+						else:
+							for new_key, new_value in imdb_metadata.items():
+								if new_key in movie_metadata:
+									movie_metadata[new_key] = new_value
+									logger.debug(f"existing imdb date '{new_key}' updated with '{new_value}'")
+							logger.debug("updated only existing imdb data")
 				else:
-					logger.debug("imdb data already complete")
+					logger.debug("imdb data already complete or don't scrape additional data")
 			else:
 				logger.debug("scraping of additional data is not wanted or imdb data already scraped")
 			update(1)
@@ -466,7 +483,8 @@ if __name__ == "__main__":
 
 	# validate command line arguments
 	logger.debug("validate command line arguments")
-	cl_args["force"] = "--force" in argv or "-f" in argv
+	cl_args["update-imdb-data"] = "--update-imdb-data" in argv or "-u" in argv
+	cl_args["add-imdb-data"] = "--add-imdb-data" in argv or "-a" in argv
 	logger.info(f"command line arguments validated and loaded ({cl_args=})")
 
 	# run with args
